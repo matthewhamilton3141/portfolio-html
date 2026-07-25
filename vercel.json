@@ -1,4 +1,27 @@
 {
+  "redirects": [
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/photos/",
+      "destination": "/photos",
+      "permanent": true
+    },
+    {
+      "source": "/photos.html",
+      "destination": "/photos",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/photos",
+      "destination": "/photos.html"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)\\.(js|css|png|jpg|jpeg|webp|glb|svg|pdf|ico)",
