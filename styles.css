@@ -194,9 +194,32 @@ html, body, a, button, input, label, summary,
 .notch-progress { display:flex; align-items:center; gap:8px; width:100%; margin-top:6px; }
 .notch-progress .t { font-size:9px; font-family:var(--font-mono); color:rgba(163,163,163,.8); min-width:24px; }
 .notch-progress .t.right { text-align:right; }
-.notch-progress input[type=range]{ flex:1; height:5px; border-radius:9999px; -webkit-appearance:none; appearance:none; outline:none; }
-.notch-progress input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:0; height:0; }
-.notch-progress input[type=range]::-moz-range-thumb { width:0; height:0; border:0; }
+.notch-progress input[type=range] {
+  flex:1; height:4px; border-radius:9999px;
+  -webkit-appearance:none; appearance:none; outline:none;
+  /* White completed fill with a straight leading edge; muted remainder. */
+  background:linear-gradient(
+    to right,
+    #fff 0%,
+    #fff var(--seek-pct, 0%),
+    rgba(255,255,255,.22) var(--seek-pct, 0%),
+    rgba(255,255,255,.22) 100%
+  );
+}
+.notch-progress input[type=range]::-webkit-slider-runnable-track {
+  height:4px; border-radius:9999px; background:transparent;
+}
+.notch-progress input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance:none; width:0; height:0; border:0; background:transparent;
+}
+.notch-progress input[type=range]::-moz-range-track {
+  height:4px; border-radius:9999px; border:0; background:rgba(255,255,255,.22);
+}
+.notch-progress input[type=range]::-moz-range-progress {
+  height:4px; border:0; background:#fff;
+  border-radius:9999px 0 0 9999px; /* rounded start, straight end */
+}
+.notch-progress input[type=range]::-moz-range-thumb { width:0; height:0; border:0; background:transparent; }
 .marquee-box { width:100%; overflow:hidden; position:relative; white-space:nowrap; }
 .marquee-box .track { display:inline-block; }
 .marquee-box .track.overflow { display:flex; gap:32px; width:max-content; }

@@ -502,8 +502,24 @@ $$('.livephoto').forEach(initLivePhoto);
   function play() { audio.play().then(() => { playing = true; initCtx(); renderState(); }).catch(() => { playing = false; renderState(); }); }
   function pause() { audio.pause(); playing = false; renderState(); }
 
-  audio.addEventListener('loadedmetadata', () => { $('#dur-time').textContent = fmt(audio.duration); $('#seek').max = audio.duration || 100; });
-  audio.addEventListener('timeupdate', () => { $('#cur-time').textContent = fmt(audio.currentTime); $('#seek').value = audio.currentTime; });
+  const seekEl = $('#seek');
+  const syncSeekFill = () => {
+    const max = parseFloat(seekEl.max) || 0;
+    const val = parseFloat(seekEl.value) || 0;
+    const pct = max > 0 ? Math.min(100, Math.max(0, (val / max) * 100)) : 0;
+    seekEl.style.setProperty('--seek-pct', pct + '%');
+  };
+
+  audio.addEventListener('loadedmetadata', () => {
+    $('#dur-time').textContent = fmt(audio.duration);
+    seekEl.max = audio.duration || 100;
+    syncSeekFill();
+  });
+  audio.addEventListener('timeupdate', () => {
+    $('#cur-time').textContent = fmt(audio.currentTime);
+    seekEl.value = audio.currentTime;
+    syncSeekFill();
+  });
   audio.addEventListener('ended', () => next());
 
   function next() { skip = true; idx = (idx + 1) % TRACKS.length; changeTrack(); }
@@ -512,14 +528,20 @@ $$('.livephoto').forEach(initLivePhoto);
     const wasPlaying = playing || skip; skip = false;
     setSrc(true); renderTrack();
     if (wasPlaying) play(); else { audio.currentTime = 0; renderState(); }
+    syncSeekFill();
   }
 
   $('#btn-play').addEventListener('click', (e) => { e.stopPropagation(); playing ? pause() : play(); resetTimer(); });
   $('#btn-mute').addEventListener('click', (e) => { e.stopPropagation(); muted = !muted; audio.muted = muted; renderState(); resetTimer(); });
   $('#btn-next').addEventListener('click', (e) => { e.stopPropagation(); next(); resetTimer(); });
   $('#btn-prev').addEventListener('click', (e) => { e.stopPropagation(); prev(); resetTimer(); });
-  $('#seek').addEventListener('input', (e) => { audio.currentTime = parseFloat(e.target.value); resetTimer(); });
-  $('#seek').addEventListener('click', (e) => e.stopPropagation());
+  seekEl.addEventListener('input', (e) => {
+    audio.currentTime = parseFloat(e.target.value);
+    syncSeekFill();
+    resetTimer();
+  });
+  seekEl.addEventListener('click', (e) => e.stopPropagation());
+  syncSeekFill();
 
   function resetTimer() {
     if (inactivity) clearTimeout(inactivity);
