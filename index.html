@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>matthew h</title>
+  <meta name="description" content="swe, systems design engineering @ uwaterloo" />
+  <link rel="icon" href="icon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..900;1,9..40,300..900&family=Playfair+Display:wght@400;700;900&family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=hl-colors" />
+  <script>
+    // Apply before paint so returning from /photos doesn't replay fade/typewriter.
+    try { if (sessionStorage.getItem('portfolio-intro-done') === '1') document.documentElement.classList.add('skip-intro'); } catch (_) {}
+  </script>
+  <!-- Import map so three.js addon modules can resolve the bare "three" specifier. -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+
+  <!-- ============================ NOTCH MEDIA PLAYER ============================ -->
+  <div class="notch-wrap">
+    <div class="notch expanded" id="notch">
+      <!-- compact -->
+      <div class="notch-compact">
+        <div class="compact-info" id="compact-playing" style="display:none">
+          <div class="notch-cover"><img id="compact-cover" alt="" /></div>
+          <div class="marquee-box"><div class="track"><span class="compact-title" id="compact-title"></span></div></div>
+        </div>
+        <div class="viz" id="viz" style="display:none"></div>
+        <div class="compact-idle" id="compact-idle">
+          <div class="notch-cover"><img id="idle-cover" alt="" /></div>
+        </div>
+      </div>
+      <!-- expanded -->
+      <div class="notch-expanded">
+        <div class="notch-top">
+          <div class="notch-left">
+            <div class="notch-art">
+              <div class="glow" id="art-glow"></div>
+              <div class="art-inner"><img id="art-cover" alt="" /></div>
+            </div>
+            <div class="notch-meta">
+              <div class="marquee-box"><div class="track"><span class="notch-track-title" id="track-title"></span></div></div>
+              <div class="marquee-box"><div class="track"><span class="notch-track-artist" id="track-artist"></span></div></div>
+            </div>
+          </div>
+          <div class="notch-controls">
+            <button class="ctrl mute" id="btn-mute" aria-label="Mute"></button>
+            <button class="ctrl" id="btn-prev" aria-label="Previous">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+            </button>
+            <button class="play" id="btn-play" aria-label="Play"></button>
+            <button class="ctrl" id="btn-next" aria-label="Next">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="notch-progress">
+          <span class="t" id="cur-time">0:00</span>
+          <input type="range" id="seek" min="0" max="100" value="0" />
+          <span class="t right" id="dur-time">0:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ TOP BAR ============================ -->
+  <!-- Fixed palette — always visible, bottom-right -->
+  <div class="palette-dock" id="palette" aria-label="Color palette">
+    <span class="palette-label">palette</span>
+    <div class="palette-squares" id="palette-squares"></div>
+  </div>
+
+  <header class="topbar">
+    <div class="topbar-icons">
+      <span class="try-now">try now <span class="animate-nudge-right">→</span></span>
+      <a class="topbar-icon" href="https://retermina.com" target="_blank" rel="noopener noreferrer" title="Retermina" aria-label="Retermina">
+        <span class="retermina-glyph"><span style="display:inline-block;transform:scaleX(0.6)">&gt;</span>_</span>
+      </a>
+      <a class="topbar-icon" href="https://linkedin.com/in/matthewhamilton3141" target="_blank" rel="noopener noreferrer" title="LinkedIn" aria-label="LinkedIn">
+        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M7 10v7M7 7v.5M12 17v-4a2 2 0 014 0v4M12 10v7"/></svg>
+      </a>
+      <a class="topbar-icon" href="https://github.com/matthewhamilton3141" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub">
+        <svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 020 4.77 5.07 5.07 0 0 019.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+      </a>
+      <a class="topbar-icon" href="https://instagram.com/mxtth2w" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Instagram">
+        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      </a>
+      <a class="topbar-icon" href="mailto:matthewhamilton3141@gmail.com" title="Email" aria-label="Email">
+        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </a>
+      <button class="topbar-icon" id="theme-toggle" title="Toggle theme" aria-label="Toggle dark mode">
+        <svg id="theme-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============================ SIDE NAV ============================ -->
+  <nav class="sidenav" aria-label="Section navigation">
+    <div class="nav-dot-wrap" data-target="landing"><div class="nav-dot active"></div><span class="nav-label">home</span></div>
+    <div class="nav-dot-wrap" data-target="projects"><div class="nav-dot"></div><span class="nav-label">projects</span></div>
+    <div class="nav-dot-wrap" data-target="contact"><div class="nav-dot"></div><span class="nav-label">contact</span></div>
+  </nav>
+
+  <!-- ============================ PAGE ============================ -->
+  <main>
+
+    <!-- ---------- LANDING ---------- -->
+    <section class="landing" id="landing">
+      <div class="landing-left">
+        <div class="landing-inner">
+          <div class="name-wrap" id="name-wrap" aria-label="MATTHEW HAMILTON (陳文飛)">
+            <div class="name-inner">
+              <div class="name-en" id="name-en">
+                <div id="name-line1"></div>
+                <div id="name-line2"><span class="name-cursor animate-blink" id="name-cursor"></span></div>
+              </div>
+              <span class="name-zh" aria-hidden="true">陳文飛</span>
+            </div>
+          </div>
+
+          <div class="about-bio" id="about-bio">
+            <p class="about-label">about</p>
+
+            <div class="about-lead">
+              <p>
+                i study
+                <a class="hl hl-yellow about-mark" href="https://uwaterloo.ca/future-students/programs/systems-design-engineering" target="_blank" rel="noopener noreferrer">systems design engineering at the university of waterloo<img class="about-logo" src="images/loo.png?v=2" alt="" /></a>
+              </p>
+              <p>seeking <span class="hl">summer 2027</span> internship opportunities</p>
+            </div>
+
+            <div class="about-block">
+              <p class="about-heading">working on</p>
+              <ul class="about-list">
+                <li>
+                  <a class="hl hl-green" href="https://github.com/matthewhamilton3141/gsplat-rt" target="_blank" rel="noopener noreferrer">gsplat-rt</a>
+                  — a real-time pipeline converting a live video stream into 3D gaussian splats, exported as an OpenUSD stage for
+                  <span class="hl hl-green about-mark">isaac sim / omniverse<img class="about-logo" src="images/about/nvidia.png" alt="" /></span>
+                </li>
+                <li>becoming better everyday</li>
+              </ul>
+            </div>
+
+            <div class="about-block">
+              <p class="about-heading">what i've done</p>
+              <ul class="about-list">
+                <li>
+                  built
+                  <a class="hl about-mark" href="https://retermina.com/" target="_blank" rel="noopener noreferrer">retermina<img class="about-logo" src="images/about/retermina.png" alt="" /></a>
+                  and
+                  <a class="hl hl-sketch about-mark" href="https://sketchstack.vercel.app" target="_blank" rel="noopener noreferrer">sketchstack<img class="about-logo" src="images/about/sketchstack.png" alt="" /></a>,
+                  developer tools for a new era of coding.
+                </li>
+                <li>
+                  <span class="about-mark">hackathon winner<img class="about-logo spaced" src="images/about/cursor.png" alt="" /></span>
+                </li>
+                <li>
+                  <span class="about-mark">t500 sigma main in overwatch<img class="about-logo" src="images/about/overwatch.png" alt="" /></span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="about-block">
+              <p class="about-heading">trying to</p>
+              <ul class="about-list">
+                <li>meet more people</li>
+                <li>travel the world, explore nature with friends</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="landing-right">
+        <div class="right-fade" id="right-fade">
+          <div class="media-cluster">
+            <div class="media-row">
+              <div class="photo-frame" id="photo-frame">
+                <img class="portrait" src="images/touching_grass.png" alt="Matthew Hamilton" />
+              </div>
+              <nav class="site-directory" id="site-directory" aria-label="Site directory">
+                <ul class="dir-list">
+                  <li>
+                    <button type="button" data-target="projects">
+                      <span class="dir-path">/projects</span>
+                    </button>
+                  </li>
+                  <li>
+                    <a href="photos.html">
+                      <span class="dir-path">/photos</span>
+                    </a>
+                  </li>
+                  <li>
+                    <button type="button" data-target="contact">
+                      <span class="dir-path">/contact</span>
+                    </button>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+            <ul class="sticker-board" id="icon-strip" aria-label="Things I care about">
+              <li class="sticker" style="--x:6%; --y:10%; --r:-14deg; --s:1.05; --z:3"><img src="images/waterloologo.png" alt="University of Waterloo" /></li>
+              <li class="sticker" style="--x:2%; --y:30%; --r:9deg; --s:.95; --z:2"><img src="images/nvidialogo.png" alt="NVIDIA" /></li>
+              <li class="sticker" style="--x:10%; --y:54%; --r:-7deg; --s:.9; --z:4"><img src="images/jamhackslogo.png" alt="JamHacks" /></li>
+              <li class="sticker" style="--x:3%; --y:74%; --r:16deg; --s:1.1; --z:3"><img src="images/bayernlogo.png" alt="Bayern Munich" /></li>
+              <li class="sticker" style="--x:20%; --y:93%; --r:-11deg; --s:1; --z:5"><img src="images/overwatchlogo.png" alt="Overwatch" /></li>
+              <li class="sticker" style="--x:40%; --y:97%; --r:8deg; --s:.92; --z:2"><img src="images/league.png" alt="League of Legends" /></li>
+              <li class="sticker" style="--x:58%; --y:91%; --r:-18deg; --s:1.08; --z:4"><img src="images/rayquaza.png" alt="Rayquaza" /></li>
+              <li class="sticker" style="--x:76%; --y:72%; --r:12deg; --s:.96; --z:3"><img src="images/retermina.png" alt="Retermina" /></li>
+              <li class="sticker" style="--x:88%; --y:54%; --r:-8deg; --s:.88; --z:2"><img src="images/claude.png" alt="Claude" /></li>
+              <li class="sticker" style="--x:90%; --y:34%; --r:15deg; --s:1; --z:4"><img src="images/hk.png" alt="Hong Kong" /></li>
+              <li class="sticker" style="--x:58%; --y:5%; --r:-6deg; --s:1.02; --z:3"><img src="images/sketchstacklogo.png" alt="Sketchstack" /></li>
+            </ul>
+          </div>
+
+          <button class="mobile-hint" id="mobile-hint" data-target="projects">
+            <span>projects</span><div class="line"></div>
+          </button>
+        </div>
+        <div class="cream-bleed"></div>
+      </div>
+    </section>
+
+    <!-- ---------- PROJECTS ---------- -->
+    <section class="projects" id="projects">
+      <div class="projects-header">
+        <h2>projects</h2>
+        <div class="view-switch">
+          <button data-view="grid" class="active">grid</button>
+          <button data-view="list">list</button>
+        </div>
+      </div>
+      <div class="grid-view" id="grid-view"></div>
+      <div class="list-view" id="list-view" style="display:none"></div>
+      <div class="hover-preview" id="hover-preview"></div>
+    </section>
+
+    <!-- ---------- CONTACT ---------- -->
+    <section class="contact" id="contact">
+      <div class="contact-bg">
+        <canvas id="poro-canvas"></canvas>
+        <div class="poro-fallback" id="poro-fallback"></div>
+      </div>
+      <div class="contact-inner">
+        <div class="contact-copy">
+          <h2>let's build something.</h2>
+          <p class="contact-sub">get in touch</p>
+          <div class="contact-links">
+            <a class="contact-link" href="matthew_hamilton_july26_v7.pdf" target="_blank" rel="noopener noreferrer">
+              <span class="ic"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
+              <span>resume</span>
+            </a>
+            <a class="contact-link" href="mailto:matthewhamilton3141@gmail.com">
+              <span class="ic"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
+              <span>email</span>
+            </a>
+            <a class="contact-link" href="https://www.linkedin.com/in/matthewhamilton3141/" target="_blank" rel="noopener noreferrer">
+              <span class="ic"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M7 10v7M7 7v.5M12 17v-4a2 2 0 014 0v4M12 10v7"/></svg></span>
+              <span>linkedin</span>
+            </a>
+            <a class="contact-link" href="https://github.com/matthewhamilton3141" target="_blank" rel="noopener noreferrer">
+              <span class="ic"><svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg></span>
+              <span>github</span>
+            </a>
+            <a class="contact-link" href="https://www.instagram.com/mxtth2w/" target="_blank" rel="noopener noreferrer">
+              <span class="ic"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></span>
+              <span>instagram</span>
+            </a>
+          </div>
+        </div>
+        <div class="github-card contact-gh" id="gh-card" aria-label="GitHub contribution graph, past 4 months">
+          <div class="gh-graph" id="gh-graph"></div>
+          <div class="gh-tooltip" id="gh-tooltip" role="tooltip" hidden></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- FOOTER ---------- -->
+    <footer class="footer">
+      <span>matthew hamilton · 陳文飛 · built with React, Next.js &amp; TypeScript</span>
+    </footer>
+  </main>
+
+  <script src="script.js?v=poro-fix2"></script>
+</body>
+</html>
