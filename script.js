@@ -665,7 +665,7 @@ $$('.livephoto').forEach(initLivePhoto);
     }
 
     const SCALE = 0.95, SPEED = 0.3, RUN_THRESH = 0.02;
-    const TARGET_H = 1.2; // world units — old 0.001 scale made it a speck
+    const TARGET_H = 0.38; // world units — small bottom mascot (1.2 was huge)
     const w = () => Math.max(1, section.clientWidth);
     const h = () => Math.max(1, section.clientHeight);
 
@@ -792,7 +792,7 @@ $$('.livephoto').forEach(initLivePhoto);
           }
         }
         group.position.x = posX;
-        group.position.y = -1.45 * SCALE;
+        group.position.y = -1.62 * SCALE;
         group.rotation.y = facing;
       }
       renderer.render(scene, camera);
