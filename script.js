@@ -313,7 +313,7 @@ $$('.livephoto').forEach(initLivePhoto);
       video: R2 + 'baamimsg.mp4', webm: R2 + 'baamimsg.webm', logo: 'images/jamhackslogo.png',
       logoLink: 'https://jamhacks.ca', startTime: 2.23 },
     { category: 'personal projects', title: 'portfolio',
-      description: 'Utilizes React and TypeScript to create a complex, stacked event architecture to create a high-fidelity UI. Leverages Cloudflare R2 Object Storage for efficient asset delivery and is deployed through Vercel to ensure rapid, globally distributed performance. Real-time state management, cloud infrastructure integration for a smooth, responsive user experience.',
+      description: 'A static site in HTML, CSS, and vanilla JavaScript — no framework runtime. Custom theme system, notch media player with R2-hosted audio, interactive GitHub contribution graph, scattered photobook lightbox, and a Three.js Poro on the contact page. Optimized WebP assets and long-cache headers on Vercel for a fast first load.',
       link: 'https://github.com/matthewhamilton3141/portfolio-html', thumb: 'images/casestudy1.webp' },
   ];
 
