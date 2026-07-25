@@ -665,7 +665,7 @@ $$('.livephoto').forEach(initLivePhoto);
     }
 
     const SCALE = 0.95, SPEED = 0.3, RUN_THRESH = 0.02;
-    const TARGET_H = 0.38; // world units — small bottom mascot (1.2 was huge)
+    const TARGET_H = 0.28; // world units — small bottom mascot
     const w = () => Math.max(1, section.clientWidth);
     const h = () => Math.max(1, section.clientHeight);
 
