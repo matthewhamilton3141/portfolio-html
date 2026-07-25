@@ -5,11 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>matthew h</title>
   <meta name="description" content="swe, systems design engineering @ uwaterloo" />
-  <link rel="icon" href="icon.svg" />
+  <link rel="icon" href="icon.png?v=round" type="image/png" />
+  <link rel="apple-touch-icon" href="icon.png?v=round" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..900;1,9..40,300..900&family=Playfair+Display:wght@400;700;900&family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=hl-colors" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;600;700;900&family=Noto+Serif+SC:wght@700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=cursor-one" />
+  <link rel="preload" as="image" href="images/touching_grass.webp" type="image/webp" fetchpriority="high" />
   <script>
     // Apply before paint so returning from /photos doesn't replay fade/typewriter.
     try { if (sessionStorage.getItem('portfolio-intro-done') === '1') document.documentElement.classList.add('skip-intro'); } catch (_) {}
@@ -144,10 +146,9 @@
               <ul class="about-list">
                 <li>
                   <a class="hl hl-green" href="https://github.com/matthewhamilton3141/gsplat-rt" target="_blank" rel="noopener noreferrer">gsplat-rt</a>
-                  — a real-time pipeline converting a live video stream into 3D gaussian splats, exported as an OpenUSD stage for
+                  — live video → real-time 3D gaussian splats, OpenUSD for
                   <span class="hl hl-green about-mark">isaac sim / omniverse<img class="about-logo" src="images/about/nvidia.png" alt="" /></span>
                 </li>
-                <li>becoming better everyday</li>
               </ul>
             </div>
 
@@ -186,7 +187,7 @@
           <div class="media-cluster">
             <div class="media-row">
               <div class="photo-frame" id="photo-frame">
-                <img class="portrait" src="images/touching_grass.png" alt="Matthew Hamilton" />
+                <img class="portrait" src="images/touching_grass.webp" alt="Matthew Hamilton" width="675" height="1200" decoding="async" fetchpriority="high" />
               </div>
               <nav class="site-directory" id="site-directory" aria-label="Site directory">
                 <ul class="dir-list">
@@ -209,17 +210,17 @@
               </nav>
             </div>
             <ul class="sticker-board" id="icon-strip" aria-label="Things I care about">
-              <li class="sticker" style="--x:6%; --y:10%; --r:-14deg; --s:1.05; --z:3"><img src="images/waterloologo.png" alt="University of Waterloo" /></li>
-              <li class="sticker" style="--x:2%; --y:30%; --r:9deg; --s:.95; --z:2"><img src="images/nvidialogo.png" alt="NVIDIA" /></li>
-              <li class="sticker" style="--x:10%; --y:54%; --r:-7deg; --s:.9; --z:4"><img src="images/jamhackslogo.png" alt="JamHacks" /></li>
-              <li class="sticker" style="--x:3%; --y:74%; --r:16deg; --s:1.1; --z:3"><img src="images/bayernlogo.png" alt="Bayern Munich" /></li>
-              <li class="sticker" style="--x:20%; --y:93%; --r:-11deg; --s:1; --z:5"><img src="images/overwatchlogo.png" alt="Overwatch" /></li>
-              <li class="sticker" style="--x:40%; --y:97%; --r:8deg; --s:.92; --z:2"><img src="images/league.png" alt="League of Legends" /></li>
-              <li class="sticker" style="--x:58%; --y:91%; --r:-18deg; --s:1.08; --z:4"><img src="images/rayquaza.png" alt="Rayquaza" /></li>
-              <li class="sticker" style="--x:76%; --y:72%; --r:12deg; --s:.96; --z:3"><img src="images/retermina.png" alt="Retermina" /></li>
-              <li class="sticker" style="--x:88%; --y:54%; --r:-8deg; --s:.88; --z:2"><img src="images/claude.png" alt="Claude" /></li>
-              <li class="sticker" style="--x:90%; --y:34%; --r:15deg; --s:1; --z:4"><img src="images/hk.png" alt="Hong Kong" /></li>
-              <li class="sticker" style="--x:58%; --y:5%; --r:-6deg; --s:1.02; --z:3"><img src="images/sketchstacklogo.png" alt="Sketchstack" /></li>
+              <li class="sticker" style="--x:6%; --y:10%; --r:-14deg; --s:1.05; --z:3"><img loading="lazy" decoding="async" src="images/waterloologo.png" alt="University of Waterloo" /></li>
+              <li class="sticker" style="--x:2%; --y:30%; --r:9deg; --s:.95; --z:2"><img loading="lazy" decoding="async" src="images/nvidialogo.png" alt="NVIDIA" /></li>
+              <li class="sticker" style="--x:10%; --y:54%; --r:-7deg; --s:.9; --z:4"><img loading="lazy" decoding="async" src="images/jamhackslogo.png" alt="JamHacks" /></li>
+              <li class="sticker" style="--x:3%; --y:74%; --r:16deg; --s:1.1; --z:3"><img loading="lazy" decoding="async" src="images/bayernlogo.png" alt="Bayern Munich" /></li>
+              <li class="sticker" style="--x:20%; --y:93%; --r:-11deg; --s:1; --z:5"><img loading="lazy" decoding="async" src="images/overwatchlogo.png" alt="Overwatch" /></li>
+              <li class="sticker" style="--x:40%; --y:97%; --r:8deg; --s:.92; --z:2"><img loading="lazy" decoding="async" src="images/league.png" alt="League of Legends" /></li>
+              <li class="sticker" style="--x:58%; --y:91%; --r:-18deg; --s:1.08; --z:4"><img loading="lazy" decoding="async" src="images/rayquaza.png" alt="Rayquaza" /></li>
+              <li class="sticker" style="--x:76%; --y:72%; --r:12deg; --s:.96; --z:3"><img loading="lazy" decoding="async" src="images/retermina.png" alt="Retermina" /></li>
+              <li class="sticker" style="--x:88%; --y:54%; --r:-8deg; --s:.88; --z:2"><img loading="lazy" decoding="async" src="images/claude.png" alt="Claude" /></li>
+              <li class="sticker" style="--x:90%; --y:34%; --r:15deg; --s:1; --z:4"><img loading="lazy" decoding="async" src="images/hk.png" alt="Hong Kong" /></li>
+              <li class="sticker" style="--x:58%; --y:5%; --r:-6deg; --s:1.02; --z:3"><img loading="lazy" decoding="async" src="images/sketchstacklogo.png" alt="Sketchstack" /></li>
             </ul>
           </div>
 
@@ -287,10 +288,10 @@
 
     <!-- ---------- FOOTER ---------- -->
     <footer class="footer">
-      <span>matthew hamilton · 陳文飛 · built with React, Next.js &amp; TypeScript</span>
+      <span>matthew hamilton · 陳文飛 · built with HTML, CSS &amp; JavaScript</span>
     </footer>
   </main>
 
-  <script src="script.js?v=poro-fix2"></script>
+  <script src="script.js?v=perf1"></script>
 </body>
 </html>

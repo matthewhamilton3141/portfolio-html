@@ -30,7 +30,7 @@
   --radius: 0.25rem;
 
   --font-sans: 'DM Sans', system-ui, sans-serif;
-  --font-display: 'Playfair Display', Georgia, serif;
+  --font-display: 'DM Sans', Georgia, serif;
   --font-chinese: 'Noto Serif SC', serif;
   --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
 }
@@ -120,8 +120,14 @@ body {
   color:var(--ink);
 }
 a { color:inherit; text-decoration:none; }
-button { font-family:inherit; cursor:pointer; background:none; border:none; color:inherit; }
+button { font-family:inherit; background:none; border:none; color:inherit; }
 img { display:block; }
+/* One cursor everywhere — avoids pointer/default flicker on overlapping hovers. */
+html, body, a, button, input, label, summary,
+[role="button"], .sticker, .livephoto, .polaroid, .nav-dot-wrap,
+.name-wrap, .notch, .palette-square {
+  cursor: default !important;
+}
 
 /* ---- keyframes --------------------------------------------------------- */
 @keyframes blink { 50% { opacity:0; } }
@@ -149,10 +155,10 @@ img { display:block; }
   display:flex; flex-direction:column; justify-content:space-between;
   overflow:hidden; user-select:none; position:relative;
   transition:all .4s cubic-bezier(0.16,1,0.3,1);
-  width:110px; height:35px; border-radius:20px; padding:6px 10px; cursor:pointer;
+  width:110px; height:35px; border-radius:20px; padding:6px 10px;
 }
 .notch.playing { width:210px; padding:6px 14px; }
-.notch.expanded { width:min(91vw,385px); height:105px; border-radius:28px; padding:16px; cursor:default; }
+.notch.expanded { width:min(91vw,385px); height:105px; border-radius:28px; padding:16px; }
 .notch-compact { display:flex; align-items:center; justify-content:space-between; width:100%; height:100%; }
 .notch.expanded .notch-compact { display:none; }
 .notch-expanded { display:none; flex-direction:column; width:100%; height:100%; justify-content:space-between; }
@@ -188,7 +194,7 @@ img { display:block; }
 .notch-progress { display:flex; align-items:center; gap:8px; width:100%; margin-top:6px; }
 .notch-progress .t { font-size:9px; font-family:var(--font-mono); color:rgba(163,163,163,.8); min-width:24px; }
 .notch-progress .t.right { text-align:right; }
-.notch-progress input[type=range]{ flex:1; height:5px; border-radius:9999px; -webkit-appearance:none; appearance:none; outline:none; cursor:pointer; }
+.notch-progress input[type=range]{ flex:1; height:5px; border-radius:9999px; -webkit-appearance:none; appearance:none; outline:none; }
 .notch-progress input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:0; height:0; }
 .notch-progress input[type=range]::-moz-range-thumb { width:0; height:0; border:0; }
 .marquee-box { width:100%; overflow:hidden; position:relative; white-space:nowrap; }
@@ -235,9 +241,12 @@ html.skip-intro .mobile-hint {
   opacity:1; transform:none; transition:none;
 }
 html.skip-intro .sticker-board .sticker {
-  transform: translate(-50%, -50%) rotate(var(--r)) scale(var(--s, 1));
+  transform: translate(-50%, -50%) rotate(var(--r));
 }
-.nav-dot-wrap { display:flex; align-items:center; cursor:pointer; }
+html.skip-intro .sticker-board .sticker img {
+  transform: scale(var(--s, 1));
+}
+.nav-dot-wrap { display:flex; align-items:center; }
 .nav-dot { width:10px; height:10px; border-radius:9999px; flex-shrink:0; transition:.3s;
   background:color-mix(in srgb, var(--muted-foreground) 50%, transparent); }
 .nav-dot-wrap:hover .nav-dot, .nav-dot.active { background:var(--accent); transform:scale(1.2); }
@@ -255,7 +264,6 @@ html.skip-intro .sticker-board .sticker {
 .landing-left { display:flex; flex-direction:column; justify-content:flex-start; padding:12vh 6vw 80px 12vw; position:relative; z-index:1; }
 .landing-inner { display:flex; flex-direction:column; max-width:560px; gap:36px; }
 .name-wrap { position:relative; z-index:10; width:100%; }
-.name-wrap.interactive { cursor:pointer; }
 .name-inner { position:relative; width:100%; }
 .name-en {
   font-family:system-ui, sans-serif; font-weight:900; font-size:clamp(42px,5vw,72px);
@@ -301,16 +309,14 @@ html.skip-intro .sticker-board .sticker {
 }
 .sticker-board .sticker {
   position:absolute; left:var(--x); top:var(--y);
-  width:calc(48px * var(--s, 1)); height:calc(48px * var(--s, 1));
+  /* Extra hit padding so a visual lift can't escape the cursor. */
+  width:calc(56px * var(--s, 1)); height:calc(56px * var(--s, 1));
   display:flex; align-items:center; justify-content:center;
-  transform: translate(-50%, -50%) rotate(var(--r)) scale(var(--s, 1));
+  transform: translate(-50%, -50%) rotate(var(--r));
   z-index:var(--z, 1);
   opacity:0;
-  pointer-events:auto; cursor:default;
-  transition:
-    opacity .45s ease,
-    transform .28s cubic-bezier(.22,1.2,.36,1),
-    z-index 0s;
+  pointer-events:auto;
+  transition: opacity .45s ease;
 }
 .sticker-board.show .sticker { opacity:1; }
 .sticker-board.show .sticker:nth-child(1) { transition-delay:.05s; }
@@ -326,14 +332,22 @@ html.skip-intro .sticker-board .sticker {
 .sticker-board.show .sticker:nth-child(11) { transition-delay:.46s; }
 .sticker-board .sticker:hover,
 .sticker-board .sticker:focus-visible {
-  transform: translate(-50%, calc(-50% - 8px)) rotate(calc(var(--r) * .2)) scale(calc(var(--s, 1) * 1.22));
-  z-index:30;
+  /* Keep hitbox still — only the image moves — and stay under the directory. */
+  z-index:5;
   transition-delay:0s;
 }
 .sticker-board .sticker img {
-  width:100%; height:100%; object-fit:contain; display:block;
+  width:calc(48px * var(--s, 1)); height:calc(48px * var(--s, 1));
+  object-fit:contain; display:block;
   pointer-events:none;
   filter:drop-shadow(0 1px 2px rgba(0,0,0,.22));
+  transform: scale(var(--s, 1));
+  transition: transform .28s cubic-bezier(.22,1.2,.36,1), filter .28s ease;
+}
+.sticker-board .sticker:hover img,
+.sticker-board .sticker:focus-visible img {
+  transform: translateY(-6px) scale(calc(var(--s, 1) * 1.18));
+  filter:drop-shadow(0 4px 8px rgba(0,0,0,.28));
 }
 .about-bio { opacity:0; transform:translateY(20px); transition:all .8s; max-width:540px; }
 .about-bio.show { opacity:1; transform:none; }
@@ -434,7 +448,7 @@ a.hl-sketch:hover {
 .mobile-hint { display:none; }
 
 /* LivePhoto */
-.livephoto { position:relative; width:100%; height:100%; cursor:pointer; background:#e5e5e5;
+.livephoto { position:relative; width:100%; height:100%; background:#e5e5e5;
   border-radius:inherit; overflow:hidden; isolation:isolate;
   transition:transform .3s cubic-bezier(0.25,1,0.5,1), box-shadow .3s;
   box-shadow:0 4px 6px -1px rgba(0,0,0,.05), 0 2px 4px -2px rgba(0,0,0,.05); }
@@ -586,7 +600,7 @@ a.hl-sketch:hover {
   box-shadow:0 8px 24px rgba(0,0,0,.14);
 }
 .palette-square {
-  width:26px; height:26px; border-radius:6px; padding:0; cursor:pointer; flex-shrink:0;
+  width:26px; height:26px; border-radius:6px; padding:0; flex-shrink:0;
   border:none;
   /* Inset ring follows radius cleanly; avoids border/clip artifacts at corners. */
   box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--ink) 22%, transparent), 0 1px 2px rgba(0,0,0,.08);
@@ -656,7 +670,7 @@ a.hl-sketch:hover {
   background:color-mix(in srgb, var(--ink) 10%, var(--cream));
   outline:1px solid color-mix(in srgb, var(--ink) 6%, transparent);
   outline-offset:-1px;
-  cursor:default; transition:transform .12s ease, outline-color .12s ease;
+  transition:transform .12s ease, outline-color .12s ease;
 }
 .gh-cell.empty { visibility:hidden; pointer-events:none; }
 .gh-cell:hover, .gh-cell:focus-visible {
@@ -731,7 +745,7 @@ a.hl-sketch:hover {
 .polaroid {
   position:absolute; left:var(--x); top:var(--y); z-index:var(--z);
   display:flex; flex-direction:column; align-items:stretch;
-  padding:12px 12px 0; border:0; border-radius:3px; cursor:zoom-in;
+  padding:12px 12px 0; border:0; border-radius:3px;
   background:#FBF7EF; color:#1A1714;
   box-shadow:
     0 1px 0 rgba(255,255,255,.55) inset,
@@ -761,7 +775,7 @@ a.hl-sketch:hover {
 .polaroid:focus-visible {
   z-index:999 !important;
   outline:none;
-  transform:rotate(calc(var(--rot) * 0.08)) translateY(-22px) scale(1.1);
+  transform:rotate(calc(var(--rot) * 0.08)) translateY(-10px) scale(1.06);
   filter:brightness(1.03);
   box-shadow:
     0 1px 0 rgba(255,255,255,.7) inset,
@@ -915,5 +929,6 @@ a.hl-sketch:hover {
   .photo-frame { width:240px; }
   .media-row { flex-direction:column; align-items:center; gap:16px; }
   .site-directory { padding-top:0; }
-  .sticker-board .sticker { width:calc(38px * var(--s, 1)); height:calc(38px * var(--s, 1)); }
+  .sticker-board .sticker { width:calc(46px * var(--s, 1)); height:calc(46px * var(--s, 1)); }
+  .sticker-board .sticker img { width:calc(38px * var(--s, 1)); height:calc(38px * var(--s, 1)); }
 }
