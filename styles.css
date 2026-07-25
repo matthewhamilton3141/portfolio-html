@@ -682,11 +682,14 @@ a.hl-sketch:hover {
 .gh-cell[data-level="2"] { background:color-mix(in srgb, var(--accent) 55%, var(--cream)); }
 .gh-cell[data-level="3"] { background:color-mix(in srgb, var(--accent) 75%, var(--cream)); }
 .gh-cell[data-level="4"] { background:var(--accent); }
-.dark .gh-cell { background:#21262d; outline-color:rgba(255,255,255,.04); }
-.dark .gh-cell[data-level="1"] { background:#484f58; }
-.dark .gh-cell[data-level="2"] { background:#6e7681; }
-.dark .gh-cell[data-level="3"] { background:#b1bac4; }
-.dark .gh-cell[data-level="4"] { background:#f0f6fc; }
+.dark .gh-cell {
+  background:color-mix(in srgb, var(--ink) 12%, var(--cream));
+  outline-color:color-mix(in srgb, var(--ink) 8%, transparent);
+}
+.dark .gh-cell[data-level="1"] { background:color-mix(in srgb, var(--accent) 40%, var(--cream)); }
+.dark .gh-cell[data-level="2"] { background:color-mix(in srgb, var(--accent) 60%, var(--cream)); }
+.dark .gh-cell[data-level="3"] { background:color-mix(in srgb, var(--accent) 80%, var(--cream)); }
+.dark .gh-cell[data-level="4"] { background:var(--accent); }
 
 .gh-tooltip {
   position:absolute; left:0; top:0; z-index:5;

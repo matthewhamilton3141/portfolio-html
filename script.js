@@ -298,7 +298,7 @@ $$('.livephoto').forEach(initLivePhoto);
     { category: 'personal project', title: 'Retermina',
       description: 'A customizable terminal workspace built on Tauri v2 with a Rust backend driving native PTY shells — fully local, with no cloud, token limits, or subscription. Seven draggable panels (split terminals, syntax-highlighted code, explorer, live project-wide git diff, localhost tracker, native preview window, and an embedded Claude Code CLI with per-project token tracking) arrange freely on a react-grid-layout grid. Five structural theme engines and portable Loom presets re-skin the whole app instantly.',
       link: 'https://github.com/matthewhamilton3141/Retermina', liveUrl: 'https://retermina.com/',
-      thumb: 'images/reterminapreview.webp', video: R2 + 'Retermina%20Promo%20(2).mp4', zoom: 1.0 },
+      thumb: 'images/reterminapreview.webp', video: R2 + 'Retermina%20Promo%20(2).mp4', zoom: 1.35 },
     { category: 'personal project', title: 'Sketchstack',
       description: 'Sketchstack is a full-stack web app that turns visual system-design diagrams into structured prompts for AI coding agents like Claude Code and Cursor. Built with Next.js, TypeScript, and React Flow, with Supabase (Postgres, GitHub OAuth, row-level security) powering authentication, cloud save, and shareable links.',
       link: 'https://github.com/matthewhamilton3141/sketchstack', liveUrl: 'https://sketchstack.vercel.app',
@@ -314,8 +314,7 @@ $$('.livephoto').forEach(initLivePhoto);
       logoLink: 'https://jamhacks.ca', startTime: 2.23 },
     { category: 'personal projects', title: 'portfolio',
       description: 'Utilizes React and TypeScript to create a complex, stacked event architecture to create a high-fidelity UI. Leverages Cloudflare R2 Object Storage for efficient asset delivery and is deployed through Vercel to ensure rapid, globally distributed performance. Real-time state management, cloud infrastructure integration for a smooth, responsive user experience.',
-      link: 'https://github.com/matthewhamilton3141/portfolio', thumb: 'images/casestudy1.webp',
-      video: R2 + 'portfolio.mp4', webm: R2 + 'portfolio.webm' },
+      link: 'https://github.com/matthewhamilton3141/portfolio-html', thumb: 'images/casestudy1.webp' },
   ];
 
   const listView = $('#list-view');
