@@ -465,6 +465,7 @@ $$('.livephoto').forEach(initLivePhoto);
     { title: 'ochos rios', artist: 'daniel caesar', src: R2 + 'ochosrios.mp3', cover: 'images/neverenough.jpg', wave: '#4169E1' },
     { title: 'clarity', artist: 'zedd (ft. foxes)', src: R2 + 'clarity.mp3', cover: 'images/clarity.jpg', wave: 'linear-gradient(to top, #3B82F6, #22C55E)' },
     { title: 'whiplash', artist: 'aespa', src: R2 + 'whiplash.mp3', cover: 'images/whiplash.jpg', wave: '#FFFFFF' },
+    { title: 'crank the bass, play the muzik', artist: 'knock2', src: R2 + 'crankthebassplaythemuzik.mp3', cover: 'images/nolimit.jpg', wave: '#A5969B' },
     { title: 'slow dancing in the dark', artist: 'joji', src: R2 + 'slowdancinginthedark.mp3', cover: 'images/ballads1.jpeg', wave: 'linear-gradient(to top, #CDB0AE, #CEC0C0)' },
     { title: 'cyanide', artist: 'daniel caesar', src: R2 + 'cyanide.mp3', cover: 'images/casestudy.jpeg', wave: 'linear-gradient(to top, #7aadffb9, #b7b7b7ff)' },
   ];
