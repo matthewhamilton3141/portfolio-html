@@ -301,6 +301,8 @@ html.skip-intro .sticker-board .sticker img {
   transform:scaleX(1.15) translateY(0); transform-origin:left center;
   opacity:1; filter:blur(0);
 }
+/* Warm/brown palette: English name should read as brand brown, not near-black. */
+.theme-warm-editorial .name-en { color:var(--accent); }
 .name-en > div { text-transform:uppercase; user-select:none; }
 .name-cursor { display:inline-block; width:6px; height:.85em; background:var(--accent); margin-left:4px; vertical-align:middle; border-radius:2px; }
 .name-zh {
