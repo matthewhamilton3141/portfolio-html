@@ -208,11 +208,26 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
     $('#mobile-hint')?.classList.add('show');
   };
 
+  const startNameSwap = () => {
+    if (!nameWrap || nameWrap.dataset.swapReady) return;
+    nameWrap.dataset.swapReady = '1';
+    let paused = false;
+    nameWrap.addEventListener('mouseenter', () => { paused = true; });
+    nameWrap.addEventListener('mouseleave', () => { paused = false; });
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) return;
+    setInterval(() => {
+      if (paused) return;
+      nameWrap.classList.toggle('showing-zh');
+    }, 5000);
+  };
+
   const finishName = () => {
     line1.textContent = fullName.slice(0, 7);
     line2.textContent = fullName.slice(7).trim();
     if (cursor) { cursor.style.display = 'none'; line2.appendChild(cursor); }
     nameWrap?.classList.add('interactive');
+    startNameSwap();
   };
 
   const markIntroDone = () => sessionStorage.setItem(INTRO_KEY, '1');
@@ -234,6 +249,7 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
       } else {
         cursor.style.display = 'none';
         nameWrap.classList.add('interactive');
+        startNameSwap();
         setTimeout(() => $('#about-bio')?.classList.add('show'), 200);
         markIntroDone();
       }
