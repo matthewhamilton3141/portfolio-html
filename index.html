@@ -5,16 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>matthew h</title>
   <meta name="description" content="swe, systems design engineering @ uwaterloo" />
+  <meta name="theme-color" content="#F7F4EE" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="matthew hamilton" />
+  <meta property="og:title" content="matthew h" />
+  <meta property="og:description" content="swe, systems design engineering @ uwaterloo" />
+  <meta property="og:url" content="https://matthewhamilton.dev/" />
+  <meta property="og:image" content="https://matthewhamilton.dev/images/og-card.png?v=site" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="matthew hamilton portfolio" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="matthew h" />
+  <meta name="twitter:description" content="swe, systems design engineering @ uwaterloo" />
+  <meta name="twitter:image" content="https://matthewhamilton.dev/images/og-card.png?v=site" />
   <link rel="icon" href="icon.png?v=round" type="image/png" />
   <link rel="apple-touch-icon" href="icon.png?v=round" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;600;700;900&family=Noto+Serif+SC:wght@700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=seek-bar" />
+  <link rel="stylesheet" href="styles.css?v=og-light" />
   <link rel="preload" as="image" href="images/touching_grass.webp" type="image/webp" fetchpriority="high" />
   <script>
     // Apply before paint so returning from /photos doesn't replay fade/typewriter.
-    try { if (sessionStorage.getItem('portfolio-intro-done') === '1') document.documentElement.classList.add('skip-intro'); } catch (_) {}
+    // Light mode is the default; only add .dark when the user previously chose it.
+    try {
+      if (sessionStorage.getItem('portfolio-intro-done') === '1') document.documentElement.classList.add('skip-intro');
+      if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');
+      else localStorage.setItem('theme', 'light');
+    } catch (_) {}
   </script>
   <!-- Import map so three.js addon modules can resolve the bare "three" specifier. -->
   <script type="importmap">
@@ -292,6 +311,6 @@
     </footer>
   </main>
 
-  <script src="script.js?v=portfolio-desc"></script>
+  <script src="script.js?v=og-light"></script>
 </body>
 </html>
