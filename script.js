@@ -317,6 +317,10 @@ $$('.livephoto').forEach(initLivePhoto);
       link: 'https://github.com/BansonVuong/BAAM', thumb: 'images/baampreview1.webp',
       video: R2 + 'baamimsg.mp4', webm: R2 + 'baamimsg.webm', logo: 'images/jamhackslogo.png',
       logoLink: 'https://jamhacks.ca', startTime: 2.23 },
+    { category: 'hackathon project', title: 'Marrymap',
+      description: 'Marrymap is a Next.js wedding-planning stack: a React client for dual-consent vendor swiping and pipeline CRM, plus a Chrome MV3 extension that scrapes page metadata/screenshots into Supabase. Couples decide together in real time; guests clip vendors from the web and those recommendations sync straight into shared albums.',
+      link: 'https://github.com/aarontran321/marrymap', thumb: 'images/marrymap.webp',
+      logo: 'images/about/cursor.png', zoom: 1.25 },
     { category: 'personal projects', title: 'portfolio',
       description: 'A static site in HTML, CSS, and vanilla JavaScript — no framework runtime. Custom theme system, notch media player with R2-hosted audio, interactive GitHub contribution graph, scattered photobook lightbox, and a Three.js Poro on the contact page. Optimized WebP assets and long-cache headers on Vercel for a fast first load.',
       link: 'https://github.com/matthewhamilton3141/portfolio-html', thumb: 'images/casestudy1.webp' },
@@ -342,7 +346,9 @@ $$('.livephoto').forEach(initLivePhoto);
         <span class="cat">${p.category || 'In Development'}</span>
         <div class="title-line">
           <h3>${p.title}</h3>
-          ${p.logo ? `<a href="${p.logoLink}" target="_blank" rel="noopener noreferrer" title="View Hackathon"><img class="badge" src="${p.logo}" alt="Hackathon Logo"/></a>` : ''}
+          ${p.logo ? (p.logoLink
+            ? `<a href="${p.logoLink}" target="_blank" rel="noopener noreferrer" title="View Hackathon"><img class="badge" src="${p.logo}" alt="Hackathon Logo"/></a>`
+            : `<img class="badge" src="${p.logo}" alt="Hackathon Logo" title="Hackathon"/>`) : ''}
         </div>
         <p class="desc">${p.description}</p>
       </div>
@@ -406,7 +412,9 @@ $$('.livephoto').forEach(initLivePhoto);
       <p class="cat">${p.category || 'In Development'}</p>
       <div class="title-line">
         <h3>${p.title}</h3>
-        ${p.logo ? `<a href="${p.logoLink}" target="_blank" rel="noopener noreferrer" title="View Hackathon"><img class="badge" src="${p.logo}" alt="Hackathon Badge" style="width:18px;height:18px"/></a>` : ''}
+        ${p.logo ? (p.logoLink
+          ? `<a href="${p.logoLink}" target="_blank" rel="noopener noreferrer" title="View Hackathon"><img class="badge" src="${p.logo}" alt="Hackathon Badge" style="width:18px;height:18px"/></a>`
+          : `<img class="badge" src="${p.logo}" alt="Hackathon Badge" title="Hackathon" style="width:18px;height:18px"/>`) : ''}
       </div>
       <p class="desc">${p.description}</p>
       <div class="links">${linksHTML(p)}</div>`;

@@ -3,3 +3,5 @@
 photos/originals/
 .cursor/
 *.log
+*.heic
+*.HEIC
