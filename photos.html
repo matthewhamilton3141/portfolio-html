@@ -10,9 +10,71 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=DM+Sans:ital,opsz,wght@0,9..40,300..900;1,9..40,300..900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles.css?v=gh-accent" />
+  <link rel="stylesheet" href="/styles.css?v=photos-chrome" />
+  <script>
+    try {
+      sessionStorage.setItem('portfolio-intro-done', '1');
+      const p = localStorage.getItem('portfolio-palette');
+      const map = {
+        zinc: 'theme-stark-mono', editorial: 'theme-warm-editorial', nordic: 'theme-cyber-nordic',
+        mint: 'theme-midnight-mint', lavender: 'theme-lavender-dusk', rose: 'theme-cherry-blossom',
+      };
+      document.documentElement.classList.add(map[p] || 'theme-stark-mono');
+      if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');
+      else localStorage.setItem('theme', 'light');
+    } catch (_) {}
+  </script>
 </head>
 <body class="photos-page">
+
+  <div class="notch-wrap">
+    <div class="notch" id="notch">
+      <div class="notch-compact">
+        <div class="compact-info" id="compact-playing" style="display:none">
+          <div class="notch-cover"><img id="compact-cover" alt="" /></div>
+          <div class="marquee-box"><div class="track"><span class="compact-title" id="compact-title"></span></div></div>
+        </div>
+        <div class="viz" id="viz" style="display:none"></div>
+        <div class="compact-idle" id="compact-idle">
+          <div class="notch-cover"><img id="idle-cover" alt="" /></div>
+        </div>
+      </div>
+      <div class="notch-expanded">
+        <div class="notch-top">
+          <div class="notch-left">
+            <div class="notch-art">
+              <div class="glow" id="art-glow"></div>
+              <div class="art-inner"><img id="art-cover" alt="" /></div>
+            </div>
+            <div class="notch-meta">
+              <div class="marquee-box"><div class="track"><span class="notch-track-title" id="track-title"></span></div></div>
+              <div class="marquee-box"><div class="track"><span class="notch-track-artist" id="track-artist"></span></div></div>
+            </div>
+          </div>
+          <div class="notch-controls">
+            <button class="ctrl mute" id="btn-mute" aria-label="Mute"></button>
+            <button class="ctrl" id="btn-prev" aria-label="Previous">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+            </button>
+            <button class="play" id="btn-play" aria-label="Play"></button>
+            <button class="ctrl" id="btn-next" aria-label="Next">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="notch-progress">
+          <span class="t" id="cur-time">0:00</span>
+          <input type="range" id="seek" min="0" max="100" value="0" />
+          <span class="t right" id="dur-time">0:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="palette-dock show" id="palette" aria-label="Color palette">
+    <span class="palette-label">palette</span>
+    <div class="palette-squares" id="palette-squares"></div>
+  </div>
 
   <header class="topbar">
     <a class="photos-back" href="/" id="photos-home">← home</a>
@@ -43,48 +105,11 @@
     </figure>
   </div>
 
+  <script src="/script.js?v=photos-chrome"></script>
   <script>
-    // Coming back home shouldn't replay the landing intro.
-    sessionStorage.setItem('portfolio-intro-done', '1');
     document.getElementById('photos-home')?.addEventListener('click', () => {
       sessionStorage.setItem('portfolio-intro-done', '1');
     });
-
-    (function () {
-      const THEMES = [
-        { id: 'zinc', className: 'theme-stark-mono' },
-        { id: 'editorial', className: 'theme-warm-editorial' },
-        { id: 'nordic', className: 'theme-cyber-nordic' },
-        { id: 'mint', className: 'theme-midnight-mint' },
-        { id: 'lavender', className: 'theme-lavender-dusk' },
-        { id: 'rose', className: 'theme-cherry-blossom' },
-      ];
-      const root = document.documentElement;
-      const saved = localStorage.getItem('portfolio-palette');
-      const theme = THEMES.find((t) => t.id === saved) || THEMES[0];
-      THEMES.forEach((t) => root.classList.remove(t.className));
-      root.classList.add(theme.className);
-
-      const btn = document.getElementById('theme-toggle');
-      const icon = document.getElementById('theme-icon');
-      const moon = '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>';
-      const sun = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
-      let dark = localStorage.getItem('theme') === 'dark';
-      if (localStorage.getItem('theme') !== 'dark' && localStorage.getItem('theme') !== 'light') {
-        localStorage.setItem('theme', 'light');
-        dark = false;
-      }
-      const apply = () => {
-        root.classList.toggle('dark', dark);
-        icon.innerHTML = dark ? sun : moon;
-      };
-      apply();
-      btn.addEventListener('click', () => {
-        dark = !dark;
-        localStorage.setItem('theme', dark ? 'dark' : 'light');
-        apply();
-      });
-    })();
 
     /* ---- polaroid board ------------------------------------------------ */
     (function () {

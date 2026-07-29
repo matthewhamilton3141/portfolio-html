@@ -12,6 +12,7 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 (function () {
   const btn = $('#theme-toggle');
   const icon = $('#theme-icon');
+  if (!btn || !icon) return;
   const moon = '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>';
   const sun = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
   // Light is default for first-time / unset visitors.
@@ -196,6 +197,11 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const line2 = $('#name-line2');
   const cursor = $('#name-cursor');
   const nameWrap = $('#name-wrap');
+  if (!nameWrap || !line1 || !line2) {
+    // Still reveal shared chrome (palette) on non-landing pages.
+    $('#palette')?.classList.add('show');
+    return;
+  }
   const INTRO_KEY = 'portfolio-intro-done';
   const skipIntro = sessionStorage.getItem(INTRO_KEY) === '1';
 
@@ -348,6 +354,7 @@ $$('.livephoto').forEach(initLivePhoto);
   const listView = $('#list-view');
   const gridView = $('#grid-view');
   const hp = $('#hover-preview');
+  if (!listView || !gridView) return;
   let hovered = null, mouse = { x: 0, y: 0 };
 
   const icGithub = `<svg class="proj-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>`;
@@ -456,27 +463,32 @@ $$('.livephoto').forEach(initLivePhoto);
 
 /* ======================================================================
    NOTCH MEDIA PLAYER — notch-media-player.tsx
+   Persists across / ↔ /photos via sessionStorage so playback can resume.
    ====================================================================== */
 (function () {
   const R2 = 'https://pub-ce086066003e4e1cad2011087e85618b.r2.dev/';
+  const STATE_KEY = 'portfolio-notch';
   const TRACKS = [
-    { title: 'who knows', artist: 'daniel caesar', src: R2 + 'whoknows.mp3', cover: 'images/sonofspergy.jpg', wave: 'linear-gradient(to top, #800020, #c60032ff)' },
-    { title: 'japanese denim', artist: 'daniel caesar', src: R2 + 'japanesedenim.mp3', cover: 'images/japanesedenim.jpg', wave: 'linear-gradient(to top, #e2e2e2ff, #a5a5a5ff)' },
-    { title: 'nights', artist: 'frank ocean', src: R2 + 'nights.mp3', cover: 'images/blond.jpg', wave: 'linear-gradient(to top, #22C55E, #e4e4e4ff)' },
-    { title: 'seigfried', artist: 'frank ocean', src: R2 + 'seigfried.mp3', cover: 'images/blond.jpg', wave: 'linear-gradient(to top, #22C55E, #e4e4e4ff)' },
-    { title: 'rearrange my world', artist: 'daniel caesar (ft. rex orange county)', src: R2 + 'rearrangemyworld.mp3', cover: 'images/rearrange.jpeg', wave: '#b7b7b7ff' },
-    { title: 'ochos rios', artist: 'daniel caesar', src: R2 + 'ochosrios.mp3', cover: 'images/neverenough.jpg', wave: '#4169E1' },
-    { title: 'clarity', artist: 'zedd (ft. foxes)', src: R2 + 'clarity.mp3', cover: 'images/clarity.jpg', wave: 'linear-gradient(to top, #3B82F6, #22C55E)' },
-    { title: 'whiplash', artist: 'aespa', src: R2 + 'whiplash.mp3', cover: 'images/whiplash.jpg', wave: '#FFFFFF' },
-    { title: 'crank the bass, play the muzik', artist: 'knock2', src: R2 + 'crankthebassplaythemuzik.mp3', cover: 'images/nolimit.jpg', wave: '#A5969B' },
-    { title: 'slow dancing in the dark', artist: 'joji', src: R2 + 'slowdancinginthedark.mp3', cover: 'images/ballads1.jpeg', wave: 'linear-gradient(to top, #CDB0AE, #CEC0C0)' },
-    { title: 'cyanide', artist: 'daniel caesar', src: R2 + 'cyanide.mp3', cover: 'images/casestudy.jpeg', wave: 'linear-gradient(to top, #7aadffb9, #b7b7b7ff)' },
+    { title: 'who knows', artist: 'daniel caesar', src: R2 + 'whoknows.mp3', cover: '/images/sonofspergy.jpg', wave: 'linear-gradient(to top, #800020, #c60032ff)' },
+    { title: 'japanese denim', artist: 'daniel caesar', src: R2 + 'japanesedenim.mp3', cover: '/images/japanesedenim.jpg', wave: 'linear-gradient(to top, #e2e2e2ff, #a5a5a5ff)' },
+    { title: 'nights', artist: 'frank ocean', src: R2 + 'nights.mp3', cover: '/images/blond.jpg', wave: 'linear-gradient(to top, #22C55E, #e4e4e4ff)' },
+    { title: 'seigfried', artist: 'frank ocean', src: R2 + 'seigfried.mp3', cover: '/images/blond.jpg', wave: 'linear-gradient(to top, #22C55E, #e4e4e4ff)' },
+    { title: 'rearrange my world', artist: 'daniel caesar (ft. rex orange county)', src: R2 + 'rearrangemyworld.mp3', cover: '/images/rearrange.jpeg', wave: '#b7b7b7ff' },
+    { title: 'ochos rios', artist: 'daniel caesar', src: R2 + 'ochosrios.mp3', cover: '/images/neverenough.jpg', wave: '#4169E1' },
+    { title: 'clarity', artist: 'zedd (ft. foxes)', src: R2 + 'clarity.mp3', cover: '/images/clarity.jpg', wave: 'linear-gradient(to top, #3B82F6, #22C55E)' },
+    { title: 'whiplash', artist: 'aespa', src: R2 + 'whiplash.mp3', cover: '/images/whiplash.jpg', wave: '#FFFFFF' },
+    { title: 'crank the bass, play the muzik', artist: 'knock2', src: R2 + 'crankthebassplaythemuzik.mp3', cover: '/images/nolimit.jpg', wave: '#A5969B' },
+    { title: 'slow dancing in the dark', artist: 'joji', src: R2 + 'slowdancinginthedark.mp3', cover: '/images/ballads1.jpeg', wave: 'linear-gradient(to top, #CDB0AE, #CEC0C0)' },
+    { title: 'cyanide', artist: 'daniel caesar', src: R2 + 'cyanide.mp3', cover: '/images/casestudy.jpeg', wave: 'linear-gradient(to top, #7aadffb9, #b7b7b7ff)' },
   ];
   const BAR_COUNT = 9;
   const notch = $('#notch');
+  if (!notch) return;
   const audio = new Audio(); audio.crossOrigin = 'anonymous'; audio.preload = 'metadata';
   let idx = 0, playing = false, muted = false, expanded = true, skip = false;
   let ctx = null, analyser = null, raf = null, inactivity = null;
+  let pendingResume = false;
+  let saveTimer = null;
 
   // build viz bars
   const viz = $('#viz'); const bars = [];
@@ -488,6 +500,22 @@ $$('.livephoto').forEach(initLivePhoto);
   const muteIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>';
 
   const fmt = (t) => { if (!isFinite(t)) return '0:00'; const m = Math.floor(t / 60), s = Math.floor(t % 60); return `${m}:${s < 10 ? '0' : ''}${s}`; };
+
+  const saveState = () => {
+    try {
+      sessionStorage.setItem(STATE_KEY, JSON.stringify({
+        idx, t: audio.currentTime || 0, playing: playing || pendingResume, muted,
+      }));
+    } catch (_) {}
+  };
+  const scheduleSave = () => {
+    if (saveTimer) return;
+    saveTimer = setTimeout(() => { saveTimer = null; saveState(); }, 400);
+  };
+  const readState = () => {
+    try { return JSON.parse(sessionStorage.getItem(STATE_KEY) || 'null'); }
+    catch (_) { return null; }
+  };
 
   function renderTrack() {
     const t = TRACKS[idx];
@@ -506,6 +534,9 @@ $$('.livephoto').forEach(initLivePhoto);
     $('#compact-idle').style.display = playing ? 'none' : 'flex';
     $('#btn-play').innerHTML = playing ? pauseIcon : playIcon;
     $('#btn-mute').innerHTML = muted ? muteIcon : volIcon;
+    // Remeasure after expand/collapse — compact is display:none while expanded.
+    requestAnimationFrame(() => setupMarquees());
+    scheduleSave();
   }
 
   function initCtx() {
@@ -532,8 +563,13 @@ $$('.livephoto').forEach(initLivePhoto);
   function setSrc(load) {
     audio.src = TRACKS[idx].src; if (load) audio.load();
   }
-  function play() { audio.play().then(() => { playing = true; initCtx(); renderState(); }).catch(() => { playing = false; renderState(); }); }
-  function pause() { audio.pause(); playing = false; renderState(); }
+  function play() {
+    pendingResume = false;
+    audio.play().then(() => { playing = true; initCtx(); renderState(); }).catch(() => {
+      playing = false; pendingResume = true; renderState();
+    });
+  }
+  function pause() { pendingResume = false; audio.pause(); playing = false; renderState(); }
 
   const seekEl = $('#seek');
   const syncSeekFill = () => {
@@ -552,13 +588,16 @@ $$('.livephoto').forEach(initLivePhoto);
     $('#cur-time').textContent = fmt(audio.currentTime);
     seekEl.value = audio.currentTime;
     syncSeekFill();
+    scheduleSave();
   });
   audio.addEventListener('ended', () => next());
+  window.addEventListener('pagehide', saveState);
+  window.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') saveState(); });
 
   function next() { skip = true; idx = (idx + 1) % TRACKS.length; changeTrack(); }
   function prev() { skip = true; idx = (idx - 1 + TRACKS.length) % TRACKS.length; changeTrack(); }
   function changeTrack() {
-    const wasPlaying = playing || skip; skip = false;
+    const wasPlaying = playing || skip || pendingResume; skip = false;
     setSrc(true); renderTrack();
     if (wasPlaying) play(); else { audio.currentTime = 0; renderState(); }
     syncSeekFill();
@@ -588,27 +627,53 @@ $$('.livephoto').forEach(initLivePhoto);
   notch.addEventListener('click', () => { if (!expanded) { expanded = true; renderState(); } });
   window.addEventListener('scroll', () => { if (expanded) { expanded = false; renderState(); } }, { passive: true });
 
-  // marquee: duplicate text + animate only when overflowing
+  // marquee: duplicate text + animate only when overflowing (and visible)
   function setupMarquees() {
     $$('.marquee-box').forEach((box) => {
       const track = box.querySelector('.track');
-      const span = track.querySelector('span');
-      track.classList.remove('overflow');
+      const span = track?.querySelector('span');
+      if (!track || !span) return;
+      track.classList.remove('overflow', 'animate-marquee');
       track.querySelectorAll('span[aria-hidden]').forEach((s) => s.remove());
       requestAnimationFrame(() => {
-        if (span.offsetWidth > box.offsetWidth) {
+        // Hidden (display:none) boxes report 0 width — skip until visible.
+        if (box.offsetWidth < 2) return;
+        if (span.offsetWidth > box.offsetWidth + 1) {
           track.classList.add('overflow', 'animate-marquee');
-          const clone = span.cloneNode(true); clone.setAttribute('aria-hidden', 'true'); track.appendChild(clone);
-        } else {
-          track.classList.remove('animate-marquee');
+          const clone = span.cloneNode(true);
+          clone.setAttribute('aria-hidden', 'true');
+          track.appendChild(clone);
         }
       });
     });
   }
 
-  setSrc(false); renderTrack(); renderState();
-  // auto-collapse after 2s like the original
-  setTimeout(() => { expanded = false; renderState(); }, 2000);
+  // Restore across pages, or fresh boot.
+  const saved = readState();
+  if (saved && Number.isFinite(saved.idx)) {
+    idx = Math.max(0, Math.min(TRACKS.length - 1, saved.idx | 0));
+    muted = !!saved.muted;
+    audio.muted = muted;
+    expanded = false;
+    setSrc(true);
+    renderTrack();
+    renderState();
+    const resumeAt = Math.max(0, Number(saved.t) || 0);
+    const shouldPlay = !!saved.playing;
+    const kick = () => {
+      try { if (resumeAt && isFinite(audio.duration)) audio.currentTime = Math.min(resumeAt, audio.duration - 0.05); }
+      catch (_) { audio.currentTime = resumeAt; }
+      if (shouldPlay) play();
+      else renderState();
+    };
+    if (audio.readyState >= 1) kick();
+    else audio.addEventListener('loadedmetadata', kick, { once: true });
+    // Autoplay may block after navigation — retry on next gesture.
+    document.addEventListener('pointerdown', () => { if (pendingResume) play(); }, true);
+  } else {
+    setSrc(false); renderTrack(); renderState();
+    setTimeout(() => { expanded = false; renderState(); }, 2000);
+  }
 })();
 
 /* ======================================================================
