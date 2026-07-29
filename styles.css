@@ -192,7 +192,7 @@ html, body, a, button, input, label, summary,
 .notch-controls button:hover { background:#262626; color:#fff; }
 .notch-controls .ctrl { padding:6px; }
 .notch-controls .play { padding:8px; background:#fff; color:#000; }
-.notch-controls .play:hover { background:#fff; transform:scale(1.05); }
+.notch-controls .play:hover { background:#f0f0f0; color:#000; transform:scale(1.05); }
 .notch-controls svg { width:16px; height:16px; }
 .notch-controls .play svg { width:14px; height:14px; }
 .notch-controls .mute svg { width:14px; height:14px; }
@@ -779,6 +779,8 @@ a.hl-sketch:hover {
    ======================================================================== */
 .photos-page { --font-hand: 'Caveat', 'Segoe Print', cursive; }
 .photos-page .palette-dock { opacity:1; transform:none; }
+#soft-photos-root { min-height:100dvh; }
+#soft-photos-root[hidden] { display:none !important; }
 .photos-page .topbar {
   flex-direction:row; justify-content:space-between; align-items:center;
   pointer-events:none;

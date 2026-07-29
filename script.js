@@ -10,9 +10,6 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
    THEME TOGGLE (dark / light)  — theme-toggle.tsx
    ====================================================================== */
 (function () {
-  const btn = $('#theme-toggle');
-  const icon = $('#theme-icon');
-  if (!btn || !icon) return;
   const moon = '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>';
   const sun = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
   // Light is default for first-time / unset visitors.
@@ -23,10 +20,13 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   }
   const apply = () => {
     document.documentElement.classList.toggle('dark', dark);
-    icon.innerHTML = dark ? sun : moon;
+    $$('#theme-icon').forEach((icon) => { icon.innerHTML = dark ? sun : moon; });
   };
   apply();
-  btn.addEventListener('click', () => {
+  window.__applyThemeIcons = apply;
+  // Delegation so soft-nav photos topbar toggles work too.
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest?.('#theme-toggle')) return;
     dark = !dark;
     localStorage.setItem('theme', dark ? 'dark' : 'light');
     apply();
@@ -469,16 +469,16 @@ $$('.livephoto').forEach(initLivePhoto);
   const R2 = 'https://pub-ce086066003e4e1cad2011087e85618b.r2.dev/';
   const STATE_KEY = 'portfolio-notch';
   const TRACKS = [
-    { title: 'who knows', artist: 'daniel caesar', src: R2 + 'whoknows.mp3', cover: '/images/sonofspergy.jpg', wave: 'linear-gradient(to top, #800020, #c60032ff)' },
-    { title: 'japanese denim', artist: 'daniel caesar', src: R2 + 'japanesedenim.mp3', cover: '/images/japanesedenim.jpg', wave: 'linear-gradient(to top, #e2e2e2ff, #a5a5a5ff)' },
     { title: 'nights', artist: 'frank ocean', src: R2 + 'nights.mp3', cover: '/images/blond.jpg', wave: 'linear-gradient(to top, #22C55E, #e4e4e4ff)' },
+    { title: 'who knows', artist: 'daniel caesar', src: R2 + 'whoknows.mp3', cover: '/images/sonofspergy.jpg', wave: 'linear-gradient(to top, #800020, #c60032ff)' },
+    { title: 'whiplash', artist: 'aespa', src: R2 + 'whiplash.mp3', cover: '/images/whiplash.jpg', wave: '#FFFFFF' },
+    { title: 'clarity', artist: 'zedd (ft. foxes)', src: R2 + 'clarity.mp3', cover: '/images/clarity.jpg', wave: 'linear-gradient(to top, #3B82F6, #22C55E)' },
+    { title: 'japanese denim', artist: 'daniel caesar', src: R2 + 'japanesedenim.mp3', cover: '/images/japanesedenim.jpg', wave: 'linear-gradient(to top, #e2e2e2ff, #a5a5a5ff)' },
+    { title: 'crank the bass, play the muzik', artist: 'knock2', src: R2 + 'crankthebassplaythemuzik.mp3', cover: '/images/nolimit.jpg', wave: '#A5969B' },
     { title: 'seigfried', artist: 'frank ocean', src: R2 + 'seigfried.mp3', cover: '/images/blond.jpg', wave: 'linear-gradient(to top, #22C55E, #e4e4e4ff)' },
+    { title: 'slow dancing in the dark', artist: 'joji', src: R2 + 'slowdancinginthedark.mp3', cover: '/images/ballads1.jpeg', wave: 'linear-gradient(to top, #CDB0AE, #CEC0C0)' },
     { title: 'rearrange my world', artist: 'daniel caesar (ft. rex orange county)', src: R2 + 'rearrangemyworld.mp3', cover: '/images/rearrange.jpeg', wave: '#b7b7b7ff' },
     { title: 'ochos rios', artist: 'daniel caesar', src: R2 + 'ochosrios.mp3', cover: '/images/neverenough.jpg', wave: '#4169E1' },
-    { title: 'clarity', artist: 'zedd (ft. foxes)', src: R2 + 'clarity.mp3', cover: '/images/clarity.jpg', wave: 'linear-gradient(to top, #3B82F6, #22C55E)' },
-    { title: 'whiplash', artist: 'aespa', src: R2 + 'whiplash.mp3', cover: '/images/whiplash.jpg', wave: '#FFFFFF' },
-    { title: 'crank the bass, play the muzik', artist: 'knock2', src: R2 + 'crankthebassplaythemuzik.mp3', cover: '/images/nolimit.jpg', wave: '#A5969B' },
-    { title: 'slow dancing in the dark', artist: 'joji', src: R2 + 'slowdancinginthedark.mp3', cover: '/images/ballads1.jpeg', wave: 'linear-gradient(to top, #CDB0AE, #CEC0C0)' },
     { title: 'cyanide', artist: 'daniel caesar', src: R2 + 'cyanide.mp3', cover: '/images/casestudy.jpeg', wave: 'linear-gradient(to top, #7aadffb9, #b7b7b7ff)' },
   ];
   const BAR_COUNT = 9;
@@ -524,6 +524,7 @@ $$('.livephoto').forEach(initLivePhoto);
     $('#art-glow').style.background = t.wave.includes('linear-gradient') ? t.wave : `radial-gradient(circle, ${t.wave} 0%, transparent 70%)`;
     bars.forEach((b) => { b.style.background = t.wave; });
     setupMarquees();
+    syncMediaSession();
   }
 
   function renderState() {
@@ -537,6 +538,20 @@ $$('.livephoto').forEach(initLivePhoto);
     // Remeasure after expand/collapse — compact is display:none while expanded.
     requestAnimationFrame(() => setupMarquees());
     scheduleSave();
+    syncMediaSession();
+  }
+
+  function syncMediaSession() {
+    if (!('mediaSession' in navigator)) return;
+    const t = TRACKS[idx];
+    try {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: t.title,
+        artist: t.artist,
+        artwork: [{ src: t.cover, sizes: '512x512', type: 'image/jpeg' }],
+      });
+      navigator.mediaSession.playbackState = playing ? 'playing' : 'paused';
+    } catch (_) {}
   }
 
   function initCtx() {
@@ -570,6 +585,28 @@ $$('.livephoto').forEach(initLivePhoto);
     });
   }
   function pause() { pendingResume = false; audio.pause(); playing = false; renderState(); }
+
+  // Keep UI in sync when OS media keys / Control Center pause/play the element.
+  audio.addEventListener('play', () => {
+    playing = true;
+    pendingResume = false;
+    initCtx();
+    renderState();
+  });
+  audio.addEventListener('pause', () => {
+    if (!audio.paused) return;
+    playing = false;
+    renderState();
+  });
+
+  if ('mediaSession' in navigator) {
+    try {
+      navigator.mediaSession.setActionHandler('play', () => { play(); });
+      navigator.mediaSession.setActionHandler('pause', () => { pause(); });
+      navigator.mediaSession.setActionHandler('previoustrack', () => { prev(); });
+      navigator.mediaSession.setActionHandler('nexttrack', () => { next(); });
+    } catch (_) {}
+  }
 
   const seekEl = $('#seek');
   const syncSeekFill = () => {
@@ -931,5 +968,157 @@ $$('.livephoto').forEach(initLivePhoto);
       camera.aspect = w() / h();
       camera.updateProjectionMatrix();
     });
+  }
+})();
+
+/* ======================================================================
+   SOFT NAV — home ↔ /photos without unloading the notch Audio element.
+   Full reloads pause music; this swaps the page chrome around the player.
+   ====================================================================== */
+(function () {
+  const pathOf = (href) => {
+    try { return new URL(href, location.origin).pathname.replace(/\/$/, '') || '/'; }
+    catch (_) { return href; }
+  };
+  const isPhotos = (p) => p === '/photos' || p.endsWith('/photos.html');
+  const isHome = (p) => p === '/' || p === '' || p === '/index.html';
+
+  let view = isPhotos(pathOf(location.pathname)) ? 'photos' : (isHome(pathOf(location.pathname)) ? 'home' : null);
+  if (!view) return;
+
+  let photosHtml = null;
+  let photosRoot = null;
+  let homeHidden = [];
+  let navigating = false;
+  const HOME_TITLE = 'matthew h';
+  const PHOTOS_TITLE = 'photobook · matthew h';
+
+  const isChrome = (el) =>
+    el.classList?.contains('notch-wrap') ||
+    el.id === 'palette' ||
+    el.id === 'soft-photos-root';
+
+  const ensureCaveat = () => {
+    if (document.getElementById('font-caveat')) return;
+    const link = document.createElement('link');
+    link.id = 'font-caveat';
+    link.rel = 'stylesheet';
+    link.href = 'https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&display=swap';
+    document.head.appendChild(link);
+  };
+
+  const prefetchPhotos = async () => {
+    if (photosHtml) return photosHtml;
+    try {
+      const res = await fetch('/photos', { credentials: 'same-origin' });
+      if (!res.ok) throw new Error('fetch photos failed');
+      photosHtml = await res.text();
+    } catch (_) { photosHtml = null; }
+    return photosHtml;
+  };
+
+  const buildPhotosRoot = (html) => {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const root = document.createElement('div');
+    root.id = 'soft-photos-root';
+    const top = doc.querySelector('header.topbar');
+    const main = doc.querySelector('main.photobook');
+    const lb = doc.querySelector('#photo-lightbox');
+    if (top) root.appendChild(document.importNode(top, true));
+    if (main) root.appendChild(document.importNode(main, true));
+    if (lb) root.appendChild(document.importNode(lb, true));
+    return root;
+  };
+
+  const goPhotos = async ({ push = true } = {}) => {
+    if (view === 'photos' || navigating) return;
+    navigating = true;
+    try {
+      sessionStorage.setItem('portfolio-intro-done', '1');
+      ensureCaveat();
+
+      if (document.body.classList.contains('photos-page') && !photosRoot) {
+        view = 'photos';
+        if (push) history.pushState({ soft: 'photos' }, '', '/photos');
+        return;
+      }
+
+      const html = await prefetchPhotos();
+      if (!html) { location.href = '/photos'; return; }
+
+      if (!photosRoot) {
+        photosRoot = buildPhotosRoot(html);
+        document.body.appendChild(photosRoot);
+      }
+
+      homeHidden = [];
+      [...document.body.children].forEach((el) => {
+        if (isChrome(el) || el === photosRoot) return;
+        homeHidden.push([el, el.style.display]);
+        el.style.display = 'none';
+      });
+
+      photosRoot.hidden = false;
+      document.body.classList.add('photos-page');
+      document.title = PHOTOS_TITLE;
+      view = 'photos';
+      if (push) history.pushState({ soft: 'photos' }, '', '/photos');
+      window.initPhotobook?.();
+      window.__applyThemeIcons?.();
+      window.scrollTo(0, 0);
+    } finally {
+      navigating = false;
+    }
+  };
+
+  const goHome = async ({ push = true } = {}) => {
+    if (view === 'home' || navigating) return;
+    navigating = true;
+    try {
+      sessionStorage.setItem('portfolio-intro-done', '1');
+
+      // Soft return only if we still have the home DOM (came from home via soft-nav).
+      if (!homeHidden.length) {
+        location.href = '/';
+        return;
+      }
+
+      if (photosRoot) photosRoot.hidden = true;
+      homeHidden.forEach(([el, display]) => { el.style.display = display; });
+      homeHidden = [];
+      document.body.classList.remove('photos-page');
+      document.body.style.overflow = '';
+      document.title = HOME_TITLE;
+      view = 'home';
+      if (push) history.pushState({ soft: 'home' }, '', '/');
+      window.scrollTo(0, 0);
+    } finally {
+      navigating = false;
+    }
+  };
+
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest?.('a[href]');
+    if (!a || a.target === '_blank' || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const path = pathOf(a.getAttribute('href'));
+    if (isPhotos(path) && view === 'home') {
+      e.preventDefault();
+      goPhotos({ push: true });
+    } else if (isHome(path) && view === 'photos') {
+      e.preventDefault();
+      goHome({ push: true });
+    }
+  });
+
+  window.addEventListener('popstate', () => {
+    const path = pathOf(location.pathname);
+    if (isPhotos(path)) goPhotos({ push: false });
+    else if (isHome(path)) goHome({ push: false });
+  });
+
+  if (view === 'home' && 'requestIdleCallback' in window) {
+    requestIdleCallback(() => { prefetchPhotos(); }, { timeout: 2500 });
+  } else if (view === 'home') {
+    setTimeout(() => { prefetchPhotos(); }, 1200);
   }
 })();
