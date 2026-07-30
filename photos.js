@@ -23,7 +23,7 @@
       src: '/photos/web/cat.jpg',
       caption: 'cat',
       alt: 'Cat',
-      size: 'sm', x: 36, y: 14, rot: -9, z: 6,
+      size: 'md', x: 36, y: 14, rot: -9, z: 6,
     },
     {
       src: '/photos/web/harbour.jpg',
@@ -41,7 +41,7 @@
       src: '/photos/web/daniel-caesar-fist-bump.jpg',
       caption: 'daniel caesar fist bump',
       alt: 'Fist bump with Daniel Caesar',
-      size: 'sm', x: 38, y: 30, rot: 11, z: 7,
+      size: 'md', x: 38, y: 30, rot: 11, z: 7,
     },
     {
       src: '/photos/web/cursor-hackathon.jpg',
@@ -65,7 +65,7 @@
       src: '/photos/web/central.jpg',
       caption: 'central',
       alt: 'Central',
-      size: 'sm', x: 72, y: 52, rot: -8, z: 3,
+      size: 'md', x: 72, y: 52, rot: -8, z: 3,
     },
     {
       src: '/photos/web/if-i-am-the-sky-you-are-the-sea.jpg',
@@ -77,7 +77,7 @@
       src: '/photos/web/IMG_9761.jpg',
       caption: 'forgot to tap off because of this',
       alt: 'GO Transit train at a platform at dusk',
-      size: 'sm', x: 28, y: 64, rot: 10, z: 4,
+      size: 'md', x: 28, y: 64, rot: 10, z: 4,
     },
     {
       src: '/photos/web/danielcaesartookmyphone.jpg',
