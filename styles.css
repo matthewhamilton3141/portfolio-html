@@ -402,6 +402,7 @@ html.skip-intro .sticker-board .sticker img {
 .sticker-board.show .sticker:nth-child(9) { transition-delay:.38s; }
 .sticker-board.show .sticker:nth-child(10) { transition-delay:.42s; }
 .sticker-board.show .sticker:nth-child(11) { transition-delay:.46s; }
+.sticker-board.show .sticker:nth-child(12) { transition-delay:.5s; }
 .sticker-board .sticker:hover,
 .sticker-board .sticker:focus-visible {
   /* Keep hitbox still — only the image moves — and stay under the directory. */
@@ -414,8 +415,15 @@ html.skip-intro .sticker-board .sticker img {
   pointer-events:none;
   filter:drop-shadow(0 1px 2px rgba(0,0,0,.22));
   transform: scale(var(--s, 1));
-  transition: transform .28s cubic-bezier(.22,1.2,.36,1), filter .28s ease;
+  transition: transform .28s cubic-bezier(.22,1.2,.36,1), filter .28s ease, opacity .25s ease;
 }
+.sticker-board .sticker.theme-swap {
+  display:grid; place-items:center;
+}
+.sticker-board .sticker.theme-swap img { grid-area:1 / 1; }
+.sticker-board .sticker.theme-swap .for-dark { opacity:0; }
+.dark .sticker-board .sticker.theme-swap .for-light { opacity:0; }
+.dark .sticker-board .sticker.theme-swap .for-dark { opacity:1; }
 .sticker-board .sticker:hover img,
 .sticker-board .sticker:focus-visible img {
   transform: translateY(-6px) scale(calc(var(--s, 1) * 1.18));
@@ -488,6 +496,13 @@ a.hl-sketch:hover {
   );
   color:var(--ink);
 }
+.hl-orange {
+  background-color:rgba(255, 140, 40, .28);
+}
+a.hl-orange:hover {
+  background-color:rgba(255, 140, 40, .42);
+  color:var(--ink);
+}
 .about-mark { white-space:nowrap; }
 .hl .about-logo,
 .about-mark .about-logo {
@@ -496,6 +511,19 @@ a.hl-sketch:hover {
   border-radius:0;
   filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.28)) drop-shadow(0 0 0.5px rgba(0,0,0,.18));
 }
+.about-logo.theme-swap {
+  display:inline-grid; place-items:center;
+  width:1.35em; max-width:1.55em; height:1.2em;
+}
+.about-logo.theme-swap img {
+  grid-area:1 / 1;
+  display:block; width:100%; height:100%; object-fit:contain;
+  margin:0; filter:inherit;
+  transition:opacity .25s ease;
+}
+.about-logo.theme-swap .for-dark { opacity:0; }
+.dark .about-logo.theme-swap .for-light { opacity:0; }
+.dark .about-logo.theme-swap .for-dark { opacity:1; }
 .about-logo {
   display:inline-block; height:1.2em; width:auto; max-width:1.55em; object-fit:contain;
   vertical-align:-0.22em; margin:0 0 0 .18em;
