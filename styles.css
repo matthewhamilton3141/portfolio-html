@@ -503,7 +503,12 @@ a.hl-orange:hover {
   background-color:rgba(255, 140, 40, .42);
   color:var(--ink);
 }
+/* Keep logo chips on one line on desktop; allow wrap on narrow widths. */
 .about-mark { white-space:nowrap; }
+@media (max-width:767px) {
+  .about-mark { white-space:normal; }
+  .about-lead p, .about-list li { overflow-wrap:break-word; }
+}
 .hl .about-logo,
 .about-mark .about-logo {
   display:inline-block; height:1.2em; width:auto; max-width:1.55em; object-fit:contain;
@@ -1003,9 +1008,12 @@ a.hl-orange:hover {
   .landing-left { padding:100px 8vw 32px; }
   .landing-inner { gap:36px; }
   .landing-right { padding:40px 8vw 64px; }
+  /* Keep about/media fully readable — scroll fade is desktop-only. */
+  .right-fade { opacity:1 !important; pointer-events:auto !important; will-change:auto; }
+  .landing-left, .landing-inner, .about-bio { max-width:100%; min-width:0; }
   .contact-inner h2 { white-space:normal; }
-  .github-card { max-width:100%; }
-  .gh-graph { overflow-x:auto; }
+  .github-card { max-width:100%; overflow:hidden; }
+  .gh-graph { overflow-x:auto; -webkit-overflow-scrolling:touch; overscroll-behavior-x:contain; }
   .scroll-hints { display:none; }
   .mobile-hint { display:flex; flex-direction:column; align-items:center; gap:8px; margin:40px auto 0; opacity:0; transition:opacity .8s; }
   .mobile-hint.show { opacity:1; }

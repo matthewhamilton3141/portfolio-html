@@ -168,7 +168,21 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
       }
     }
     root.appendChild(grid);
+
+    // On narrow viewports the graph scrolls horizontally — pin to the latest weeks.
+    const pinLatest = () => {
+      root.scrollLeft = Math.max(0, root.scrollWidth - root.clientWidth);
+    };
+    pinLatest();
+    requestAnimationFrame(pinLatest);
   };
+
+  const onResize = () => {
+    if (root.querySelector('.gh-cells')) {
+      root.scrollLeft = Math.max(0, root.scrollWidth - root.clientWidth);
+    }
+  };
+  window.addEventListener('resize', onResize, { passive: true });
 
   card.addEventListener('mouseleave', hideTip);
   root.innerHTML = '<p class="gh-loading">loading contributions…</p>';
@@ -180,7 +194,15 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
     })
     .then((data) => {
       const all = data.contributions || [];
-      render(all.slice(-(WEEKS * 7)));
+      const today = new Date();
+      const todayStr = [
+        today.getFullYear(),
+        String(today.getMonth() + 1).padStart(2, '0'),
+        String(today.getDate()).padStart(2, '0'),
+      ].join('-');
+      // Drop any future padding the API includes through year-end.
+      const throughToday = all.filter((d) => d.date <= todayStr);
+      render(throughToday.slice(-(WEEKS * 7)));
     })
     .catch(() => {
       root.innerHTML = '<p class="gh-loading">couldn’t load contributions</p>';
@@ -275,18 +297,43 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
   // Fade the right panel as the landing scrolls away. Opacity only — translating
   // it down used to push text into the section clip edge and look like a hard cut.
+  // Disabled on mobile: the stacked layout puts the about copy inside #right-fade,
+  // so the same progress math fades text while you're still reading it.
   const section = $('#landing');
   const target = $('#right-fade');
+  if (!section || !target) return;
+  const desktopMq = window.matchMedia('(min-width: 768px)');
+  const reduceMq = window.matchMedia('(prefers-reduced-motion: reduce)');
   let ticking = false;
+
+  const clearFade = () => {
+    target.style.opacity = '';
+    target.style.pointerEvents = '';
+  };
+
   const update = () => {
     ticking = false;
+    if (!desktopMq.matches || reduceMq.matches) {
+      clearFade();
+      return;
+    }
     const rect = section.getBoundingClientRect();
     const scrolled = Math.max(0, -rect.top);
     const progress = Math.min(scrolled / (rect.height * 0.75), 1);
     target.style.opacity = `${1 - progress}`;
     target.style.pointerEvents = progress > 0.85 ? 'none' : '';
   };
-  window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+
+  const onScroll = () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(update);
+    }
+  };
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  desktopMq.addEventListener('change', update);
+  reduceMq.addEventListener('change', update);
   update();
 })();
 
