@@ -366,10 +366,10 @@ $$('.livephoto').forEach(initLivePhoto);
   const R2 = 'https://pub-642075d77d2b430c93bf3b1c60299af0.r2.dev/';
   const projects = [
     { category: 'working on', title: 'kitti-nav',
-      description: "A hard safety shield around a learned planner, shown both ways: a shielded PPO planner on real KITTI (78% / 0 collisions), and the same car dropped into a reconstructed scene it drives live in-browser — NuRec-ready, every number measured. It's the production-shaped counterpart to gsplat-rt: real sensors → occupancy/BEV → shielded learned planner.",
+      description: 'The production-shaped, onboard counterpart to gsplat-rt: stereo visual odometry + lidar BEV occupancy feed a PPO planner behind a braking-aware safety shield — 78% success / 0 collisions on real KITTI (137 tests).',
       link: 'https://github.com/matthewhamilton3141/kitti-nav', thumb: 'images/kitti-nav.webp' },
     { category: 'working on', title: 'gsplat-rt',
-      description: 'The reconstruction end of the same shielded-planner stack: live video into occupancy, then that same self-planning car driving inside the scene in the browser. Mac-first computer-vision testbed into robotics and AV — GPU reserved for verification — engineered to ingest NVIDIA NuRec real-to-sim reconstructions as the next real-scene source.',
+      description: 'A real-time 3D Gaussian-splatting SLAM pipeline (CUDA/TensorRT) that turns live video into a navigable 3D scene — then used as a digital twin: I drop a shielded, self-planning car into a reconstructed real drive (an NVIDIA NuRec clip) and it navigates the full 312 m route through an interchange — 0 collisions.',
       link: 'https://github.com/matthewhamilton3141/gsplat-rt', thumb: 'images/reconstruction_desk.webp',
       video: R2 + 'reconstruction_turntable.mp4', zoom: 1.2 },
     { category: 'personal project', title: 'Retermina',
