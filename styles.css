@@ -846,6 +846,7 @@ a.hl-orange:hover {
 .photobook-sub {
   font-size:15px; line-height:1.6; color:var(--ink-soft); max-width:28rem;
 }
+.photobook-sub-desk { display:none; }
 
 .polaroid-board {
   position:relative; width:100%; max-width:1180px; margin:0 auto;
@@ -872,6 +873,8 @@ a.hl-orange:hover {
     filter .35s ease;
   will-change:transform;
   touch-action:manipulation;
+  user-select:none;
+  -webkit-user-select:none;
 }
 .dark .polaroid {
   box-shadow:
@@ -895,6 +898,18 @@ a.hl-orange:hover {
     0 60px 100px rgba(0,0,0,.22);
 }
 .polaroid:focus-visible { outline:2px solid var(--accent); outline-offset:5px; }
+.polaroid.dragging {
+  z-index:1000 !important;
+  cursor:grabbing;
+  transition:none;
+  transform:rotate(calc(var(--rot) * 0.15)) translateY(-14px) scale(1.07);
+  filter:brightness(1.04);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.75) inset,
+    0 10px 20px rgba(0,0,0,.14),
+    0 36px 64px rgba(0,0,0,.28),
+    0 70px 110px rgba(0,0,0,.24);
+}
 
 .polaroid-sm { width:168px; }
 .polaroid-md { width:228px; }
@@ -982,9 +997,17 @@ a.hl-orange:hover {
   .polaroid { opacity:1; transform:rotate(var(--rot)); }
 }
 
+@media (min-width:901px) {
+  .photobook-sub-mobile { display:none; }
+  .photobook-sub-desk { display:inline; }
+  .polaroid { cursor:grab; }
+}
+
 @media (max-width:900px) {
+  .photobook-sub-desk { display:none; }
+  .photobook-sub-mobile { display:inline; }
   .polaroid-board { min-height:0; display:flex; flex-wrap:wrap; justify-content:center; gap:32px 20px; padding:12px 0 40px; }
-  .polaroid { position:relative; left:auto; top:auto; }
+  .polaroid { position:relative; left:auto; top:auto; cursor:pointer; }
   .polaroid-sm { width:44vw; max-width:180px; }
   .polaroid-md { width:48vw; max-width:210px; }
   .polaroid-lg, .polaroid-xl { width:72vw; max-width:300px; }

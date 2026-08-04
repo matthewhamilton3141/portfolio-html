@@ -127,8 +127,11 @@
     if (!board || !lightbox || !lbImg || board.dataset.ready === '1') return;
     board.dataset.ready = '1';
 
+    const deskMq = window.matchMedia('(min-width: 901px)');
+    const DRAG_THRESHOLD = 6;
     let active = -1;
     let hoverBoost = null;
+    let topZ = SHOTS.reduce((m, s, i) => Math.max(m, s.z ?? i + 1), 1);
 
     const showShot = (i) => {
       active = (i + SHOTS.length) % SHOTS.length;
@@ -161,6 +164,100 @@
     const prev = () => { if (active >= 0) showShot(active - 1); };
     const next = () => { if (active >= 0) showShot(active + 1); };
 
+    const readPct = (el, prop, fallback = 0) => {
+      const raw = el.style.getPropertyValue(prop);
+      const n = parseFloat(raw);
+      return Number.isFinite(n) ? n : fallback;
+    };
+
+    const clampPos = (el, x, y) => {
+      const bw = board.clientWidth || 1;
+      const bh = board.clientHeight || 1;
+      const maxX = Math.max(0, 100 - (el.offsetWidth / bw) * 100);
+      const maxY = Math.max(0, 100 - (el.offsetHeight / bh) * 100);
+      return {
+        x: Math.min(maxX, Math.max(0, x)),
+        y: Math.min(maxY, Math.max(0, y)),
+      };
+    };
+
+    const place = (el, x, y, rot, z) => {
+      const p = clampPos(el, x, y);
+      el.style.setProperty('--x', p.x + '%');
+      el.style.setProperty('--y', p.y + '%');
+      if (rot != null) el.style.setProperty('--rot', rot + 'deg');
+      if (z != null) el.style.setProperty('--z', String(z));
+    };
+
+    const rand = (min, max) => min + Math.random() * (max - min);
+
+    const enableDesk = () => deskMq.matches;
+
+    const bindDrag = (el, index) => {
+      let pointerId = null;
+      let startClientX = 0;
+      let startClientY = 0;
+      let startX = 0;
+      let startY = 0;
+      let dragging = false;
+      let moved = false;
+
+      const onMove = (e) => {
+        if (pointerId == null || e.pointerId !== pointerId) return;
+        const dx = e.clientX - startClientX;
+        const dy = e.clientY - startClientY;
+        if (!dragging) {
+          if (Math.hypot(dx, dy) < DRAG_THRESHOLD) return;
+          dragging = true;
+          moved = true;
+          el.classList.add('dragging');
+          el.classList.add('lifted');
+          topZ += 1;
+          el.style.setProperty('--z', String(topZ));
+          try { el.setPointerCapture(pointerId); } catch (_) { /* ignore */ }
+        }
+        e.preventDefault();
+        const bw = board.clientWidth || 1;
+        const bh = board.clientHeight || 1;
+        place(el, startX + (dx / bw) * 100, startY + (dy / bh) * 100);
+      };
+
+      const onUp = (e) => {
+        if (pointerId == null || e.pointerId !== pointerId) return;
+        const wasMoved = moved;
+        pointerId = null;
+        dragging = false;
+        el.classList.remove('dragging');
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp);
+        window.removeEventListener('pointercancel', onUp);
+        if (!wasMoved) open(index);
+        else {
+          // Slight settle tilt when dropped.
+          const rot = readPct(el, '--rot');
+          const settle = Math.max(-14, Math.min(14, rot + rand(-2.5, 2.5)));
+          el.style.setProperty('--rot', settle + 'deg');
+        }
+        moved = false;
+      };
+
+      el.addEventListener('pointerdown', (e) => {
+        if (!enableDesk()) return;
+        if (e.button != null && e.button !== 0) return;
+        if (e.target.closest('a')) return;
+        pointerId = e.pointerId;
+        startClientX = e.clientX;
+        startClientY = e.clientY;
+        startX = readPct(el, '--x');
+        startY = readPct(el, '--y');
+        dragging = false;
+        moved = false;
+        window.addEventListener('pointermove', onMove, { passive: false });
+        window.addEventListener('pointerup', onUp);
+        window.addEventListener('pointercancel', onUp);
+      });
+    };
+
     SHOTS.forEach((shot, i) => {
       const el = document.createElement('button');
       el.type = 'button';
@@ -173,21 +270,32 @@
       el.setAttribute('aria-label', shot.caption || shot.alt || 'Open photo');
       el.innerHTML =
         `<span class="polaroid-frame">` +
-          `<img src="${shot.src}" alt="" loading="lazy" decoding="async" />` +
+          `<img src="${shot.src}" alt="" loading="lazy" decoding="async" draggable="false" />` +
         `</span>` +
         `<span class="polaroid-cap">${shot.caption || ''}</span>`;
       el.addEventListener('pointerenter', () => {
+        if (el.classList.contains('dragging')) return;
         if (hoverBoost && hoverBoost !== el) hoverBoost.classList.remove('lifted');
         hoverBoost = el;
         el.classList.add('lifted');
       });
       el.addEventListener('pointerleave', () => {
+        if (el.classList.contains('dragging')) return;
         el.classList.remove('lifted');
         if (hoverBoost === el) hoverBoost = null;
       });
       el.addEventListener('focus', () => el.classList.add('lifted'));
       el.addEventListener('blur', () => el.classList.remove('lifted'));
-      el.addEventListener('click', () => open(i));
+      // Mobile: click opens. Desktop pointer path opens via pointerup (drag vs click).
+      // detail === 0 is a keyboard-activated click — still open on desk.
+      el.addEventListener('click', (e) => {
+        if (enableDesk() && e.detail !== 0) {
+          e.preventDefault();
+          return;
+        }
+        open(i);
+      });
+      bindDrag(el, i);
       board.appendChild(el);
       requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('show')));
     });
