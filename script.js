@@ -571,7 +571,7 @@ $$('.livephoto').forEach(initLivePhoto);
     $('#track-title').textContent = t.title; $('#track-artist').textContent = t.artist; $('#compact-title').textContent = t.title;
     $('#art-glow').style.background = t.wave.includes('linear-gradient') ? t.wave : `radial-gradient(circle, ${t.wave} 0%, transparent 70%)`;
     bars.forEach((b) => { b.style.background = t.wave; });
-    setupMarquees();
+    scheduleMarquees();
     syncMediaSession();
   }
 
@@ -583,8 +583,8 @@ $$('.livephoto').forEach(initLivePhoto);
     $('#compact-idle').style.display = playing ? 'none' : 'flex';
     $('#btn-play').innerHTML = playing ? pauseIcon : playIcon;
     $('#btn-mute').innerHTML = muted ? muteIcon : volIcon;
-    // Remeasure after expand/collapse — compact is display:none while expanded.
-    requestAnimationFrame(() => setupMarquees());
+    // Expand/collapse animates width — ResizeObserver remasures after layout settles.
+    scheduleMarquees();
     scheduleSave();
     syncMediaSession();
   }
@@ -712,26 +712,54 @@ $$('.livephoto').forEach(initLivePhoto);
   notch.addEventListener('click', () => { if (!expanded) { expanded = true; renderState(); } });
   window.addEventListener('scroll', () => { if (expanded) { expanded = false; renderState(); } }, { passive: true });
 
-  // marquee: duplicate text + animate only when overflowing (and visible)
-  function setupMarquees() {
+  // marquee: duplicate text + animate only when overflowing (and visible).
+  // Must remasure after notch width transitions — a single rAF runs while the
+  // expanded meta column is still ~0px wide, so overflow would be skipped forever.
+  let marqueeRaf = 0;
+  let marqueeRoTimer = 0;
+
+  function applyMarquees() {
     $$('.marquee-box').forEach((box) => {
       const track = box.querySelector('.track');
-      const span = track?.querySelector('span');
-      if (!track || !span) return;
+      if (!track) return;
+      // Strip clones/animation first so overlapping callers can't stack copies.
       track.classList.remove('overflow', 'animate-marquee');
       track.querySelectorAll('span[aria-hidden]').forEach((s) => s.remove());
-      requestAnimationFrame(() => {
-        // Hidden (display:none) boxes report 0 width — skip until visible.
-        if (box.offsetWidth < 2) return;
-        if (span.offsetWidth > box.offsetWidth + 1) {
-          track.classList.add('overflow', 'animate-marquee');
-          const clone = span.cloneNode(true);
-          clone.setAttribute('aria-hidden', 'true');
-          track.appendChild(clone);
-        }
-      });
+      const span = track.querySelector('span');
+      if (!span) return;
+      // Hidden (display:none) or not yet laid out during the width transition.
+      if (box.offsetWidth < 2) return;
+      if (span.offsetWidth > box.offsetWidth + 1) {
+        track.classList.add('overflow', 'animate-marquee');
+        const clone = span.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.setAttribute('aria-hidden', 'true');
+        track.appendChild(clone);
+      }
     });
   }
+
+  function scheduleMarquees() {
+    if (marqueeRaf) return;
+    marqueeRaf = requestAnimationFrame(() => {
+      marqueeRaf = 0;
+      applyMarquees();
+    });
+  }
+
+  if (typeof ResizeObserver !== 'undefined') {
+    const marqueeRo = new ResizeObserver(() => {
+      // Debounce through the .4s notch width transition; measure once it settles.
+      if (marqueeRoTimer) clearTimeout(marqueeRoTimer);
+      marqueeRoTimer = setTimeout(() => {
+        marqueeRoTimer = 0;
+        scheduleMarquees();
+      }, 80);
+    });
+    $$('.marquee-box').forEach((box) => marqueeRo.observe(box));
+    marqueeRo.observe(notch);
+  }
+  if (document.fonts?.ready) document.fonts.ready.then(() => scheduleMarquees());
 
   // Restore across pages, or fresh boot.
   const saved = readState();
