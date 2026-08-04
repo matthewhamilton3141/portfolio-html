@@ -365,12 +365,15 @@ $$('.livephoto').forEach(initLivePhoto);
 (function () {
   const R2 = 'https://pub-642075d77d2b430c93bf3b1c60299af0.r2.dev/';
   const projects = [
+    { category: 'working on', title: 'kitti-nav',
+      description: "A hard safety shield around a learned planner, shown both ways: a shielded PPO planner on real KITTI (78% / 0 collisions), and the same car dropped into a reconstructed scene it drives live in-browser — NuRec-ready, every number measured. It's the production-shaped counterpart to gsplat-rt: real sensors → occupancy/BEV → shielded learned planner.",
+      link: 'https://github.com/matthewhamilton3141/kitti-nav', thumb: 'images/kitti-nav.webp' },
     { category: 'working on', title: 'gsplat-rt',
-      description: "Real-time pipeline converting a live video stream into 3D Gaussian Splats plus a physics-ready collision mesh, exported as an OpenUSD stage for Isaac Sim / Omniverse. A multi-threaded, queue-decoupled architecture runs a strongly-typed FP16 TensorRT depth engine (Depth Anything V2, 2.24×), a custom CUDA TSDF fusion kernel (175× over numpy, bit-for-bit verified), and a learned SuperPoint + LightGlue SLAM front-end (3.5 cm ATE). Benchmarked at 82.7 FPS on an A10G — 2.75× the 30 FPS real-time budget — so an RL robot can see and physically interact with a scene as it's captured.",
+      description: 'The reconstruction end of the same shielded-planner stack: live video into occupancy, then that same self-planning car driving inside the scene in the browser. Mac-first computer-vision testbed into robotics and AV — GPU reserved for verification — engineered to ingest NVIDIA NuRec real-to-sim reconstructions as the next real-scene source.',
       link: 'https://github.com/matthewhamilton3141/gsplat-rt', thumb: 'images/reconstruction_desk.webp',
       video: R2 + 'reconstruction_turntable.mp4', zoom: 1.2 },
     { category: 'personal project', title: 'Retermina',
-      description: 'An AI-coding terminal workspace built on Tauri v2 with a Rust backend driving native PTY shells. An embedded Claude Code agent (unified Agent + CLI views with per-project token tracking) is the primary surface, while tools — split terminals, syntax-highlighted code with explorer, project-wide git diff, localhost tracker, and a native preview — slide in from a side drawer, all re-skinnable instantly by five structural theme engines and portable Loom presets. Shells run in an out-of-process host that outlives the app, so terminals and their live dev servers survive a quit, crash, or auto-update and reattach on reopen and the Claude session resumes right where it left off.',
+      description: 'An AI-coding terminal on Tauri v2 + Rust with native PTYs. Claude Code is the primary surface; split terminals, a code explorer, git diff, and preview slide in from a drawer. Shells run out-of-process so terminals and live servers survive a quit, crash, or auto-update and reattach on reopen.',
       link: 'https://github.com/matthewhamilton3141/Retermina', liveUrl: 'https://retermina.com/',
       thumb: 'images/reterminapreview.webp', video: R2 + 'Retermina%20Promo%20(2).mp4', zoom: 1.35 },
     { category: 'personal project', title: 'Sketchstack',
