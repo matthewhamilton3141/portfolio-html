@@ -496,6 +496,26 @@ a.hl-sketch:hover {
   );
   color:var(--ink);
 }
+.hl-microsoft {
+  background-image:linear-gradient(
+    105deg,
+    rgba(242, 80, 34, .28) 0%,
+    rgba(127, 186, 0, .28) 33%,
+    rgba(0, 164, 239, .28) 66%,
+    rgba(255, 185, 0, .28) 100%
+  );
+  background-color:transparent;
+}
+a.hl-microsoft:hover, .hl-microsoft:hover {
+  background-image:linear-gradient(
+    105deg,
+    rgba(242, 80, 34, .42) 0%,
+    rgba(127, 186, 0, .42) 33%,
+    rgba(0, 164, 239, .42) 66%,
+    rgba(255, 185, 0, .42) 100%
+  );
+  color:var(--ink);
+}
 .hl-orange {
   background-color:rgba(255, 140, 40, .28);
 }
@@ -536,6 +556,9 @@ a.hl-orange:hover {
   filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.28)) drop-shadow(0 0 0.5px rgba(0,0,0,.18));
 }
 .about-logo.spaced { margin-left:.42em; }
+.hl .about-logo.rounded,
+.about-mark .about-logo.rounded,
+.about-logo.rounded { border-radius:22%; }
 .dark .about-logo {
   filter:drop-shadow(0 1px 2px rgba(0,0,0,.55)) drop-shadow(0 0 1px rgba(255,255,255,.35));
 }
