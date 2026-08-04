@@ -44,6 +44,12 @@
       size: 'md', x: 38, y: 30, rot: 11, z: 7,
     },
     {
+      src: '/photos/web/dc.jpg',
+      caption: 'bro broke his ankle mid tour',
+      alt: 'Daniel Caesar on stage with a bandaged ankle and crutch',
+      size: 'md', x: 84, y: 40, rot: -9, z: 5,
+    },
+    {
       src: '/photos/web/cursor-hackathon.jpg',
       caption: 'cursor hackathon',
       alt: 'Cursor hackathon',
