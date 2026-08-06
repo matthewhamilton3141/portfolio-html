@@ -1067,7 +1067,9 @@ a.hl-orange:hover {
   .mobile-hint .line { width:1px; height:36px; background:linear-gradient(to bottom,var(--ink-muted),transparent); }
   .media-cluster, .media-row { width:100%; }
   .media-cluster { padding:20px 24px 40px; margin:-20px -24px -40px; }
-  .media-row { justify-content:center; align-items:flex-start; gap:20px; }
+  .media-row { justify-content:center; align-items:flex-start; gap:20px; z-index:3; }
+  /* Desktop stickers float over the cluster; on mobile they land on the face — keep the portrait on top. */
+  .sticker-board { z-index:1; }
   .contact-inner { flex-direction:column; align-items:flex-start; justify-content:center; gap:28px; padding:80px 8vw; }
   .contact-gh { align-self:flex-start; }
   .palette-dock { right:14px; bottom:14px; }
