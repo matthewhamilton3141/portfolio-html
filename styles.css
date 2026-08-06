@@ -1066,10 +1066,21 @@ a.hl-orange:hover {
   .mobile-hint span { font-size:10px; letter-spacing:.18em; text-transform:lowercase; color:var(--ink-muted); }
   .mobile-hint .line { width:1px; height:36px; background:linear-gradient(to bottom,var(--ink-muted),transparent); }
   .media-cluster, .media-row { width:100%; }
-  .media-cluster { padding:20px 24px 40px; margin:-20px -24px -40px; }
-  .media-row { justify-content:center; align-items:flex-start; gap:20px; z-index:3; }
-  /* Desktop stickers float over the cluster; on mobile they land on the face — keep the portrait on top. */
-  .sticker-board { z-index:1; }
+  .media-cluster { padding:28px 20px 44px; margin:-28px -20px -44px; }
+  .media-row { justify-content:center; align-items:flex-start; gap:20px; }
+  /* Keep stickers in front, but pin them to the frame so they don't sit on the face or directory. */
+  .sticker-board .sticker:nth-child(1)  { --x:6% !important;  --y:8% !important; }   /* waterloo */
+  .sticker-board .sticker:nth-child(2)  { --x:3% !important;  --y:26% !important; }  /* nvidia */
+  .sticker-board .sticker:nth-child(3)  { --x:5% !important;  --y:44% !important; }  /* jamhacks */
+  .sticker-board .sticker:nth-child(4)  { --x:6% !important;  --y:60% !important; }  /* bayern */
+  .sticker-board .sticker:nth-child(5)  { --x:8% !important;  --y:78% !important; }  /* overwatch — left of /projects */
+  .sticker-board .sticker:nth-child(6)  { --x:92% !important; --y:80% !important; }  /* league — right of directory */
+  .sticker-board .sticker:nth-child(7)  { --x:96% !important; --y:68% !important; }  /* rayquaza */
+  .sticker-board .sticker:nth-child(8)  { --x:90% !important; --y:52% !important; }  /* retermina */
+  .sticker-board .sticker:nth-child(9)  { --x:94% !important; --y:36% !important; }  /* claude */
+  .sticker-board .sticker:nth-child(10) { --x:96% !important; --y:20% !important; }  /* hk */
+  .sticker-board .sticker:nth-child(11) { --x:82% !important; --y:6% !important; }   /* sketchstack */
+  .sticker-board .sticker:nth-child(12) { --x:94% !important; --y:12% !important; }  /* stash */
   .contact-inner { flex-direction:column; align-items:flex-start; justify-content:center; gap:28px; padding:80px 8vw; }
   .contact-gh { align-self:flex-start; }
   .palette-dock { right:14px; bottom:14px; }
@@ -1093,4 +1104,17 @@ a.hl-orange:hover {
   .site-directory { padding-top:0; }
   .sticker-board .sticker { width:calc(46px * var(--s, 1)); height:calc(46px * var(--s, 1)); }
   .sticker-board .sticker img { width:calc(38px * var(--s, 1)); height:calc(38px * var(--s, 1)); }
+  /* Narrow phones: clear center channel over the portrait and directory links. */
+  .sticker-board .sticker:nth-child(1)  { --x:4% !important;  --y:7% !important; }
+  .sticker-board .sticker:nth-child(2)  { --x:2% !important;  --y:24% !important; }
+  .sticker-board .sticker:nth-child(3)  { --x:3% !important;  --y:42% !important; }
+  .sticker-board .sticker:nth-child(4)  { --x:4% !important;  --y:58% !important; }
+  .sticker-board .sticker:nth-child(5)  { --x:6% !important;  --y:76% !important; }  /* overwatch */
+  .sticker-board .sticker:nth-child(6)  { --x:94% !important; --y:78% !important; }  /* league */
+  .sticker-board .sticker:nth-child(7)  { --x:97% !important; --y:64% !important; }  /* rayquaza */
+  .sticker-board .sticker:nth-child(8)  { --x:92% !important; --y:50% !important; }  /* retermina */
+  .sticker-board .sticker:nth-child(9)  { --x:96% !important; --y:34% !important; }  /* claude */
+  .sticker-board .sticker:nth-child(10) { --x:97% !important; --y:18% !important; }  /* hk */
+  .sticker-board .sticker:nth-child(11) { --x:80% !important; --y:5% !important; }   /* sketchstack */
+  .sticker-board .sticker:nth-child(12) { --x:94% !important; --y:11% !important; }  /* stash */
 }
