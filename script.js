@@ -366,39 +366,39 @@ $$('.livephoto').forEach(initLivePhoto);
   const R2 = 'https://pub-642075d77d2b430c93bf3b1c60299af0.r2.dev/';
   const projects = [
     { category: 'working on', title: 'kitti-nav',
-      description: 'The production-shaped, onboard counterpart to gsplat-rt: stereo visual odometry + lidar BEV occupancy feed a PPO planner behind a braking-aware safety shield — 78% success / 0 collisions on real KITTI (137 tests).',
+      description: 'Onboard stereo VO + lidar BEV feeding a shielded PPO planner — 78% success, 0 collisions on KITTI.',
       link: 'https://github.com/matthewhamilton3141/kitti-nav', thumb: 'images/kitti-nav.webp' },
     { category: 'working on', title: 'gsplat-rt',
-      description: 'A real-time 3D Gaussian-splatting SLAM pipeline (CUDA/TensorRT) that turns live video into a navigable 3D scene — then used as a digital twin: I drop a shielded, self-planning car into a reconstructed real drive (an NVIDIA NuRec clip) and it navigates the full 312 m route through an interchange — 0 collisions.',
+      description: 'Real-time Gaussian-splatting SLAM (CUDA/TensorRT) — a self-planning car drives 312 m through a reconstructed interchange with 0 collisions.',
       link: 'https://github.com/matthewhamilton3141/gsplat-rt', thumb: 'images/reconstruction_desk.webp',
       video: R2 + 'reconstruction_turntable.mp4', zoom: 1.2 },
     { category: 'personal project', title: 'Retermina',
-      description: 'An AI-coding terminal on Tauri v2 + Rust with native PTYs. Claude Code is the primary surface; split terminals, a code explorer, git diff, and preview slide in from a drawer. Shells run out-of-process so terminals and live servers survive a quit, crash, or auto-update and reattach on reopen.',
+      description: 'AI-coding terminal on Tauri v2 + Rust. Native PTYs, split panes, and out-of-process shells that survive quit, crash, or update.',
       link: 'https://github.com/matthewhamilton3141/Retermina', liveUrl: 'https://retermina.com/',
       thumb: 'images/reterminapreview.webp', video: R2 + 'Retermina%20Promo%20(2).mp4', zoom: 1.35 },
     { category: 'personal project', title: 'Sketchstack',
-      description: 'Sketchstack is a full-stack web app that turns visual system-design diagrams into structured prompts for AI coding agents like Claude Code and Cursor. Built with Next.js, TypeScript, and React Flow, with Supabase (Postgres, GitHub OAuth, row-level security) powering authentication, cloud save, and shareable links.',
+      description: 'Turn system-design diagrams into structured prompts for Claude Code and Cursor. Next.js, React Flow, Supabase.',
       link: 'https://github.com/matthewhamilton3141/sketchstack', liveUrl: 'https://sketchstack.vercel.app',
       thumb: 'images/sketchstack.webp' },
     { category: 'personal project', title: 'Stash',
-      description: "Menu-bar macOS app to stash code or write quick pointers you'll want again — capture from anywhere with ⌘⇧K, find and copy it in a keystroke. Built with Tauri 2 + React + CodeMirror 6.",
+      description: 'Menu-bar macOS app to stash code snippets — capture with ⌘⇧K, find and copy in a keystroke. Tauri 2 + React.',
       link: 'https://github.com/matthewhamilton3141/stash', liveUrl: 'https://stashnotes.vercel.app',
       thumb: 'images/codenote.webp' },
     { category: 'personal project', title: 'Iris-NL',
-      description: 'Building an open-source TypeScript library that turns plain English into shell commands for terminal tools. Provider-agnostic backend (NVIDIA NIM / local Ollama / TensorRT-LLM) with a built-in safety layer and test suite. Designed to plug into my Retermina terminal app, with a benchmarking harness already in place to measure and optimize a local TensorRT-LLM model on consumer GPU hardware.',
+      description: 'TypeScript library that turns plain English into shell commands — provider-agnostic backend with a built-in safety layer.',
       link: 'https://github.com/matthewhamilton3141/iris-nl', thumb: 'images/iris-nl.webp',
       video: R2 + 'iris-nl.mp4', objectPosition: 'left' },
     { category: 'hackathon project', title: 'baam',
-      description: 'BAAM goes where you go, a social betting platform for your personal circle linking Solana smart contracts, MongoDB Atlas for data management, and Vultr for backend infrastructure to provide a native iMessage plugin, Discord bot, and a centralized web app.',
+      description: 'Social betting for your circle — Solana contracts with iMessage, Discord, and web clients.',
       link: 'https://github.com/BansonVuong/BAAM', thumb: 'images/baampreview1.webp',
       video: R2 + 'baamimsg.mp4', webm: R2 + 'baamimsg.webm', logo: 'images/jamhackslogo.png',
       logoLink: 'https://jamhacks.ca', startTime: 2.23 },
     { category: 'hackathon project', title: 'Marrymap',
-      description: 'Marrymap is a Next.js wedding-planning stack: a React client for dual-consent vendor swiping and pipeline CRM, plus a Chrome MV3 extension that scrapes page metadata/screenshots into Supabase. Couples decide together in real time; guests clip vendors from the web and those recommendations sync straight into shared albums.',
+      description: 'Wedding planning with dual-consent vendor swiping and a Chrome extension that clips vendors into shared albums.',
       link: 'https://github.com/aarontran321/marrymap', thumb: 'images/marrymap.webp',
       logo: 'images/about/cursor.png', zoom: 1.25 },
     { category: 'personal projects', title: 'portfolio',
-      description: 'A static site in HTML, CSS, and vanilla JavaScript — no framework runtime. Custom theme system, notch media player with R2-hosted audio, interactive GitHub contribution graph, scattered photobook lightbox, and a Three.js Poro on the contact page. Optimized WebP assets and long-cache headers on Vercel for a fast first load.',
+      description: 'Static HTML/CSS/JS portfolio — custom themes, notch player, contribution graph, photobook, and a Three.js Poro.',
       link: 'https://github.com/matthewhamilton3141/portfolio-html', thumb: 'images/casestudy1.webp' },
   ];
 
@@ -411,25 +411,25 @@ $$('.livephoto').forEach(initLivePhoto);
   const icGithub = `<svg class="proj-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>`;
   const icLink = `<svg class="proj-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`;
   const linksHTML = (p) => `
-    ${p.link ? `<a class="proj-link" href="${p.link}" target="_blank" rel="noopener noreferrer">${icGithub}<span>github repo</span></a>` : ''}
-    ${p.liveUrl ? `<a class="proj-link try" href="${p.liveUrl}" target="_blank" rel="noopener noreferrer">${icLink}<span>try</span></a>` : ''}`;
+    ${p.link ? `<a class="proj-link" href="${p.link}" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub">${icGithub}</a>` : ''}
+    ${p.liveUrl ? `<a class="proj-link try" href="${p.liveUrl}" target="_blank" rel="noopener noreferrer" title="Open live site" aria-label="Open live site">${icLink}</a>` : ''}`;
+  const logoHTML = (p) => p.logo
+    ? (p.logoLink
+      ? `<a href="${p.logoLink}" target="_blank" rel="noopener noreferrer" title="View Hackathon"><img class="badge" src="${p.logo}" alt="Hackathon Logo"/></a>`
+      : `<img class="badge" src="${p.logo}" alt="Hackathon Logo" title="Hackathon"/>`)
+    : '';
 
   // ---- list ----
   projects.forEach((p, idx) => {
     const row = document.createElement('div');
     row.className = 'list-row';
     row.innerHTML = `
-      <div>
-        <span class="cat">${p.category || 'In Development'}</span>
-        <div class="title-line">
-          <h3>${p.title}</h3>
-          ${p.logo ? (p.logoLink
-            ? `<a href="${p.logoLink}" target="_blank" rel="noopener noreferrer" title="View Hackathon"><img class="badge" src="${p.logo}" alt="Hackathon Logo"/></a>`
-            : `<img class="badge" src="${p.logo}" alt="Hackathon Logo" title="Hackathon"/>`) : ''}
-        </div>
-        <p class="desc">${p.description}</p>
+      <div class="title-line">
+        <h3>${p.title}</h3>
+        ${logoHTML(p)}
+        <div class="title-links">${linksHTML(p)}</div>
       </div>
-      <div class="links">${linksHTML(p)}</div>`;
+      <p class="desc">${p.description}</p>`;
     row.addEventListener('mouseenter', (e) => { hovered = idx; mouse = { x: e.clientX, y: e.clientY }; showPreview(); });
     row.addEventListener('mouseleave', () => { hovered = null; hp.style.display = 'none'; hp.innerHTML = ''; });
     listView.appendChild(row);
@@ -486,15 +486,12 @@ $$('.livephoto').forEach(initLivePhoto);
     const details = document.createElement('div');
     details.className = 'grid-details';
     details.innerHTML = `
-      <p class="cat">${p.category || 'In Development'}</p>
       <div class="title-line">
         <h3>${p.title}</h3>
-        ${p.logo ? (p.logoLink
-          ? `<a href="${p.logoLink}" target="_blank" rel="noopener noreferrer" title="View Hackathon"><img class="badge" src="${p.logo}" alt="Hackathon Badge" style="width:18px;height:18px"/></a>`
-          : `<img class="badge" src="${p.logo}" alt="Hackathon Badge" title="Hackathon" style="width:18px;height:18px"/>`) : ''}
+        ${logoHTML(p)}
+        <div class="title-links">${linksHTML(p)}</div>
       </div>
-      <p class="desc">${p.description}</p>
-      <div class="links">${linksHTML(p)}</div>`;
+      <p class="desc">${p.description}</p>`;
     card.appendChild(details);
     gridView.appendChild(card);
   });
