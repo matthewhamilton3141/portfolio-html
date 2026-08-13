@@ -24,7 +24,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;600;700;900&family=Noto+Serif+SC:wght@700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=proj-notags" />
+  <link rel="stylesheet" href="styles.css?v=split-chrome" />
   <link rel="preload" as="image" href="images/touching_grass.webp" type="image/webp" fetchpriority="high" />
   <script>
     // Apply before paint so returning from /photos doesn't replay fade/typewriter.
@@ -49,7 +49,7 @@
 
   <!-- ============================ NOTCH MEDIA PLAYER ============================ -->
   <div class="notch-wrap">
-    <div class="notch expanded" id="notch">
+    <div class="notch" id="notch">
       <!-- compact -->
       <div class="notch-compact">
         <div class="compact-info" id="compact-playing" style="display:none">
@@ -102,13 +102,15 @@
   </div>
 
   <header class="topbar">
-    <div class="topbar-icons">
+    <div class="topbar-icons topbar-left">
       <a class="topbar-icon" href="https://linkedin.com/in/matthewhamilton3141" target="_blank" rel="noopener noreferrer" title="LinkedIn" aria-label="LinkedIn">
         <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M7 10v7M7 7v.5M12 17v-4a2 2 0 014 0v4M12 10v7"/></svg>
       </a>
       <a class="topbar-icon" href="https://github.com/matthewhamilton3141" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub">
         <svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 020 4.77 5.07 5.07 0 0 019.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
       </a>
+    </div>
+    <div class="topbar-icons topbar-right">
       <a class="topbar-icon" href="mailto:matthewhamilton3141@gmail.com" title="Email" aria-label="Email">
         <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
       </a>
@@ -157,13 +159,14 @@
               <p class="about-heading">working on</p>
               <ul class="about-list">
                 <li>
-                  Worked on
                   <a class="hl hl-green" href="https://github.com/matthewhamilton3141/gsplat-rt" target="_blank" rel="noopener noreferrer">gsplat-rt</a>
-                  — live video to a real-time, navigable 3D scene — as a computer-vision testbed I grew into robotics and AV: a digital twin that drives a shielded planner through reconstructed real drives
-                  (<a class="hl hl-green about-mark" href="https://developer.nvidia.com/omniverse/nurec" target="_blank" rel="noopener noreferrer">NVIDIA NuRec<img class="about-logo" src="images/about/nvidia.png" alt="" /></a>).
-                  Now carrying that into
+                  — real-time gaussian-splatting SLAM from live video; dropping a shielded planner into reconstructed
+                  <a class="hl hl-green about-mark" href="https://developer.nvidia.com/omniverse/nurec" target="_blank" rel="noopener noreferrer">NVIDIA NuRec<img class="about-logo" src="images/about/nvidia.png" alt="" /></a>
+                  drives as a digital twin
+                </li>
+                <li>
                   <a class="hl hl-green" href="https://github.com/matthewhamilton3141/kitti-nav" target="_blank" rel="noopener noreferrer">kitti-nav</a>
-                  — AV navigation on real KITTI sensor data.
+                  — taking that stack onboard: stereo VO + lidar BEV feeding a PPO planner on real KITTI
                 </li>
               </ul>
             </div>
@@ -314,7 +317,7 @@
     </footer>
   </main>
 
-  <script src="script.js?v=proj-notags"></script>
+  <script src="script.js?v=split-chrome"></script>
   <script src="photos.js?v=drag-only"></script>
 </body>
 </html>

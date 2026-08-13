@@ -533,7 +533,7 @@ $$('.livephoto').forEach(initLivePhoto);
   const notch = $('#notch');
   if (!notch) return;
   const audio = new Audio(); audio.crossOrigin = 'anonymous'; audio.preload = 'metadata';
-  let idx = 0, playing = false, muted = false, expanded = true, skip = false;
+  let idx = 0, playing = false, muted = false, expanded = window.innerWidth >= 768, skip = false;
   let ctx = null, analyser = null, raf = null, inactivity = null;
   let pendingResume = false;
   let saveTimer = null;
@@ -785,7 +785,7 @@ $$('.livephoto').forEach(initLivePhoto);
     document.addEventListener('pointerdown', () => { if (pendingResume) play(); }, true);
   } else {
     setSrc(false); renderTrack(); renderState();
-    setTimeout(() => { expanded = false; renderState(); }, 2000);
+    if (expanded) setTimeout(() => { expanded = false; renderState(); }, 2000);
   }
 })();
 
