@@ -24,7 +24,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;600;700;900&family=Noto+Serif+SC:wght@700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=split-chrome" />
+  <link rel="stylesheet" href="styles.css?v=grid-only" />
   <link rel="preload" as="image" href="images/touching_grass.webp" type="image/webp" fetchpriority="high" />
   <script>
     // Apply before paint so returning from /photos doesn't replay fade/typewriter.
@@ -166,7 +166,13 @@
                 </li>
                 <li>
                   <a class="hl hl-green" href="https://github.com/matthewhamilton3141/kitti-nav" target="_blank" rel="noopener noreferrer">kitti-nav</a>
-                  — taking that stack onboard: stereo VO + lidar BEV feeding a PPO planner on real KITTI
+                  — a PPO planner on lidar BEV occupancy, shielded, holding 0 collisions on real KITTI drives.
+                </li>
+                <li>
+                  <a class="hl hl-green" href="https://github.com/matthewhamilton3141/shield-in-alpasim" target="_blank" rel="noopener noreferrer">shield-in-alpasim</a>
+                  carries just the shield into
+                  <a class="hl hl-green about-mark" href="https://github.com/NVlabs/alpasim" target="_blank" rel="noopener noreferrer">NVIDIA AlpaSim<img class="about-logo" src="images/about/nvidia.png" alt="" /></a>
+                  and wraps it around AlpaSim's camera policy (VaVAM)
                 </li>
               </ul>
             </div>
@@ -189,7 +195,7 @@
                   <a class="hl hl-orange about-mark" href="https://stashnotes.vercel.app" target="_blank" rel="noopener noreferrer">stash<span class="about-logo theme-swap" aria-hidden="true"><img class="for-light" src="images/about/stash-light.png" alt="" /><img class="for-dark" src="images/about/stash.png" alt="" /></span></a>,
                   developer tools for a new era of coding.
                 </li>
-                <li>hackathon winner</li>
+                <li>multiple hackathon winner</li>
                 <li>
                   <span class="about-mark">t500 sigma main in overwatch<img class="about-logo" src="images/about/overwatch.png" alt="" /></span>
                 </li>
@@ -265,14 +271,8 @@
     <section class="projects" id="projects">
       <div class="projects-header">
         <h2>projects</h2>
-        <div class="view-switch">
-          <button data-view="grid" class="active">grid</button>
-          <button data-view="list">list</button>
-        </div>
       </div>
       <div class="grid-view" id="grid-view"></div>
-      <div class="list-view" id="list-view" style="display:none"></div>
-      <div class="hover-preview" id="hover-preview"></div>
     </section>
 
     <!-- ---------- CONTACT ---------- -->
@@ -317,7 +317,7 @@
     </footer>
   </main>
 
-  <script src="script.js?v=split-chrome"></script>
+  <script src="script.js?v=grid-only"></script>
   <script src="photos.js?v=drag-only"></script>
 </body>
 </html>

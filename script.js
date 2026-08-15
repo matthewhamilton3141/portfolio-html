@@ -340,13 +340,25 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 /* ======================================================================
    LIVE PHOTO — hover to play preview video  (live-photo.tsx)
    ====================================================================== */
+function applyMediaCrop(el, { fit, objectPosition, zoom } = {}) {
+  if (fit) el.style.objectFit = fit;
+  if (objectPosition) el.style.objectPosition = objectPosition;
+  const z = zoom != null && zoom !== '' ? Number(zoom) : NaN;
+  if (Number.isFinite(z) && z !== 1) el.style.transform = `scale(${z})`;
+}
+
 function initLivePhoto(el) {
-  const videoSrc = el.dataset.video, webm = el.dataset.webm;
+  const videoSrc = el.dataset.video, webm = el.dataset.webm, fit = el.dataset.fit;
   let video = null;
   const ensureVideo = () => {
     if (video || !videoSrc) return;
     video = document.createElement('video');
     video.loop = true; video.muted = true; video.playsInline = true; video.preload = 'auto'; video.crossOrigin = 'anonymous';
+    applyMediaCrop(video, {
+      fit,
+      objectPosition: el.dataset.objectPosition,
+      zoom: el.dataset.zoom,
+    });
     if (webm) { const s = document.createElement('source'); s.src = webm; s.type = 'video/webm'; video.appendChild(s); }
     const s2 = document.createElement('source'); s2.src = videoSrc; s2.type = 'video/mp4'; video.appendChild(s2);
     el.insertBefore(video, el.firstChild);
@@ -355,12 +367,15 @@ function initLivePhoto(el) {
   const deactivate = () => { el.classList.remove('active'); if (video) { video.pause(); video.currentTime = 0; } };
   el.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') activate(); });
   el.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') deactivate(); });
-  el.addEventListener('pointerup', (e) => { if (e.pointerType !== 'mouse') el.classList.contains('active') ? deactivate() : activate(); });
+  el.addEventListener('pointerup', (e) => {
+    if (e.pointerType === 'mouse') return;
+    el.classList.contains('active') ? deactivate() : activate();
+  });
 }
 $$('.livephoto').forEach(initLivePhoto);
 
 /* ======================================================================
-   PROJECTS — list / grid render + floating hover preview
+   PROJECTS — grid render with livephoto hover previews
    ====================================================================== */
 (function () {
   const R2 = 'https://pub-642075d77d2b430c93bf3b1c60299af0.r2.dev/';
@@ -368,6 +383,9 @@ $$('.livephoto').forEach(initLivePhoto);
     { category: 'working on', title: 'kitti-nav',
       description: 'Onboard stereo VO + lidar BEV feeding a shielded PPO planner — 78% success, 0 collisions on KITTI.',
       link: 'https://github.com/matthewhamilton3141/kitti-nav', thumb: 'images/kitti-nav.webp' },
+    { category: 'working on', title: 'shield-in-alpasim',
+      description: "kitti-nav's hard braking-shield wrapping AlpaSim's VaVAM camera driver — certifies the policy's trajectory against ground-truth scene geometry.",
+      link: 'https://github.com/matthewhamilton3141/shield-in-alpasim', thumb: 'images/shield-in-alpasim.webp' },
     { category: 'working on', title: 'gsplat-rt',
       description: 'Real-time Gaussian-splatting SLAM (CUDA/TensorRT) — a self-planning car drives 312 m through a reconstructed interchange with 0 collisions.',
       link: 'https://github.com/matthewhamilton3141/gsplat-rt', thumb: 'images/reconstruction_desk.webp',
@@ -384,10 +402,11 @@ $$('.livephoto').forEach(initLivePhoto);
       description: 'Menu-bar macOS app to stash code snippets — capture with ⌘⇧K, find and copy in a keystroke. Tauri 2 + React.',
       link: 'https://github.com/matthewhamilton3141/stash', liveUrl: 'https://stashnotes.vercel.app',
       thumb: 'images/codenote.webp' },
-    { category: 'personal project', title: 'Iris-NL',
-      description: 'TypeScript library that turns plain English into shell commands — provider-agnostic backend with a built-in safety layer.',
-      link: 'https://github.com/matthewhamilton3141/iris-nl', thumb: 'images/iris-nl.webp',
-      video: R2 + 'iris-nl.mp4', objectPosition: 'left' },
+    { category: 'hackathon project', title: 'laser tag now',
+      description: 'AR laser tag on your phone — real-world matches with radar, health, and live fire over the camera feed.',
+      link: 'https://github.com/ConnorXTan/phonegame', thumb: 'images/lasertagnow.webp',
+      video: R2 + 'lasertagnow.mp4', logo: 'images/summerhacks.svg',
+      logoLink: 'https://summerhacks.ca', fit: 'contain', mediaBg: '#000' },
     { category: 'hackathon project', title: 'baam',
       description: 'Social betting for your circle — Solana contracts with iMessage, Discord, and web clients.',
       link: 'https://github.com/BansonVuong/BAAM', thumb: 'images/baampreview1.webp',
@@ -402,11 +421,8 @@ $$('.livephoto').forEach(initLivePhoto);
       link: 'https://github.com/matthewhamilton3141/portfolio-html', thumb: 'images/casestudy1.webp' },
   ];
 
-  const listView = $('#list-view');
   const gridView = $('#grid-view');
-  const hp = $('#hover-preview');
-  if (!listView || !gridView) return;
-  let hovered = null, mouse = { x: 0, y: 0 };
+  if (!gridView) return;
 
   const icGithub = `<svg class="proj-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>`;
   const icLink = `<svg class="proj-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`;
@@ -419,51 +435,6 @@ $$('.livephoto').forEach(initLivePhoto);
       : `<img class="badge" src="${p.logo}" alt="Hackathon Logo" title="Hackathon"/>`)
     : '';
 
-  // ---- list ----
-  projects.forEach((p, idx) => {
-    const row = document.createElement('div');
-    row.className = 'list-row';
-    row.innerHTML = `
-      <div class="title-line">
-        <h3>${p.title}</h3>
-        ${logoHTML(p)}
-        <div class="title-links">${linksHTML(p)}</div>
-      </div>
-      <p class="desc">${p.description}</p>`;
-    row.addEventListener('mouseenter', (e) => { hovered = idx; mouse = { x: e.clientX, y: e.clientY }; showPreview(); });
-    row.addEventListener('mouseleave', () => { hovered = null; hp.style.display = 'none'; hp.innerHTML = ''; });
-    listView.appendChild(row);
-  });
-  listView.addEventListener('mousemove', (e) => {
-    if (hovered === null) return;
-    mouse = { x: e.clientX, y: e.clientY };
-    positionPreview();
-  });
-
-  function showPreview() {
-    if (hovered === null || window.innerWidth < 1024) return;
-    const p = projects[hovered];
-    hp.innerHTML = '';
-    if (p.video) {
-      const v = document.createElement('video');
-      v.autoplay = true; v.muted = true; v.loop = true; v.playsInline = true; v.crossOrigin = 'anonymous';
-      v.style.objectPosition = p.objectPosition || 'center';
-      if (p.webm) { const s = document.createElement('source'); s.src = p.webm; s.type = 'video/webm'; v.appendChild(s); }
-      const s2 = document.createElement('source'); s2.src = p.video; s2.type = 'video/mp4'; v.appendChild(s2);
-      if (p.startTime) v.addEventListener('loadedmetadata', () => { v.currentTime = p.startTime; }, { once: true });
-      hp.appendChild(v);
-    } else {
-      const img = document.createElement('img'); img.src = p.thumb; hp.appendChild(img);
-    }
-    hp.style.display = 'block';
-    positionPreview();
-  }
-  function positionPreview() {
-    hp.style.left = mouse.x + 20 + 'px';
-    hp.style.top = mouse.y - 120 + 'px';
-  }
-
-  // ---- grid ----
   projects.forEach((p) => {
     const card = document.createElement('div');
     card.className = 'grid-card';
@@ -473,11 +444,14 @@ $$('.livephoto').forEach(initLivePhoto);
     lp.className = 'livephoto' + (p.video ? ' has-video' : '');
     lp.dataset.video = p.video || '';
     if (p.webm) lp.dataset.webm = p.webm;
-    lp.style.borderRadius = '12px';
+    if (p.fit) lp.dataset.fit = p.fit;
+    if (p.objectPosition) lp.dataset.objectPosition = p.objectPosition;
+    if (p.zoom && p.zoom !== 1) lp.dataset.zoom = String(p.zoom);
+    if (p.mediaBg) lp.style.background = p.mediaBg;
+    lp.style.borderRadius = '4px';
     const im = document.createElement('img'); im.className = 'lp-thumb'; im.src = p.thumb; im.alt = p.title;
     im.loading = 'lazy'; im.decoding = 'async';
-    if (p.zoom && p.zoom !== 1) im.style.transform = `scale(${p.zoom})`;
-    im.style.objectPosition = p.objectPosition || 'center';
+    applyMediaCrop(im, { fit: p.fit, objectPosition: p.objectPosition || 'center', zoom: p.zoom });
     lp.appendChild(im);
     thumb.appendChild(lp);
     if (p.startTime) lp.dataset.startTime = p.startTime;
@@ -494,18 +468,6 @@ $$('.livephoto').forEach(initLivePhoto);
       <p class="desc">${p.description}</p>`;
     card.appendChild(details);
     gridView.appendChild(card);
-  });
-
-  // ---- view switch ----
-  $$('.view-switch button').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      $$('.view-switch button').forEach((b) => b.classList.remove('active'));
-      btn.classList.add('active');
-      const grid = btn.dataset.view === 'grid';
-      gridView.style.display = grid ? 'grid' : 'none';
-      listView.style.display = grid ? 'none' : 'flex';
-      if (grid) { hovered = null; hp.style.display = 'none'; }
-    });
   });
 })();
 
