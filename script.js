@@ -416,9 +416,6 @@ $$('.livephoto').forEach(initLivePhoto);
       description: 'Wedding planning with dual-consent vendor swiping and a Chrome extension that clips vendors into shared albums.',
       link: 'https://github.com/aarontran321/marrymap', thumb: 'images/marrymap.webp',
       logo: 'images/about/cursor.png', zoom: 1.25 },
-    { category: 'personal projects', title: 'portfolio',
-      description: 'Static HTML/CSS/JS portfolio — custom themes, notch player, contribution graph, photos, and a Three.js Poro.',
-      link: 'https://github.com/matthewhamilton3141/portfolio-html', thumb: 'images/casestudy1.webp' },
   ];
 
   const gridView = $('#grid-view');
