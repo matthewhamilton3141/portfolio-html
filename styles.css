@@ -155,15 +155,15 @@ html, body, a, button, input, label, summary,
   display:flex; flex-direction:column; justify-content:space-between;
   overflow:hidden; user-select:none; position:relative;
   transition:all .4s cubic-bezier(0.16,1,0.3,1);
-  width:110px; height:35px; border-radius:12px; padding:6px 10px;
+  width:110px; height:35px; border-radius:20px; padding:6px 10px;
 }
 .notch.playing { width:210px; padding:6px 14px; }
-.notch.expanded { width:min(91vw,385px); height:105px; border-radius:14px; padding:16px; }
+.notch.expanded { width:min(91vw,385px); height:105px; border-radius:28px; padding:16px; }
 .notch-compact { display:flex; align-items:center; justify-content:space-between; width:100%; height:100%; }
 .notch.expanded .notch-compact { display:none; }
 .notch-expanded { display:none; flex-direction:column; width:100%; height:100%; justify-content:space-between; }
 .notch.expanded .notch-expanded { display:flex; animation:fadeIn .2s ease-out; }
-.notch-cover { position:relative; border-radius:2px; overflow:hidden; flex-shrink:0; border:1px solid rgba(255,255,255,.08); }
+.notch-cover { position:relative; border-radius:5px; overflow:hidden; flex-shrink:0; border:1px solid rgba(255,255,255,.08); }
 .notch-cover img { width:100%; height:100%; object-fit:cover; }
 .compact-info {
   display:flex; align-items:center; gap:8px;
@@ -181,14 +181,14 @@ html, body, a, button, input, label, summary,
 .notch-top { display:flex; align-items:center; justify-content:space-between; width:100%; }
 .notch-left { display:flex; align-items:center; gap:12px; min-width:0; max-width:55%; }
 .notch-art { position:relative; width:44px; height:44px; flex-shrink:0; }
-.notch-art .glow { position:absolute; inset:0; border-radius:4px; opacity:.7; filter:blur(20px); transform:scale(1.25); mix-blend-mode:screen; animation:pulse 3s infinite; pointer-events:none; }
-.notch-art .art-inner { position:relative; width:100%; height:100%; border-radius:4px; background:#171717; border:1px solid rgba(255,255,255,.1); overflow:hidden; }
+.notch-art .glow { position:absolute; inset:0; border-radius:10px; opacity:.7; filter:blur(20px); transform:scale(1.25); mix-blend-mode:screen; animation:pulse 3s infinite; pointer-events:none; }
+.notch-art .art-inner { position:relative; width:100%; height:100%; border-radius:10px; background:#171717; border:1px solid rgba(255,255,255,.1); overflow:hidden; }
 .notch-art .art-inner img { width:100%; height:100%; object-fit:cover; }
 .notch-meta { display:flex; flex-direction:column; min-width:0; flex:1; line-height:1.15; }
 .notch-track-title { font-size:13px; font-weight:700; color:#fff; }
 .notch-track-artist { font-size:11px; color:#a3a3a3; font-weight:500; margin-top:2px; }
 .notch-controls { display:flex; align-items:center; gap:6px; }
-.notch-controls button { display:flex; align-items:center; justify-content:center; border-radius:4px; color:#d4d4d4; transition:.2s; }
+.notch-controls button { display:flex; align-items:center; justify-content:center; border-radius:9999px; color:#d4d4d4; transition:.2s; }
 .notch-controls button:hover { background:#262626; color:#fff; }
 .notch-controls .ctrl { padding:6px; }
 .notch-controls .play { padding:8px; background:#fff; color:#000; }
