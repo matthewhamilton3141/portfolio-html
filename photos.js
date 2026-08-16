@@ -106,7 +106,45 @@
       caption: 'watermelon',
       alt: 'watermelon',
     },
+    {
+      src: '/photos/web/zedd-in-the-park.jpg',
+      caption: 'zedd in the park',
+      alt: 'Raised hand in a crowd facing a purple-lit festival stage at night',
+    },
   ];
+
+  function hashSeed(str) {
+    let h = 2166136261;
+    for (let i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return h >>> 0;
+  }
+
+  function mulberry32(seed) {
+    let a = seed >>> 0;
+    return () => {
+      a = (a + 0x6D2B79F5) >>> 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function shuffle(list, seed) {
+    const rnd = mulberry32(seed);
+    const out = list.slice();
+    for (let i = out.length - 1; i > 0; i--) {
+      const j = Math.floor(rnd() * (i + 1));
+      const tmp = out[i];
+      out[i] = out[j];
+      out[j] = tmp;
+    }
+    return out;
+  }
+
+  const ORDER = shuffle(SHOTS, hashSeed(SHOTS.map((s) => s.src).join('|') + '|roll-v1'));
 
   function initPhotobook() {
     const roll = document.getElementById('photo-roll');
@@ -121,8 +159,8 @@
     let active = -1;
 
     const showShot = (i) => {
-      active = (i + SHOTS.length) % SHOTS.length;
-      const shot = SHOTS[active];
+      active = (i + ORDER.length) % ORDER.length;
+      const shot = ORDER[active];
       lbImg.classList.remove('swap');
       void lbImg.offsetWidth;
       lbImg.src = shot.src;
@@ -151,7 +189,7 @@
     const prev = () => { if (active >= 0) showShot(active - 1); };
     const next = () => { if (active >= 0) showShot(active + 1); };
 
-    SHOTS.forEach((shot, i) => {
+    ORDER.forEach((shot, i) => {
       const el = document.createElement('button');
       el.type = 'button';
       el.className = 'roll-item';
@@ -181,7 +219,7 @@
       if (active < 0) return;
       [active - 1, active + 1].forEach((i) => {
         const img = new Image();
-        img.src = SHOTS[(i + SHOTS.length) % SHOTS.length].src;
+        img.src = ORDER[(i + ORDER.length) % ORDER.length].src;
       });
     });
   }
