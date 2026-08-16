@@ -417,7 +417,7 @@ $$('.livephoto').forEach(initLivePhoto);
       link: 'https://github.com/aarontran321/marrymap', thumb: 'images/marrymap.webp',
       logo: 'images/about/cursor.png', zoom: 1.25 },
     { category: 'personal projects', title: 'portfolio',
-      description: 'Static HTML/CSS/JS portfolio — custom themes, notch player, contribution graph, photobook, and a Three.js Poro.',
+      description: 'Static HTML/CSS/JS portfolio — custom themes, notch player, contribution graph, photos, and a Three.js Poro.',
       link: 'https://github.com/matthewhamilton3141/portfolio-html', thumb: 'images/casestudy1.webp' },
   ];
 
@@ -1029,21 +1029,12 @@ $$('.livephoto').forEach(initLivePhoto);
   let homeHidden = [];
   let navigating = false;
   const HOME_TITLE = 'matthew h';
-  const PHOTOS_TITLE = 'photobook · matthew h';
+  const PHOTOS_TITLE = 'photos · matthew h';
 
   const isChrome = (el) =>
     el.classList?.contains('notch-wrap') ||
     el.id === 'palette' ||
     el.id === 'soft-photos-root';
-
-  const ensureCaveat = () => {
-    if (document.getElementById('font-caveat')) return;
-    const link = document.createElement('link');
-    link.id = 'font-caveat';
-    link.rel = 'stylesheet';
-    link.href = 'https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&display=swap';
-    document.head.appendChild(link);
-  };
 
   const prefetchPhotos = async () => {
     if (photosHtml) return photosHtml;
@@ -1073,7 +1064,6 @@ $$('.livephoto').forEach(initLivePhoto);
     navigating = true;
     try {
       sessionStorage.setItem('portfolio-intro-done', '1');
-      ensureCaveat();
 
       if (document.body.classList.contains('photos-page') && !photosRoot) {
         view = 'photos';
