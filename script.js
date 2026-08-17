@@ -381,7 +381,7 @@ $$('.livephoto').forEach(initLivePhoto);
   const R2 = 'https://pub-642075d77d2b430c93bf3b1c60299af0.r2.dev/';
   const projects = [
     { category: 'working on', title: 'shield-in-alpasim',
-      description: "kitti-nav's hard braking-shield wrapping AlpaSim's VaVAM camera driver — certifies the policy's trajectory against ground-truth scene geometry.",
+      description: "A hard braking-shield around AlpaSim's VaVAM camera policy — certifies planned trajectories against ground-truth scene geometry.",
       link: 'https://github.com/matthewhamilton3141/shield-in-alpasim', thumb: 'images/shield-in-alpasim.webp' },
     { category: 'personal project', title: 'Retermina',
       description: 'AI-coding terminal on Tauri v2 + Rust. Native PTYs, split panes, and out-of-process shells that survive quit, crash, or update.',
