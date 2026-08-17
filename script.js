@@ -380,16 +380,9 @@ $$('.livephoto').forEach(initLivePhoto);
 (function () {
   const R2 = 'https://pub-642075d77d2b430c93bf3b1c60299af0.r2.dev/';
   const projects = [
-    { category: 'working on', title: 'kitti-nav',
-      description: 'Onboard stereo VO + lidar BEV feeding a shielded PPO planner — 78% success, 0 collisions on KITTI.',
-      link: 'https://github.com/matthewhamilton3141/kitti-nav', thumb: 'images/kitti-nav.webp' },
     { category: 'working on', title: 'shield-in-alpasim',
       description: "kitti-nav's hard braking-shield wrapping AlpaSim's VaVAM camera driver — certifies the policy's trajectory against ground-truth scene geometry.",
       link: 'https://github.com/matthewhamilton3141/shield-in-alpasim', thumb: 'images/shield-in-alpasim.webp' },
-    { category: 'working on', title: 'gsplat-rt',
-      description: 'Real-time Gaussian-splatting SLAM (CUDA/TensorRT) — a self-planning car drives 312 m through a reconstructed interchange with 0 collisions.',
-      link: 'https://github.com/matthewhamilton3141/gsplat-rt', thumb: 'images/reconstruction_desk.webp',
-      video: R2 + 'reconstruction_turntable.mp4', zoom: 1.2 },
     { category: 'personal project', title: 'Retermina',
       description: 'AI-coding terminal on Tauri v2 + Rust. Native PTYs, split panes, and out-of-process shells that survive quit, crash, or update.',
       link: 'https://github.com/matthewhamilton3141/Retermina', liveUrl: 'https://retermina.com/',
@@ -488,7 +481,9 @@ $$('.livephoto').forEach(initLivePhoto);
     { title: 'ochos rios', artist: 'daniel caesar', src: R2 + 'ochosrios.mp3', cover: '/images/neverenough.jpg', wave: '#4169E1' },
     { title: 'cyanide', artist: 'daniel caesar', src: R2 + 'cyanide.mp3', cover: '/images/casestudy.jpeg', wave: 'linear-gradient(to top, #7aadffb9, #b7b7b7ff)' },
   ];
-  const BAR_COUNT = 9;
+  const BAR_COUNT = 6;
+  const VIZ_MIN = 0.3;
+  const VIZ_MAX = 0.7;
   const notch = $('#notch');
   if (!notch) return;
   const audio = new Audio(); audio.crossOrigin = 'anonymous'; audio.preload = 'metadata';
@@ -497,9 +492,19 @@ $$('.livephoto').forEach(initLivePhoto);
   let pendingResume = false;
   let saveTimer = null;
 
-  // build viz bars
+  // build viz bars — each column is a bar plus its reflection
   const viz = $('#viz'); const bars = [];
-  for (let i = 0; i < BAR_COUNT; i++) { const b = document.createElement('div'); b.className = 'viz-bar'; viz.appendChild(b); bars.push(b); }
+  for (let i = 0; i < BAR_COUNT; i++) {
+    const col = document.createElement('div');
+    col.className = 'viz-col';
+    const up = document.createElement('div');
+    up.className = 'viz-bar';
+    const down = document.createElement('div');
+    down.className = 'viz-bar viz-bar-mirror';
+    col.append(up, down);
+    viz.appendChild(col);
+    bars.push([up, down]);
+  }
 
   const playIcon = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
   const pauseIcon = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
@@ -524,12 +529,44 @@ $$('.livephoto').forEach(initLivePhoto);
     catch (_) { return null; }
   };
 
+  const parseHex = (h) => {
+    let s = h.slice(1);
+    if (s.length === 3) s = [...s].map((c) => c + c).join('');
+    const n = parseInt(s.slice(0, 6), 16);
+    const a = s.length >= 8 ? parseInt(s.slice(6, 8), 16) / 255 : 1;
+    return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255, a };
+  };
+  const fmtRgba = ({ r, g, b, a }) =>
+    a < 1 ? `rgba(${r},${g},${b},${+a.toFixed(3)})` : `rgb(${r},${g},${b})`;
+  const mixRgb = (a, b, t) => ({
+    r: Math.round(a.r + (b.r - a.r) * t),
+    g: Math.round(a.g + (b.g - a.g) * t),
+    b: Math.round(a.b + (b.b - a.b) * t),
+    a: a.a + (b.a - a.a) * t,
+  });
+  /** Fold the wave at its midpoint so the join is the middle colour, not one endpoint. */
+  const wavePair = (wave) => {
+    const hexes = wave.match(/#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3})\b/g) || [];
+    if (hexes.length < 2) return { up: wave, down: wave };
+    const a = parseHex(hexes[0]);
+    const b = parseHex(hexes[1]);
+    const mid = fmtRgba(mixRgb(a, b, 0.5));
+    return {
+      up: `linear-gradient(to top, ${mid}, ${fmtRgba(b)})`,
+      down: `linear-gradient(to bottom, ${mid}, ${fmtRgba(a)})`,
+    };
+  };
+
   function renderTrack() {
     const t = TRACKS[idx];
     $('#art-cover').src = t.cover; $('#compact-cover').src = t.cover; $('#idle-cover').src = t.cover;
     $('#track-title').textContent = t.title; $('#track-artist').textContent = t.artist; $('#compact-title').textContent = t.title;
     $('#art-glow').style.background = t.wave.includes('linear-gradient') ? t.wave : `radial-gradient(circle, ${t.wave} 0%, transparent 70%)`;
-    bars.forEach((b) => { b.style.background = t.wave; });
+    const pairBg = wavePair(t.wave);
+    bars.forEach((pair) => {
+      pair[0].style.background = pairBg.up;
+      pair[1].style.background = pairBg.down;
+    });
     scheduleMarquees();
     syncMediaSession();
   }
@@ -576,8 +613,16 @@ $$('.livephoto').forEach(initLivePhoto);
       raf = requestAnimationFrame(draw);
       if (!audio.paused) {
         analyser.getByteFrequencyData(data);
-        bars.forEach((b, i) => { const di = Math.floor((i / BAR_COUNT) * (len * 0.55)); b.style.transform = `scaleY(${Math.max(0.15, (data[di] || 0) / 255)})`; });
-      } else bars.forEach((b) => { b.style.transform = 'scaleY(0.15)'; });
+        bars.forEach((pair, i) => {
+          const di = Math.floor((i / BAR_COUNT) * (len * 0.55));
+          const s = `scaleY(${VIZ_MIN + (VIZ_MAX - VIZ_MIN) * ((data[di] || 0) / 255)})`;
+          pair[0].style.transform = s;
+          pair[1].style.transform = s;
+        });
+      } else bars.forEach((pair) => {
+        pair[0].style.transform = `scaleY(${VIZ_MIN})`;
+        pair[1].style.transform = `scaleY(${VIZ_MIN})`;
+      });
     };
     if (raf) cancelAnimationFrame(raf); draw();
   }
@@ -745,6 +790,43 @@ $$('.livephoto').forEach(initLivePhoto);
   } else {
     setSrc(false); renderTrack(); renderState();
     if (expanded) setTimeout(() => { expanded = false; renderState(); }, 2000);
+  }
+
+  // ?viz-preview — compact playing chrome + fake waveform, no audio needed.
+  if (new URLSearchParams(location.search).has('viz-preview')) {
+    playing = true;
+    expanded = false;
+    renderTrack();
+    renderState();
+    const fake = () => {
+      raf = requestAnimationFrame(fake);
+      const t = performance.now() / 200;
+      bars.forEach((pair, i) => {
+        const s = `scaleY(${VIZ_MIN + (VIZ_MAX - VIZ_MIN) * (0.5 + 0.5 * Math.sin(t + i * 0.62))})`;
+        pair[0].style.transform = s;
+        pair[1].style.transform = s;
+      });
+    };
+    if (raf) cancelAnimationFrame(raf);
+    fake();
+
+    const step = (dir) => {
+      idx = (idx + dir + TRACKS.length) % TRACKS.length;
+      renderTrack();
+    };
+    let cycle = setInterval(() => step(1), 2400);
+    const poke = (dir) => {
+      clearInterval(cycle);
+      step(dir);
+      cycle = setInterval(() => step(1), 2400);
+    };
+    notch.addEventListener('mouseenter', (e) => { e.stopImmediatePropagation(); }, true);
+    notch.addEventListener('click', (e) => { e.stopImmediatePropagation(); poke(1); }, true);
+    notch.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      poke(e.deltaY > 0 ? 1 : -1);
+    }, { capture: true, passive: false });
   }
 })();
 
