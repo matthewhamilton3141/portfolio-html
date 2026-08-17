@@ -171,8 +171,17 @@ html, body, a, button, input, label, summary,
   max-width:calc(100% - 36px);
 }
 .compact-info .notch-cover { width:20px; height:20px; flex-shrink:0; }
-.compact-info .marquee-box { flex:1; min-width:0; width:auto; }
-.compact-title { font-size:11px; font-weight:600; color:rgba(255,255,255,.9); white-space:nowrap; }
+.compact-info .marquee-box {
+  flex:1; min-width:0; width:auto; height:20px;
+  display:flex; align-items:center;
+}
+.compact-info .marquee-box .track {
+  display:flex; align-items:center; line-height:1;
+}
+.compact-title {
+  font-size:11px; font-weight:600; line-height:1;
+  color:rgba(255,255,255,.9); white-space:nowrap;
+}
 .viz { display:flex; align-items:center; gap:2px; height:20px; padding:0 4px; flex-shrink:0; }
 .viz-col { display:flex; flex-direction:column; width:2px; height:100%; flex-shrink:0; }
 .viz-bar {
