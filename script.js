@@ -506,8 +506,8 @@ $$('.livephoto').forEach(initLivePhoto);
     bars.push([up, down]);
   }
 
-  const playIcon = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
-  const pauseIcon = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
+  const playIcon = '<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"><path d="M6 3.2v17.6L21.5 12z"/></svg>';
+  const pauseIcon = '<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
   const volIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>';
   const muteIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>';
 
@@ -792,10 +792,10 @@ $$('.livephoto').forEach(initLivePhoto);
     if (expanded) setTimeout(() => { expanded = false; renderState(); }, 2000);
   }
 
-  // ?viz-preview — compact playing chrome + fake waveform, no audio needed.
+  // ?viz-preview — expanded player + fake waveform, no audio needed.
   if (new URLSearchParams(location.search).has('viz-preview')) {
     playing = true;
-    expanded = false;
+    expanded = true;
     renderTrack();
     renderState();
     const fake = () => {
@@ -820,13 +820,14 @@ $$('.livephoto').forEach(initLivePhoto);
       step(dir);
       cycle = setInterval(() => step(1), 2400);
     };
-    notch.addEventListener('mouseenter', (e) => { e.stopImmediatePropagation(); }, true);
-    notch.addEventListener('click', (e) => { e.stopImmediatePropagation(); poke(1); }, true);
+    window.addEventListener('scroll', (e) => { e.stopImmediatePropagation(); }, true);
+    notch.addEventListener('mouseleave', (e) => { e.stopImmediatePropagation(); }, true);
+    $('#btn-prev')?.addEventListener('click', (e) => { e.stopPropagation(); poke(-1); });
+    $('#btn-next')?.addEventListener('click', (e) => { e.stopPropagation(); poke(1); });
     notch.addEventListener('wheel', (e) => {
       e.preventDefault();
-      e.stopImmediatePropagation();
       poke(e.deltaY > 0 ? 1 : -1);
-    }, { capture: true, passive: false });
+    }, { passive: false });
   }
 })();
 

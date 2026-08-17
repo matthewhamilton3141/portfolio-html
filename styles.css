@@ -207,12 +207,12 @@ html, body, a, button, input, label, summary,
 .notch-controls { display:flex; align-items:center; gap:6px; }
 .notch-controls button { display:flex; align-items:center; justify-content:center; border-radius:9999px; color:#d4d4d4; transition:.2s; }
 .notch-controls button:hover { background:#262626; color:#fff; }
-.notch-controls .ctrl { padding:6px; }
-.notch-controls .play { padding:8px; background:#fff; color:#000; }
-.notch-controls .play:hover { background:#f0f0f0; color:#000; transform:scale(1.05); }
-.notch-controls svg { width:16px; height:16px; }
-.notch-controls .play svg { width:14px; height:14px; }
-.notch-controls .mute svg { width:14px; height:14px; }
+.notch-controls .ctrl { padding:5px; }
+.notch-controls .play { padding:3px; background:transparent; color:#fff; }
+.notch-controls .play:hover { background:#262626; color:#fff; transform:scale(1.08); }
+.notch-controls svg { width:19px; height:19px; }
+.notch-controls .play svg { width:26px; height:26px; }
+.notch-controls .mute svg { width:16px; height:16px; }
 .notch-progress { display:flex; align-items:center; gap:8px; width:100%; margin-top:6px; }
 .notch-progress .t { font-size:9px; font-family:var(--font-mono); color:rgba(163,163,163,.8); min-width:24px; }
 .notch-progress .t.right { text-align:right; }
