@@ -494,7 +494,7 @@ $$('.livephoto').forEach(initLivePhoto);
   const VIZ_MAX = 0.7;
   const notch = $('#notch');
   if (!notch) return;
-  const audio = new Audio(); audio.crossOrigin = 'anonymous'; audio.preload = 'metadata';
+  const audio = new Audio(); audio.crossOrigin = 'anonymous'; audio.preload = 'metadata'; audio.volume = 0.55;
   let idx = 0, playing = false, muted = false, expanded = window.innerWidth >= 768, skip = false;
   let ctx = null, analyser = null, raf = null, inactivity = null;
   let pendingResume = false;
