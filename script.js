@@ -381,7 +381,7 @@ $$('.livephoto').forEach(initLivePhoto);
   const R2 = 'https://pub-642075d77d2b430c93bf3b1c60299af0.r2.dev/';
   const projects = [
     { category: 'working on', title: 'shield-in-alpasim',
-      description: "A hard braking-shield around AlpaSim's VaVAM camera policy — certifies planned trajectories against ground-truth scene geometry.",
+      description: 'Putting a provable safety shield over a learned AV camera policy (VaVAM) in NVIDIA\'s AlpaSim, and measuring how much the "no-collisions" guarantee survives when the obstacle field comes from learned perception instead of ground truth.',
       link: 'https://github.com/matthewhamilton3141/shield-in-alpasim', thumb: 'images/shield-in-alpasim.webp',
       video: R2 + 'montage_drives_labels_nogap.mp4' },
     { category: 'working on', title: 'kitti-nav',
