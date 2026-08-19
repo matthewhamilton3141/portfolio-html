@@ -553,14 +553,20 @@ a.hl-orange:hover {
   border-radius:0;
   filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.28)) drop-shadow(0 0 0.5px rgba(0,0,0,.18));
 }
+.hl .about-logo.theme-swap,
+.about-mark .about-logo.theme-swap,
 .about-logo.theme-swap {
   display:inline-grid; place-items:center;
-  width:1.35em; max-width:1.55em; height:1.2em;
+  width:1.15em; height:1.15em; max-width:1.15em; max-height:1.15em;
+  overflow:hidden; vertical-align:-0.2em; border-radius:22%;
 }
+.hl .about-logo.theme-swap img,
+.about-mark .about-logo.theme-swap img,
 .about-logo.theme-swap img {
   grid-area:1 / 1;
-  display:block; width:100%; height:100%; object-fit:contain;
-  margin:0; filter:inherit;
+  display:block; width:1.15em; height:1.15em; max-width:none; max-height:none;
+  object-fit:cover; margin:0; filter:inherit;
+  transform:scale(1.67); transform-origin:center;
   transition:opacity .25s ease;
 }
 .about-logo.theme-swap .for-dark { opacity:0; }
