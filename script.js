@@ -236,26 +236,11 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
     $('#mobile-hint')?.classList.add('show');
   };
 
-  const startNameSwap = () => {
-    if (!nameWrap || nameWrap.dataset.swapReady) return;
-    nameWrap.dataset.swapReady = '1';
-    let paused = false;
-    nameWrap.addEventListener('mouseenter', () => { paused = true; });
-    nameWrap.addEventListener('mouseleave', () => { paused = false; });
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduceMotion) return;
-    setInterval(() => {
-      if (paused) return;
-      nameWrap.classList.toggle('showing-zh');
-    }, 5000);
-  };
-
   const finishName = () => {
     line1.textContent = fullName.slice(0, 7);
     line2.textContent = fullName.slice(7).trim();
     if (cursor) { cursor.style.display = 'none'; line2.appendChild(cursor); }
     nameWrap?.classList.add('interactive');
-    startNameSwap();
   };
 
   const markIntroDone = () => sessionStorage.setItem(INTRO_KEY, '1');
@@ -277,7 +262,6 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
       } else {
         cursor.style.display = 'none';
         nameWrap.classList.add('interactive');
-        startNameSwap();
         markIntroDone();
       }
     };
@@ -585,7 +569,9 @@ $$('.livephoto').forEach(initLivePhoto);
     $('#compact-idle').style.display = playing ? 'none' : 'flex';
     $('#btn-play').innerHTML = playing ? pauseIcon : playIcon;
     $('#btn-mute').innerHTML = muted ? muteIcon : volIcon;
-    // Expand/collapse animates width — ResizeObserver remasures after layout settles.
+    // Width is mid-transition here (idle 110 → playing 210). Measuring now
+    // would treat short titles as overflow and flash a cloned "strobe" name.
+    markNotchMode();
     scheduleMarquees();
     scheduleSave();
     syncMediaSession();
@@ -727,8 +713,20 @@ $$('.livephoto').forEach(initLivePhoto);
   // expanded meta column is still ~0px wide, so overflow would be skipped forever.
   let marqueeRaf = 0;
   let marqueeRoTimer = 0;
+  let marqueeSettleTimer = 0;
+  let lastNotchMode = '';
+  let marqueeBlockUntil = 0;
+  const NOTCH_WIDTH_MS = 420;
+
+  function markNotchMode() {
+    const mode = `${expanded ? 1 : 0}|${playing && !expanded ? 1 : 0}`;
+    if (mode === lastNotchMode) return;
+    lastNotchMode = mode;
+    marqueeBlockUntil = performance.now() + NOTCH_WIDTH_MS;
+  }
 
   function applyMarquees() {
+    const blocked = performance.now() < marqueeBlockUntil;
     $$('.marquee-box').forEach((box) => {
       const track = box.querySelector('.track');
       if (!track) return;
@@ -737,8 +735,8 @@ $$('.livephoto').forEach(initLivePhoto);
       track.querySelectorAll('span[aria-hidden]').forEach((s) => s.remove());
       const span = track.querySelector('span');
       if (!span) return;
-      // Hidden (display:none) or not yet laid out during the width transition.
-      if (box.offsetWidth < 2) return;
+      // Hidden, mid-resize, or not yet laid out — keep a single title.
+      if (blocked || box.offsetWidth < 2) return;
       if (span.offsetWidth > box.offsetWidth + 1) {
         track.classList.add('overflow', 'animate-marquee');
         const clone = span.cloneNode(true);
@@ -747,6 +745,14 @@ $$('.livephoto').forEach(initLivePhoto);
         track.appendChild(clone);
       }
     });
+    if (blocked) {
+      const wait = Math.max(16, marqueeBlockUntil - performance.now());
+      if (marqueeSettleTimer) clearTimeout(marqueeSettleTimer);
+      marqueeSettleTimer = setTimeout(() => {
+        marqueeSettleTimer = 0;
+        scheduleMarquees();
+      }, wait);
+    }
   }
 
   function scheduleMarquees() {
@@ -769,6 +775,12 @@ $$('.livephoto').forEach(initLivePhoto);
     $$('.marquee-box').forEach((box) => marqueeRo.observe(box));
     marqueeRo.observe(notch);
   }
+  notch.addEventListener('transitionend', (e) => {
+    if (e.target !== notch || e.propertyName !== 'width') return;
+    marqueeBlockUntil = 0;
+    if (marqueeSettleTimer) { clearTimeout(marqueeSettleTimer); marqueeSettleTimer = 0; }
+    scheduleMarquees();
+  });
   if (document.fonts?.ready) document.fonts.ready.then(() => scheduleMarquees());
 
   // Restore across pages, or fresh boot.
@@ -838,6 +850,72 @@ $$('.livephoto').forEach(initLivePhoto);
 })();
 
 /* ======================================================================
+   SMOOTH KEYBOARD SCROLL — arrow / page / space ease toward a target
+   ====================================================================== */
+(function () {
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let target = 0;
+  let raf = 0;
+
+  const maxY = () => Math.max(0, document.documentElement.scrollHeight - innerHeight);
+  const clamp = (y) => Math.min(maxY(), Math.max(0, y));
+
+  const stop = () => {
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+    target = window.scrollY;
+  };
+
+  const tick = () => {
+    const y = window.scrollY;
+    const next = y + (target - y) * 0.14;
+    if (Math.abs(target - y) < 0.5) {
+      window.scrollTo(0, target);
+      raf = 0;
+      return;
+    }
+    window.scrollTo(0, next);
+    raf = requestAnimationFrame(tick);
+  };
+
+  const aim = (y) => {
+    target = clamp(y);
+    if (!raf) raf = requestAnimationFrame(tick);
+  };
+
+  window.addEventListener('wheel', stop, { passive: true });
+  window.addEventListener('pointerdown', stop);
+
+  window.addEventListener('keydown', (e) => {
+    if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.target.closest?.('input, textarea, select, [contenteditable="true"]')) return;
+    if (reduce.matches) return;
+
+    const view = window.innerHeight;
+    const from = raf ? target : window.scrollY;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      aim(from + view * (e.repeat ? 0.035 : 0.2));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      aim(from - view * (e.repeat ? 0.035 : 0.2));
+    } else if (e.key === 'PageDown' || (e.key === ' ' && !e.shiftKey)) {
+      e.preventDefault();
+      if (!e.repeat) aim(from + view * 0.84);
+    } else if (e.key === 'PageUp' || (e.key === ' ' && e.shiftKey)) {
+      e.preventDefault();
+      if (!e.repeat) aim(from - view * 0.84);
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      aim(0);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      aim(maxY());
+    }
+  });
+})();
+
+/* ======================================================================
    SIDE NAV — active tracking + scroll-to  (side-nav.tsx)
    ====================================================================== */
 (function () {
@@ -881,6 +959,150 @@ $$('.livephoto').forEach(initLivePhoto);
   }, { rootMargin: '-30% 0px -40% 0px' });
   sections.forEach((id) => { const el = document.getElementById(id); if (el) obs.observe(el); });
 
+})();
+
+/* ======================================================================
+   陳文飛 — the name is the place. Each character fills in turn.
+   ====================================================================== */
+(function () {
+  const desktop = window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 768px)');
+  const CHARS = ['陳', '文', '飛'];
+  const JUMPS = ['landing', 'projects', 'contact'];
+
+  const dock = document.createElement('div');
+  dock.className = 'namefill-dock';
+  const col = document.createElement('div');
+  col.className = 'namefill';
+  col.hidden = true;
+  col.tabIndex = 0;
+  col.setAttribute('role', 'slider');
+  col.setAttribute('aria-label', '陳文飛 — place on the page');
+  col.setAttribute('aria-valuemin', '0');
+  col.setAttribute('aria-valuemax', '100');
+  col.setAttribute('aria-valuenow', '0');
+  col.setAttribute('aria-hidden', 'false');
+
+  const fills = CHARS.map((ch, i) => {
+    const glyph = document.createElement('i');
+    glyph.className = 'namefill-glyph';
+    glyph.dataset.i = String(i);
+    glyph.textContent = ch;
+    const fill = document.createElement('b');
+    fill.textContent = ch;
+    glyph.appendChild(fill);
+    col.appendChild(glyph);
+    return fill;
+  });
+
+  dock.appendChild(col);
+  document.body.appendChild(dock);
+
+  const metrics = () => {
+    const view = document.documentElement.clientHeight;
+    const total = document.documentElement.scrollHeight;
+    return { view, total, maxScroll: total - view };
+  };
+  const progress = () => {
+    const { maxScroll } = metrics();
+    if (maxScroll <= 0) return 0;
+    return Math.min(1, Math.max(0, window.scrollY / maxScroll));
+  };
+
+  const easeTo = (top, duration = 1100) => {
+    const start = window.scrollY;
+    const dist = top - start;
+    if (Math.abs(dist) < 2) return;
+    const t0 = performance.now();
+    const ease = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    const step = (now) => {
+      const p = Math.min((now - t0) / duration, 1);
+      window.scrollTo(0, start + dist * ease(p));
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+
+  const jump = (i) => {
+    const el = document.getElementById(JUMPS[i]);
+    if (el) {
+      easeTo(el.getBoundingClientRect().top + window.scrollY);
+      return;
+    }
+    const { maxScroll } = metrics();
+    easeTo((i / 2) * maxScroll);
+  };
+
+  let winding = false;
+  let didDrag = false;
+  let dragStartY = 0;
+  let dragStartScroll = 0;
+  let ticking = false;
+
+  const sync = () => {
+    if (!desktop.matches) {
+      col.hidden = true;
+      return;
+    }
+    const { maxScroll } = metrics();
+    if (maxScroll <= 8) {
+      col.hidden = true;
+      return;
+    }
+    col.hidden = false;
+    const p = progress();
+    col.setAttribute('aria-valuenow', String(Math.round(p * 100)));
+    fills.forEach((fill, i) => {
+      const local = Math.min(1, Math.max(0, p * 3 - i));
+      fill.style.clipPath = `inset(0 0 ${((1 - local) * 100).toFixed(2)}% 0)`;
+    });
+    const which = CHARS[Math.min(2, Math.floor(p * 3 - 1e-6))] || CHARS[0];
+    col.setAttribute('aria-valuetext', which);
+  };
+
+  const requestSync = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => { ticking = false; sync(); });
+  };
+
+  col.addEventListener('pointerdown', (e) => {
+    if (e.pointerType === 'touch') return;
+    e.preventDefault();
+    winding = true;
+    didDrag = false;
+    dragStartY = e.clientY;
+    dragStartScroll = window.scrollY;
+    col.classList.add('is-winding');
+    col.setPointerCapture(e.pointerId);
+    col.focus({ preventScroll: true });
+  });
+  col.addEventListener('pointermove', (e) => {
+    if (!winding) return;
+    if (Math.abs(e.clientY - dragStartY) > 5) didDrag = true;
+    const { maxScroll } = metrics();
+    window.scrollTo(0, dragStartScroll + ((e.clientY - dragStartY) / 240) * maxScroll);
+  });
+  const endWind = (e) => {
+    const glyph = e?.target?.closest?.('.namefill-glyph');
+    if (winding && !didDrag && glyph) jump(Number(glyph.dataset.i));
+    winding = false;
+    didDrag = false;
+    col.classList.remove('is-winding');
+  };
+  col.addEventListener('pointerup', endWind);
+  col.addEventListener('pointercancel', () => {
+    winding = false;
+    didDrag = false;
+    col.classList.remove('is-winding');
+  });
+
+  window.addEventListener('scroll', requestSync, { passive: true });
+  window.addEventListener('resize', requestSync);
+  desktop.addEventListener('change', requestSync);
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(requestSync).observe(document.documentElement);
+  }
+  sync();
 })();
 
 /* ======================================================================

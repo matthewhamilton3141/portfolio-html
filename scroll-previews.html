@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scroll instruments</title>
+  <meta name="robots" content="noindex" />
+  <link rel="preload" as="font" type="font/woff2" href="fonts/dm-sans-latin.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="fonts/noto-serif-sc-700-name.woff2" crossorigin />
+  <style>
+    @font-face {
+      font-family: 'DM Sans';
+      font-style: normal;
+      font-weight: 100 1000;
+      font-display: swap;
+      src: url('fonts/dm-sans-latin.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'Noto Serif SC';
+      font-style: normal;
+      font-weight: 700;
+      font-display: swap;
+      src: url('fonts/noto-serif-sc-700-name.woff2') format('woff2');
+      unicode-range: U+6587, U+9673, U+98DB;
+    }
+
+    :root {
+      --cream: #F5F5F5;
+      --warm-white: #FFFFFF;
+      --ink: #000;
+      --ink-soft: #333;
+      --ink-muted: #666;
+      --accent: #000;
+      --accent-warm: #333;
+      --border: #E5E5E5;
+      --blush: #EAEAEA;
+      --font-sans: 'DM Sans', system-ui, sans-serif;
+      --font-chinese: 'Noto Serif SC', serif;
+      --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    }
+    html.dark {
+      --cream: #141414; --warm-white: #0A0A0A; --ink: #FFF; --ink-soft: #CCC;
+      --ink-muted: #888; --accent: #FFF; --accent-warm: #CCC; --border: #262626; --blush: #1F1F1F;
+    }
+    html.theme-warm {
+      --warm-white: #FCFAF7; --cream: #F5EBD9; --ink: #2B2927; --ink-soft: #54504C;
+      --ink-muted: #8C857E; --accent: #A36A58; --accent-warm: #A0522D; --border: #E8DEC9; --blush: #D4C4B4;
+    }
+    html.dark.theme-warm {
+      --warm-white: #121110; --cream: #1C1A18; --ink: #F2EFEA; --ink-soft: #C2BBB2;
+      --ink-muted: #736E68; --accent: #E0A08D; --accent-warm: #C8784A; --border: #2B2825; --blush: #352A22;
+    }
+    html.theme-mint {
+      --warm-white: #F4F7F5; --cream: #E6EDE8; --ink: #1C2421; --ink-soft: #3D4F4A;
+      --ink-muted: #7B8F8A; --accent: #2D6A4F; --accent-warm: #1B4332; --border: #D2DFD7; --blush: #D2DFD7;
+    }
+    html.dark.theme-mint {
+      --warm-white: #0B0F0E; --cream: #121A17; --ink: #E8F5E9; --ink-soft: #A2C4B4;
+      --ink-muted: #405149; --accent: #52B788; --accent-warm: #74C69D; --border: #1B2924; --blush: #1B2924;
+    }
+    html.theme-rose {
+      --warm-white: #FFF7F8; --cream: #FFE8EC; --ink: #2D1018; --ink-soft: #6B3040;
+      --ink-muted: #A87080; --accent: #E05870; --accent-warm: #C03050; --border: #F0C8D0; --blush: #FFD8E0;
+    }
+    html.dark.theme-rose {
+      --warm-white: #130810; --cream: #1E1018; --ink: #FFE8EC; --ink-soft: #D8A8B8;
+      --ink-muted: #6A3848; --accent: #F08098; --accent-warm: #E05870; --border: #2E1020; --blush: #2A1020;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { scrollbar-width: none; }
+    html::-webkit-scrollbar, body::-webkit-scrollbar { width: 0; height: 0; display: none; }
+    html { overflow-x: clip; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--warm-white);
+      color: var(--ink);
+      display: grid;
+      grid-template-columns: 232px 1fr;
+      min-height: 100dvh;
+      transition: background-color .4s, color .4s;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; border: 0; background: none; color: inherit; cursor: default; }
+
+    .nav {
+      position: sticky; top: 0; align-self: start;
+      height: 100dvh; overflow: auto;
+      padding: 26px 16px 36px;
+      border-right: 1px solid var(--border);
+      background: var(--warm-white);
+      z-index: 60;
+      scrollbar-width: thin;
+    }
+    .nav h1 {
+      font-size: 11px; letter-spacing: .22em; text-transform: lowercase;
+      color: var(--ink-muted); font-weight: 700; margin-bottom: 6px;
+    }
+    .nav .sub {
+      font-size: 12px; color: var(--ink-soft); line-height: 1.45; margin-bottom: 16px;
+    }
+    .nav .group {
+      font-size: 10px; letter-spacing: .16em; text-transform: lowercase;
+      color: var(--ink-muted); font-weight: 600; margin: 16px 0 6px; padding: 0 8px;
+    }
+    .nav .links a {
+      display: block; padding: 7px 8px; border-radius: 2px;
+      font-size: 13px; color: var(--ink-soft); line-height: 1.25;
+    }
+    .nav .links a:hover, .nav .links a.active {
+      background: color-mix(in srgb, var(--ink) 5%, transparent);
+      color: var(--ink);
+    }
+    .nav .links a span { display: block; font-size: 10px; color: var(--ink-muted); margin-top: 2px; }
+    .nav .links a.on-site span::after {
+      content: " · on the site";
+      color: var(--accent);
+    }
+    .nav .tools { margin-top: 20px; display: flex; flex-direction: column; gap: 8px; }
+    .nav .tools button, .nav .tools a.btn {
+      padding: 8px 10px; border: 1px solid var(--border); border-radius: 2px;
+      font-size: 11px; letter-spacing: .06em; text-align: left;
+    }
+    .nav .tools button:hover, .nav .tools a.btn:hover { border-color: var(--accent); }
+    .swatches { display: flex; gap: 6px; padding: 0 2px; }
+    .swatch {
+      width: 18px; height: 18px; border-radius: 2px;
+      border: 1px solid var(--border);
+    }
+    .swatch.active { outline: 1px solid var(--accent); outline-offset: 2px; }
+
+    .main { min-width: 0; padding: 0 12vw 20vh 8vw; }
+    .hud {
+      position: sticky; top: 0; z-index: 30;
+      padding: 22px 0 18px;
+      background: color-mix(in srgb, var(--warm-white) 88%, transparent);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid transparent;
+    }
+    .hud-name {
+      font-size: 13px; font-weight: 700; letter-spacing: .04em;
+    }
+    .hud-blurb { font-size: 13px; color: var(--ink-soft); margin-top: 4px; max-width: 42ch; line-height: 1.45; }
+    .hud-hint { font-size: 10px; letter-spacing: .16em; text-transform: lowercase; color: var(--ink-muted); margin-top: 8px; }
+
+    .sec { min-height: 92vh; padding: 12vh 0 8vh; border-bottom: 1px solid var(--border); }
+    .sec:last-of-type { border-bottom: 0; }
+    .sec .k {
+      font-size: 10px; letter-spacing: .2em; text-transform: lowercase;
+      color: var(--ink-muted); font-weight: 600; margin-bottom: 16px;
+    }
+    .sec h2 {
+      font-size: clamp(40px, 6vw, 80px); font-weight: 900; letter-spacing: -.04em;
+      line-height: .95; margin-bottom: 20px;
+    }
+    .sec p { font-size: 16px; color: var(--ink-soft); line-height: 1.65; max-width: 46ch; }
+    .sec .zh {
+      font-family: var(--font-chinese); font-size: clamp(28px, 4vw, 48px);
+      margin-top: 28px; color: var(--ink);
+    }
+
+    #stage { position: fixed; inset: 0; pointer-events: none; z-index: 45; }
+    #stage > * { pointer-events: auto; }
+
+    /* —— instruments —— */
+    .inst {
+      position: fixed;
+      right: 36px;
+      top: 50%;
+      transform: translateY(-50%);
+      touch-action: none;
+      user-select: none;
+    }
+    .inst:focus { outline: none; }
+    .inst:focus-visible {
+      outline: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
+      outline-offset: 4px;
+    }
+
+    /* aperture */
+    .iris { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; }
+    .iris svg { width: 30px; height: 30px; overflow: visible; }
+    .iris-glass { fill: var(--cream); }
+    .iris-ring { fill: none; stroke: color-mix(in srgb, var(--ink) 22%, transparent); stroke-width: 1; }
+    .iris-seam { stroke: color-mix(in srgb, var(--ink) 14%, transparent); stroke-width: .6; }
+    .iris-stop { stroke: color-mix(in srgb, var(--ink) 28%, transparent); stroke-width: 1.15; stroke-linecap: square; }
+    .iris-stop.is-now { stroke: var(--accent); stroke-width: 1.7; }
+    .iris.is-hot .iris-ring { stroke: var(--accent); }
+
+    /* winder */
+    .winder { width: 44px; height: 44px; display: grid; place-items: center; }
+    .winder-reel {
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 1px solid color-mix(in srgb, var(--ink) 25%, transparent);
+      background: var(--cream);
+      position: relative;
+    }
+    .winder-reel::before, .winder-reel::after {
+      content: ""; position: absolute; width: 7px; height: 7px; border-radius: 50%;
+      background: var(--warm-white);
+      border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+      top: 50%; left: 50%;
+    }
+    .winder-reel::before { transform: translate(-50%, -50%) translateY(-7px); }
+    .winder-reel::after { transform: translate(-50%, -50%) translateY(7px); }
+    .winder-spoke {
+      position: absolute; left: 50%; top: 50%; width: 1px; height: 11px;
+      background: color-mix(in srgb, var(--ink) 20%, transparent);
+      transform-origin: 50% 0;
+    }
+
+    /* frames */
+    .frames {
+      min-width: 52px; padding: 8px 10px 7px;
+      border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+      background: var(--cream); border-radius: 2px;
+    }
+    .frames-num {
+      font-family: var(--font-mono); font-size: 22px; font-weight: 600;
+      letter-spacing: .06em; line-height: 1; font-variant-numeric: tabular-nums;
+    }
+    .frames-cap {
+      font-size: 8px; letter-spacing: .2em; text-transform: lowercase;
+      color: var(--ink-muted); margin-top: 5px;
+    }
+    .frames-sprockets {
+      display: flex; justify-content: space-between; margin-bottom: 6px;
+    }
+    .frames-sprockets i {
+      width: 4px; height: 4px; background: var(--warm-white);
+      border: 1px solid color-mix(in srgb, var(--ink) 16%, transparent);
+    }
+
+    /* f-stop */
+    .fstop { text-align: right; min-width: 72px; }
+    .fstop-val {
+      font-size: 28px; font-weight: 700; letter-spacing: -.03em; line-height: 1;
+    }
+    .fstop-val em { font-style: normal; font-weight: 500; color: var(--ink-muted); font-size: .72em; margin-right: 1px; }
+    .fstop-row { display: flex; gap: 4px; justify-content: flex-end; margin-top: 8px; }
+    .fstop-row b {
+      width: 3px; height: 8px;
+      background: color-mix(in srgb, var(--ink) 16%, transparent);
+    }
+    .fstop-row b.on { background: var(--accent); height: 12px; }
+
+    /* jog */
+    .jog { width: 56px; height: 56px; }
+    .jog svg { width: 56px; height: 56px; overflow: visible; }
+    .jog-ring { fill: none; stroke: color-mix(in srgb, var(--ink) 18%, transparent); stroke-width: 1; }
+    .jog-groove { fill: none; stroke: color-mix(in srgb, var(--ink) 12%, transparent); stroke-width: 5; stroke-dasharray: 1.2 2.4; }
+    .jog-pip { fill: var(--accent); }
+
+    /* chop */
+    .chop {
+      width: 36px; height: 36px; position: relative;
+      border: 1px solid var(--ink); border-radius: 2px;
+      display: grid; place-items: center;
+      font-family: var(--font-chinese); font-size: 20px; line-height: 1;
+    }
+    .chop-fill {
+      position: absolute; inset: 0;
+      background: var(--accent); color: var(--warm-white);
+      display: grid; place-items: center;
+      clip-path: inset(100% 0 0 0);
+    }
+
+    /* namefill */
+    .namefill {
+      display: flex; flex-direction: column; gap: 10px;
+      font-family: var(--font-chinese); font-size: 28px; line-height: 1;
+    }
+    .namefill i {
+      position: relative; display: block; font-style: normal;
+      color: color-mix(in srgb, var(--ink) 22%, transparent);
+    }
+    .namefill i b {
+      position: absolute; inset: 0;
+      color: var(--accent); font-weight: inherit;
+      clip-path: inset(100% 0 0 0);
+    }
+
+    /* flap */
+    .flap { width: 88px; perspective: 200px; }
+    .flap-win {
+      overflow: hidden; height: 28px;
+      border-bottom: 1px solid color-mix(in srgb, var(--ink) 16%, transparent);
+    }
+    .flap-word {
+      font-size: 18px; font-weight: 700; letter-spacing: -.02em;
+      line-height: 28px; transform-origin: 50% 0;
+    }
+    .flap-word.flip { animation: flap .38s ease; }
+    @keyframes flap {
+      0% { transform: rotateX(0); }
+      45% { transform: rotateX(-85deg); }
+      100% { transform: rotateX(0); }
+    }
+    .flap-idx {
+      font-size: 9px; letter-spacing: .18em; text-transform: lowercase;
+      color: var(--ink-muted); margin-top: 6px;
+    }
+
+    /* thread */
+    .thread { width: 20px; height: 168px; position: relative; }
+    .thread-line {
+      position: absolute; left: 9px; top: 0; bottom: 0; width: 1px;
+      background: color-mix(in srgb, var(--ink) 12%, transparent);
+    }
+    .thread-line-fill {
+      position: absolute; left: 9px; top: 0; width: 1px;
+      background: var(--accent); height: 0;
+    }
+    .thread-dot {
+      position: absolute; left: 5px; width: 9px; height: 9px; border-radius: 50%;
+      background: color-mix(in srgb, var(--ink-muted) 70%, transparent);
+    }
+    .thread-dot.on { background: var(--accent); }
+    .thread-bead {
+      position: absolute; left: 6px; width: 7px; height: 7px; border-radius: 2px;
+      background: var(--accent); top: 0;
+    }
+
+    /* needle */
+    .needle { width: 64px; height: 40px; }
+    .needle svg { width: 64px; height: 40px; overflow: visible; }
+    .needle-arc { fill: none; stroke: color-mix(in srgb, var(--ink) 18%, transparent); stroke-width: 1; }
+    .needle-arm { stroke: var(--accent); stroke-width: 1.4; stroke-linecap: square; }
+    .needle-hub { fill: var(--accent); }
+
+    /* viz */
+    .viz {
+      display: flex; align-items: flex-end; gap: 3px; height: 36px;
+    }
+    .viz b {
+      width: 3px; height: 30%; border-radius: 1px 1px 0 0;
+      background: color-mix(in srgb, var(--ink) 18%, transparent);
+    }
+    .viz b.peak { background: var(--accent); }
+
+    /* dogear */
+    .dogear {
+      position: fixed; right: 0; bottom: 0;
+      width: 20px; height: 20px;
+    }
+    .dogear-face {
+      position: absolute; inset: 0;
+      background: var(--accent);
+      clip-path: polygon(100% 0, 100% 100%, 0 100%);
+    }
+    .dogear-back {
+      position: absolute; inset: 0;
+      background: color-mix(in srgb, var(--accent) 55%, var(--ink));
+      clip-path: polygon(100% 0, 0 100%, 100% 28%);
+      mix-blend-mode: multiply;
+    }
+
+    /* ribbon */
+    .ribbon {
+      position: fixed; top: 0; right: 48px;
+      width: 8px; height: 20vh;
+      background: var(--accent);
+    }
+    .ribbon-seal {
+      position: absolute; left: 50%; bottom: -14px;
+      width: 20px; height: 20px; margin-left: -10px;
+      background: var(--accent); border-radius: 2px;
+      box-shadow: 0 4px 12px color-mix(in srgb, var(--accent) 30%, transparent);
+    }
+    .ribbon-seal::after {
+      content: "文";
+      position: absolute; inset: 0;
+      display: grid; place-items: center;
+      font-family: var(--font-chinese); font-size: 11px;
+      color: var(--warm-white);
+    }
+
+    /* caret */
+    .caret { width: 16px; height: 160px; position: relative; }
+    .caret-rule {
+      position: absolute; left: 7px; top: 0; bottom: 0; width: 1px;
+      background: color-mix(in srgb, var(--ink) 12%, transparent);
+    }
+    .caret-head {
+      position: absolute; left: 2px; width: 11px; height: 2px;
+      background: var(--accent);
+      animation: caretblink 1s step-end infinite;
+    }
+    @keyframes caretblink { 50% { opacity: 0; } }
+
+    /* leak */
+    .leak {
+      position: fixed; top: 0; right: 0; width: 22px; height: 100%;
+      background: linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--accent-warm) 42%, transparent),
+        color-mix(in srgb, var(--accent) 18%, transparent) calc(var(--p, 0) * 100%),
+        transparent calc(var(--p, 0) * 100%)
+      );
+    }
+
+    /* compass */
+    .compass { width: 48px; height: 48px; }
+    .compass svg { width: 48px; height: 48px; overflow: visible; }
+    .compass-ring { fill: none; stroke: color-mix(in srgb, var(--ink) 20%, transparent); stroke-width: 1; }
+    .compass-n { fill: var(--ink-muted); font-size: 7px; font-family: var(--font-sans); letter-spacing: .08em; }
+    .compass-needle { fill: var(--accent); }
+
+    /* cursor tick */
+    .ctick {
+      position: fixed; width: 14px; height: 14px; margin: -7px 0 0 -7px;
+      pointer-events: none; opacity: 0; transition: opacity .4s;
+    }
+    .ctick.show { opacity: 1; transition: opacity .05s; }
+    .ctick i, .ctick b {
+      position: absolute; background: var(--accent);
+    }
+    .ctick i { left: 6px; top: 0; width: 1px; height: 14px; }
+    .ctick b { top: 6px; left: 0; height: 1px; width: 14px; }
+
+    @media (max-width: 800px) {
+      body { grid-template-columns: 1fr; }
+      .nav { position: relative; height: auto; border-right: 0; border-bottom: 1px solid var(--border); }
+      .inst { right: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <aside class="nav">
+    <h1>scroll instruments</h1>
+    <p class="sub">pick one, then scroll. drag the instrument to wind the page. none of these are a bar.</p>
+
+    <div class="group">lens</div>
+    <div class="links" id="links"></div>
+
+    <div class="tools">
+      <button type="button" id="theme-toggle">toggle dark</button>
+      <div class="swatches" id="swatches"></div>
+      <a class="btn" href="index.html">← portfolio</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="hud">
+      <div class="hud-name" id="hud-name">aperture</div>
+      <p class="hud-blurb" id="hud-blurb"></p>
+      <p class="hud-hint" id="hud-hint">scroll the page · drag the instrument</p>
+    </div>
+
+    <section class="sec" id="sec-home" data-sec="home">
+      <div class="k">01 · home</div>
+      <h2>matthew<br />hamilton</h2>
+      <p>a long dummy page so you can feel each instrument. the real site stays untouched while you shop.</p>
+      <div class="zh">陳文飛</div>
+    </section>
+
+    <section class="sec" id="sec-work" data-sec="work">
+      <div class="k">02 · work</div>
+      <h2>systems,<br />then pictures.</h2>
+      <p>some of these come from the camera. some from the notch player. some from the name. a scrollbar was never the only way to say “you are here.”</p>
+    </section>
+
+    <section class="sec" id="sec-pictures" data-sec="pictures">
+      <div class="k">03 · pictures</div>
+      <h2>a roll,<br />not a rail.</h2>
+      <p>keep scrolling. drag whatever is on the right. switch instruments from the list whenever you want — the page stays put.</p>
+    </section>
+
+    <section class="sec" id="sec-end" data-sec="close">
+      <div class="k">04 · close</div>
+      <h2>end of<br />the roll.</h2>
+      <p>if one of these feels like the site, say which. we can put that one on the real pages and throw the rest away.</p>
+    </section>
+  </main>
+
+  <div id="stage"></div>
+
+  <script>
+    const $ = (s, r = document) => r.querySelector(s);
+    const stage = $('#stage');
+    const links = $('#links');
+
+    const GROUPS = [
+      { id: 'lens', items: ['aperture', 'winder', 'frames', 'fstop'] },
+      { id: 'sound', items: ['jog', 'viz'] },
+      { id: 'page', items: ['chop', 'namefill', 'flap', 'ribbon', 'dogear', 'leak'] },
+      { id: 'mark', items: ['thread', 'needle', 'caret', 'compass', 'cursor'] },
+    ];
+
+    const CATALOG = {
+      aperture: {
+        group: 'lens',
+        name: 'aperture',
+        onSite: true,
+        blurb: 'A lens. Wide open at the top, stopped down at the bottom. The hex is the hole you look through.',
+        hint: 'scroll · drag the iris like you’re winding a camera',
+      },
+      winder: {
+        group: 'lens',
+        name: 'film winder',
+        blurb: 'A cassette reel. It turns as the page advances — same gesture as winding film.',
+        hint: 'scroll · drag the reel',
+      },
+      frames: {
+        group: 'lens',
+        name: 'frame counter',
+        blurb: 'A 35mm door. Twenty-four frames to the roll. The number is the place.',
+        hint: 'scroll · drag the window',
+      },
+      fstop: {
+        group: 'lens',
+        name: 'f-stop',
+        blurb: 'Only type. The page is an exposure: f/1.4 at the start, f/16 at the end.',
+        hint: 'scroll · drag the numbers',
+      },
+      jog: {
+        group: 'sound',
+        name: 'jog wheel',
+        blurb: 'A record / iPod wheel. Lives in the same family as the notch player.',
+        hint: 'scroll · drag around the wheel, or up and down',
+      },
+      viz: {
+        group: 'sound',
+        name: 'visualizer',
+        blurb: 'The notch’s bars, used as a playhead. Energy walks across as you go.',
+        hint: 'scroll · drag the bars',
+      },
+      chop: {
+        group: 'page',
+        name: 'chop',
+        blurb: 'A cinnabar seal. 文 fills from the bottom, like the stamp pressing in.',
+        hint: 'scroll · drag the seal',
+      },
+      namefill: {
+        group: 'page',
+        name: '陳文飛',
+        blurb: 'The name is the map. Each character fills in turn. Nothing else.',
+        hint: 'scroll · drag the column',
+      },
+      flap: {
+        group: 'page',
+        name: 'split-flap',
+        blurb: 'A destination sign. It flips when you cross a section — home, work, pictures, close.',
+        hint: 'scroll through the four sections',
+      },
+      ribbon: {
+        group: 'page',
+        name: 'ribbon',
+        blurb: 'A bookmark pulled down the page. The seal is where you are; the tail hangs from the top.',
+        hint: 'scroll · drag the ribbon',
+      },
+      dogear: {
+        group: 'page',
+        name: 'dog-ear',
+        blurb: 'The corner of the page folds up the further you go. Physical, not a control strip.',
+        hint: 'scroll · drag the folded corner',
+      },
+      leak: {
+        group: 'page',
+        name: 'light leak',
+        blurb: 'A warm leak developing down the right edge. Place is how far the fog has crept.',
+        hint: 'scroll · drag the leak',
+      },
+      thread: {
+        group: 'mark',
+        name: 'thread',
+        blurb: 'The sidenav idea, finished: stations for each section, a square bead for the in-between.',
+        hint: 'scroll · drag the bead',
+      },
+      needle: {
+        group: 'mark',
+        name: 'exposure needle',
+        blurb: 'A meter. The arm swings from empty to overexposed.',
+        hint: 'scroll · drag the meter',
+      },
+      caret: {
+        group: 'mark',
+        name: 'caret',
+        blurb: 'A typewriter mark walking a hairline. The blink is the only motion that isn’t yours.',
+        hint: 'scroll · drag the caret',
+      },
+      compass: {
+        group: 'mark',
+        name: 'compass',
+        blurb: 'North is the top of the page. The needle turns as you travel.',
+        hint: 'scroll · drag the compass',
+      },
+      cursor: {
+        group: 'mark',
+        name: 'registration',
+        blurb: 'No chrome on the page. A print mark appears on the cursor while you scroll, then goes away.',
+        hint: 'scroll anywhere — watch the cursor',
+      },
+    };
+
+    const FSTOPS = [1.4, 2, 2.8, 4, 5.6, 8, 11, 16];
+    const SECTIONS = [...document.querySelectorAll('[data-sec]')];
+
+    const progress = () => {
+      const max = document.documentElement.scrollHeight - innerHeight;
+      return max <= 0 ? 0 : Math.min(1, Math.max(0, scrollY / max));
+    };
+    const setProgress = (p) => {
+      const max = document.documentElement.scrollHeight - innerHeight;
+      scrollTo(0, Math.min(max, Math.max(0, p * max)));
+    };
+    const sectionInfo = () => {
+      const y = scrollY + innerHeight * 0.38;
+      let idx = 0;
+      SECTIONS.forEach((s, i) => { if (s.offsetTop <= y) idx = i; });
+      return { idx, name: SECTIONS[idx].dataset.sec, count: SECTIONS.length };
+    };
+
+    const bindWind = (el, extra) => {
+      let on = false, y0 = 0, p0 = 0;
+      el.tabIndex = 0;
+      el.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'touch') return;
+        e.preventDefault();
+        on = true; y0 = e.clientY; p0 = progress();
+        el.classList.add('is-hot');
+        el.setPointerCapture(e.pointerId);
+        extra?.down?.(e);
+      });
+      el.addEventListener('pointermove', (e) => {
+        if (!on) return;
+        if (extra?.move && extra.move(e, { y0, p0 }) === true) return;
+        setProgress(p0 + (e.clientY - y0) / 260);
+      });
+      const up = () => { on = false; el.classList.remove('is-hot'); extra?.up?.(); };
+      el.addEventListener('pointerup', up);
+      el.addEventListener('pointercancel', up);
+      el.addEventListener('keydown', (e) => {
+        const jump = { ArrowDown: 0.06, ArrowUp: -0.06, PageDown: 0.22, PageUp: -0.22, Home: -1, End: 1 };
+        if (!(e.key in jump)) return;
+        e.preventDefault();
+        setProgress(progress() + jump[e.key]);
+      });
+    };
+
+    const ns = 'http://www.w3.org/2000/svg';
+    const svgEl = (name, attrs = {}) => {
+      const el = document.createElementNS(ns, name);
+      Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+      return el;
+    };
+
+    const makers = {
+      aperture() {
+        const root = document.createElement('div');
+        root.className = 'inst iris';
+        const CX = 18, CY = 18, RIM = 14, STOPS = 6;
+        const svg = svgEl('svg', { viewBox: '0 0 36 36', 'aria-hidden': 'true' });
+        const mask = svgEl('mask', { id: 'iris-mask', maskUnits: 'userSpaceOnUse' });
+        mask.append(
+          svgEl('rect', { width: 36, height: 36, fill: 'black' }),
+          svgEl('circle', { cx: CX, cy: CY, r: RIM, fill: 'white' })
+        );
+        const hex = svgEl('polygon', { fill: 'black' });
+        mask.append(hex);
+        const defs = svgEl('defs');
+        defs.append(mask);
+        const glass = svgEl('circle', { class: 'iris-glass', cx: CX, cy: CY, r: RIM, mask: 'url(#iris-mask)' });
+        const ring = svgEl('circle', { class: 'iris-ring', cx: CX, cy: CY, r: RIM });
+        const seams = [];
+        const seamG = svgEl('g');
+        for (let i = 0; i < STOPS; i++) {
+          const line = svgEl('line', { class: 'iris-seam' });
+          seamG.append(line);
+          seams.push(line);
+        }
+        const stopG = svgEl('g');
+        const stops = [];
+        for (let i = 0; i < STOPS; i++) {
+          const a = ((-90 + i * 60) * Math.PI) / 180;
+          const line = svgEl('line', {
+            class: 'iris-stop',
+            x1: (CX + Math.cos(a) * 15.6).toFixed(2),
+            y1: (CY + Math.sin(a) * 15.6).toFixed(2),
+            x2: (CX + Math.cos(a) * 17.6).toFixed(2),
+            y2: (CY + Math.sin(a) * 17.6).toFixed(2),
+          });
+          stopG.append(line);
+          stops.push(line);
+        }
+        svg.append(defs, glass, seamG, ring, stopG);
+        root.append(svg);
+        bindWind(root);
+        return {
+          root,
+          update(p) {
+            const r = 10.2 - p * 7.4;
+            const rot = p * 28;
+            const pts = [];
+            for (let i = 0; i < STOPS; i++) {
+              const a = ((-90 + i * 60 + rot) * Math.PI) / 180;
+              pts.push(`${(CX + r * Math.cos(a)).toFixed(2)},${(CY + r * Math.sin(a)).toFixed(2)}`);
+            }
+            hex.setAttribute('points', pts.join(' '));
+            pts.forEach((pt, i) => {
+              const [x, y] = pt.split(',');
+              const a = ((-90 + i * 60 + rot) * Math.PI) / 180;
+              seams[i].setAttribute('x1', x);
+              seams[i].setAttribute('y1', y);
+              seams[i].setAttribute('x2', (CX + Math.cos(a) * RIM).toFixed(2));
+              seams[i].setAttribute('y2', (CY + Math.sin(a) * RIM).toFixed(2));
+            });
+            const lit = Math.round(p * (STOPS - 1));
+            stops.forEach((el, i) => el.classList.toggle('is-now', i === lit));
+          },
+        };
+      },
+
+      winder() {
+        const root = document.createElement('div');
+        root.className = 'inst winder';
+        const reel = document.createElement('div');
+        reel.className = 'winder-reel';
+        for (let i = 0; i < 6; i++) {
+          const s = document.createElement('i');
+          s.className = 'winder-spoke';
+          s.style.transform = `translate(-50%, 0) rotate(${i * 60}deg)`;
+          reel.append(s);
+        }
+        root.append(reel);
+        bindWind(root);
+        return { root, update(p) { reel.style.transform = `rotate(${p * 720}deg)`; } };
+      },
+
+      frames() {
+        const root = document.createElement('div');
+        root.className = 'inst frames';
+        root.innerHTML = '<div class="frames-sprockets"><i></i><i></i><i></i><i></i></div><div class="frames-num">01</div><div class="frames-cap">frame</div>';
+        const num = root.querySelector('.frames-num');
+        bindWind(root);
+        return {
+          root,
+          update(p) { num.textContent = String(1 + Math.round(p * 23)).padStart(2, '0'); },
+        };
+      },
+
+      fstop() {
+        const root = document.createElement('div');
+        root.className = 'inst fstop';
+        const val = document.createElement('div');
+        val.className = 'fstop-val';
+        const row = document.createElement('div');
+        row.className = 'fstop-row';
+        FSTOPS.forEach(() => row.append(document.createElement('b')));
+        root.append(val, row);
+        bindWind(root);
+        return {
+          root,
+          update(p) {
+            const i = Math.round(p * (FSTOPS.length - 1));
+            val.innerHTML = `<em>f/</em>${FSTOPS[i]}`;
+            [...row.children].forEach((b, n) => b.classList.toggle('on', n === i));
+          },
+        };
+      },
+
+      jog() {
+        const root = document.createElement('div');
+        root.className = 'inst jog';
+        const svg = svgEl('svg', { viewBox: '0 0 56 56' });
+        svg.append(
+          svgEl('circle', { class: 'jog-ring', cx: 28, cy: 28, r: 26 }),
+          svgEl('circle', { class: 'jog-groove', cx: 28, cy: 28, r: 18 }),
+          svgEl('circle', { class: 'jog-ring', cx: 28, cy: 28, r: 4 })
+        );
+        const pip = svgEl('circle', { class: 'jog-pip', cx: 28, cy: 10, r: 2.4 });
+        svg.append(pip);
+        root.append(svg);
+        let lastAng = null;
+        bindWind(root, {
+          down(e) {
+            const r = root.getBoundingClientRect();
+            lastAng = Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2));
+          },
+          move(e, { p0 }) {
+            const r = root.getBoundingClientRect();
+            const ang = Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2));
+            let d = ang - lastAng;
+            if (d > Math.PI) d -= Math.PI * 2;
+            if (d < -Math.PI) d += Math.PI * 2;
+            lastAng = ang;
+            setProgress(progress() + d / (Math.PI * 2));
+            return true;
+          },
+        });
+        return {
+          root,
+          update(p) {
+            const a = p * Math.PI * 2 - Math.PI / 2;
+            pip.setAttribute('cx', (28 + Math.cos(a) * 18).toFixed(2));
+            pip.setAttribute('cy', (28 + Math.sin(a) * 18).toFixed(2));
+          },
+        };
+      },
+
+      viz() {
+        const root = document.createElement('div');
+        root.className = 'inst viz';
+        const bars = Array.from({ length: 8 }, () => {
+          const b = document.createElement('b');
+          root.append(b);
+          return b;
+        });
+        bindWind(root);
+        return {
+          root,
+          update(p) {
+            const peak = Math.round(p * (bars.length - 1));
+            bars.forEach((b, i) => {
+              const dist = Math.abs(i - peak);
+              const h = dist === 0 ? 100 : Math.max(18, 70 - dist * 18);
+              b.style.height = `${h}%`;
+              b.classList.toggle('peak', i === peak);
+            });
+          },
+        };
+      },
+
+      chop() {
+        const root = document.createElement('div');
+        root.className = 'inst chop';
+        root.innerHTML = '文<div class="chop-fill">文</div>';
+        const fill = root.querySelector('.chop-fill');
+        bindWind(root);
+        return {
+          root,
+          update(p) { fill.style.clipPath = `inset(${((1 - p) * 100).toFixed(2)}% 0 0 0)`; },
+        };
+      },
+
+      namefill() {
+        const root = document.createElement('div');
+        root.className = 'inst namefill';
+        const chars = ['陳', '文', '飛'].map((ch) => {
+          const i = document.createElement('i');
+          i.append(ch);
+          const b = document.createElement('b');
+          b.textContent = ch;
+          i.append(b);
+          root.append(i);
+          return b;
+        });
+        bindWind(root);
+        return {
+          root,
+          update(p) {
+            chars.forEach((b, i) => {
+              const local = Math.min(1, Math.max(0, p * 3 - i));
+              b.style.clipPath = `inset(${((1 - local) * 100).toFixed(2)}% 0 0 0)`;
+            });
+          },
+        };
+      },
+
+      flap() {
+        const root = document.createElement('div');
+        root.className = 'inst flap';
+        root.innerHTML = '<div class="flap-win"><div class="flap-word">home</div></div><div class="flap-idx">01 / 04</div>';
+        const word = root.querySelector('.flap-word');
+        const idx = root.querySelector('.flap-idx');
+        let last = '';
+        bindWind(root);
+        return {
+          root,
+          update() {
+            const s = sectionInfo();
+            if (s.name !== last) {
+              if (last) {
+                word.classList.remove('flip');
+                void word.offsetWidth;
+                word.classList.add('flip');
+              }
+              last = s.name;
+              word.textContent = s.name;
+              idx.textContent = `${String(s.idx + 1).padStart(2, '0')} / ${String(s.count).padStart(2, '0')}`;
+            }
+          },
+        };
+      },
+
+      ribbon() {
+        const root = document.createElement('div');
+        root.className = 'ribbon';
+        root.innerHTML = '<div class="ribbon-seal"></div>';
+        bindWind(root);
+        return {
+          root,
+          update(p) { root.style.height = `${12 + p * 70}vh`; },
+        };
+      },
+
+      dogear() {
+        const root = document.createElement('div');
+        root.className = 'dogear';
+        root.innerHTML = '<div class="dogear-back"></div><div class="dogear-face"></div>';
+        bindWind(root);
+        return {
+          root,
+          update(p) {
+            const s = 18 + p * 70;
+            root.style.width = root.style.height = `${s}px`;
+          },
+        };
+      },
+
+      leak() {
+        const root = document.createElement('div');
+        root.className = 'leak';
+        bindWind(root);
+        return {
+          root,
+          update(p) { root.style.setProperty('--p', p.toFixed(4)); },
+        };
+      },
+
+      thread() {
+        const root = document.createElement('div');
+        root.className = 'inst thread';
+        root.innerHTML = '<div class="thread-line"></div><div class="thread-line-fill"></div><div class="thread-bead"></div>';
+        const fill = root.querySelector('.thread-line-fill');
+        const bead = root.querySelector('.thread-bead');
+        const dots = SECTIONS.map((sec, i) => {
+          const d = document.createElement('div');
+          d.className = 'thread-dot';
+          d.title = sec.dataset.sec;
+          d.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sec.scrollIntoView({ behavior: 'auto', block: 'start' });
+          });
+          root.append(d);
+          return d;
+        });
+        bindWind(root);
+        return {
+          root,
+          update(p) {
+            const track = 160;
+            fill.style.height = `${p * track}px`;
+            bead.style.top = `${p * track}px`;
+            const s = sectionInfo();
+            dots.forEach((d, i) => {
+              d.style.top = `${(i / (dots.length - 1)) * track}px`;
+              d.classList.toggle('on', i === s.idx);
+            });
+          },
+        };
+      },
+
+      needle() {
+        const root = document.createElement('div');
+        root.className = 'inst needle';
+        const svg = svgEl('svg', { viewBox: '0 0 64 40' });
+        svg.append(
+          svgEl('path', { class: 'needle-arc', d: 'M8 32 A24 24 0 0 1 56 32' }),
+          svgEl('circle', { class: 'needle-hub', cx: 32, cy: 32, r: 2 })
+        );
+        const arm = svgEl('line', { class: 'needle-arm', x1: 32, y1: 32, x2: 32, y2: 10 });
+        svg.append(arm);
+        root.append(svg);
+        bindWind(root);
+        return {
+          root,
+          update(p) {
+            const a = (-80 + p * 160) * Math.PI / 180;
+            arm.setAttribute('x2', (32 + Math.cos(a - Math.PI / 2) * 22).toFixed(2));
+            arm.setAttribute('y2', (32 + Math.sin(a - Math.PI / 2) * 22).toFixed(2));
+          },
+        };
+      },
+
+      caret() {
+        const root = document.createElement('div');
+        root.className = 'inst caret';
+        root.innerHTML = '<div class="caret-rule"></div><div class="caret-head"></div>';
+        const head = root.querySelector('.caret-head');
+        bindWind(root);
+        return {
+          root,
+          update(p) { head.style.top = `${p * 154}px`; },
+        };
+      },
+
+      compass() {
+        const root = document.createElement('div');
+        root.className = 'inst compass';
+        const svg = svgEl('svg', { viewBox: '0 0 48 48' });
+        const n = svgEl('text', { class: 'compass-n', x: 24, y: 9, 'text-anchor': 'middle' });
+        n.textContent = 'N';
+        const needle = svgEl('polygon', { class: 'compass-needle', points: '24,8 26.2,26 24,24 21.8,26' });
+        svg.append(svgEl('circle', { class: 'compass-ring', cx: 24, cy: 24, r: 20 }), n, needle);
+        root.append(svg);
+        bindWind(root);
+        return {
+          root,
+          update(p) { needle.setAttribute('transform', `rotate(${p * 180} 24 24)`); },
+        };
+      },
+
+      cursor() {
+        const root = document.createElement('div');
+        root.className = 'ctick';
+        root.innerHTML = '<i></i><b></b>';
+        let hideT = 0;
+        const onMove = (e) => {
+          root.style.left = `${e.clientX}px`;
+          root.style.top = `${e.clientY}px`;
+        };
+        const onScroll = () => {
+          root.classList.add('show');
+          clearTimeout(hideT);
+          hideT = setTimeout(() => root.classList.remove('show'), 700);
+        };
+        window.addEventListener('pointermove', onMove);
+        window.addEventListener('scroll', onScroll, { passive: true });
+        return {
+          root,
+          update(p) { root.style.transform = `rotate(${p * 90}deg)`; },
+          destroy() {
+            window.removeEventListener('pointermove', onMove);
+            window.removeEventListener('scroll', onScroll);
+            clearTimeout(hideT);
+          },
+        };
+      },
+    };
+
+    let current = null;
+    let activeId = 'aperture';
+
+    const paintLinks = () => {
+      links.innerHTML = '';
+      GROUPS.forEach((g, gi) => {
+        if (gi) {
+          const label = document.createElement('div');
+          label.className = 'group';
+          label.textContent = g.id;
+          links.append(label);
+        }
+        g.items.forEach((id) => {
+          const meta = CATALOG[id];
+          const a = document.createElement('a');
+          a.href = `#${id}`;
+          a.dataset.id = id;
+          a.className = id === activeId ? 'active' : '';
+          if (meta.onSite) a.classList.add('on-site');
+          a.innerHTML = `${meta.name}<span>${meta.blurb.split('.')[0]}.</span>`;
+          links.append(a);
+        });
+      });
+    };
+
+    const mount = (id) => {
+      if (!CATALOG[id] || !makers[id]) id = 'aperture';
+      activeId = id;
+      if (current) {
+        current.destroy?.();
+        current.root.remove();
+        current = null;
+      }
+      current = makers[id]();
+      stage.append(current.root);
+      current.update(progress(), sectionInfo());
+      const meta = CATALOG[id];
+      $('#hud-name').textContent = meta.name;
+      $('#hud-blurb').textContent = meta.blurb;
+      $('#hud-hint').textContent = meta.hint;
+      paintLinks();
+      history.replaceState(null, '', `#${id}`);
+    };
+
+    links.addEventListener('click', (e) => {
+      const a = e.target.closest('a[data-id]');
+      if (!a) return;
+      e.preventDefault();
+      mount(a.dataset.id);
+    });
+
+    let ticking = false;
+    const sync = () => {
+      ticking = false;
+      current?.update(progress(), sectionInfo());
+    };
+    window.addEventListener('scroll', () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(sync);
+    }, { passive: true });
+    window.addEventListener('resize', sync);
+
+    $('#theme-toggle').addEventListener('click', () => document.documentElement.classList.toggle('dark'));
+
+    const PALETTES = [
+      { id: '', bg: '#fff', accent: '#111' },
+      { id: 'theme-warm', bg: '#F5EBD9', accent: '#A36A58' },
+      { id: 'theme-mint', bg: '#E6EDE8', accent: '#2D6A4F' },
+      { id: 'theme-rose', bg: '#FFE8EC', accent: '#E05870' },
+    ];
+    const swatches = $('#swatches');
+    PALETTES.forEach((p, i) => {
+      const b = document.createElement('button');
+      b.className = 'swatch' + (i === 0 ? ' active' : '');
+      b.style.background = `linear-gradient(135deg, ${p.bg} 50%, ${p.accent} 50%)`;
+      b.title = p.id || 'black and white';
+      b.addEventListener('click', () => {
+        document.documentElement.classList.remove('theme-warm', 'theme-mint', 'theme-rose');
+        if (p.id) document.documentElement.classList.add(p.id);
+        [...swatches.children].forEach((c) => c.classList.toggle('active', c === b));
+      });
+      swatches.append(b);
+    });
+
+    const start = (location.hash || '#aperture').slice(1);
+    paintLinks();
+    mount(CATALOG[start] ? start : 'aperture');
+  </script>
+</body>
+</html>
