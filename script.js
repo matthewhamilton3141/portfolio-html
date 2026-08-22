@@ -187,26 +187,37 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   card.addEventListener('mouseleave', hideTip);
   root.innerHTML = '<p class="gh-loading">loading contributions…</p>';
 
-  fetch(`https://github-contributions-api.jogruber.de/v4/${GH_USER}?y=last`)
+  const today = new Date();
+  const year = today.getFullYear();
+  const todayStr = [
+    year,
+    String(today.getMonth() + 1).padStart(2, '0'),
+    String(today.getDate()).padStart(2, '0'),
+  ].join('-');
+
+  const ctrl = new AbortController();
+  const timeout = setTimeout(() => ctrl.abort(), 8000);
+  // Bust browser/CDN URL cache daily. Don't send Cache-Control: no-cache —
+  // that forces the third-party API to rescrape and is rate-limited.
+  fetch(`https://github-contributions-api.jogruber.de/v4/${GH_USER}?y=${year}&y=${year - 1}&_=${todayStr}`, {
+    cache: 'no-store',
+    signal: ctrl.signal,
+  })
     .then((r) => {
       if (!r.ok) throw new Error('bad response');
       return r.json();
     })
     .then((data) => {
       const all = data.contributions || [];
-      const today = new Date();
-      const todayStr = [
-        today.getFullYear(),
-        String(today.getMonth() + 1).padStart(2, '0'),
-        String(today.getDate()).padStart(2, '0'),
-      ].join('-');
       // Drop any future padding the API includes through year-end.
       const throughToday = all.filter((d) => d.date <= todayStr);
+      throughToday.sort((a, b) => a.date.localeCompare(b.date));
       render(throughToday.slice(-(WEEKS * 7)));
     })
     .catch(() => {
       root.innerHTML = '<p class="gh-loading">couldn’t load contributions</p>';
-    });
+    })
+    .finally(() => clearTimeout(timeout));
 })();
 
 /* ======================================================================
