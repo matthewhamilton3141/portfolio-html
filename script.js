@@ -378,7 +378,7 @@ $$('.livephoto').forEach(initLivePhoto);
     { category: 'personal project', title: 'Retermina',
       description: 'AI-coding terminal on Tauri v2 + Rust. Native PTYs, split panes, and out-of-process shells that survive quit, crash, or update.',
       link: 'https://github.com/matthewhamilton3141/Retermina', liveUrl: 'https://retermina.com/',
-      thumb: 'images/reterminapreview.webp', video: R2 + 'Retermina%20Promo%20(2).mp4', zoom: 1.35 },
+      thumb: 'images/reterminapreview.webp', zoom: 1.35 },
     { category: 'personal project', title: 'Sketchstack',
       description: 'Turn system-design diagrams into structured prompts for Claude Code and Cursor. Next.js, React Flow, Supabase.',
       link: 'https://github.com/matthewhamilton3141/sketchstack', liveUrl: 'https://sketchstack.vercel.app',
