@@ -437,7 +437,6 @@ html.skip-intro .sticker-board .sticker img {
 .sticker-board.show .sticker:nth-child(9) { transition-delay:.38s; }
 .sticker-board.show .sticker:nth-child(10) { transition-delay:.42s; }
 .sticker-board.show .sticker:nth-child(11) { transition-delay:.46s; }
-.sticker-board.show .sticker:nth-child(12) { transition-delay:.5s; }
 .sticker-board .sticker:hover,
 .sticker-board .sticker:focus-visible {
   /* Keep hitbox still — only the image moves — and stay under the directory. */
@@ -1038,16 +1037,15 @@ a.hl-orange:hover {
   /* Keep stickers in front, but pin them to the frame so they don't sit on the face or directory. */
   .sticker-board .sticker:nth-child(1)  { --x:6% !important;  --y:8% !important; }   /* waterloo */
   .sticker-board .sticker:nth-child(2)  { --x:3% !important;  --y:26% !important; }  /* nvidia */
-  .sticker-board .sticker:nth-child(3)  { --x:5% !important;  --y:44% !important; }  /* jamhacks */
-  .sticker-board .sticker:nth-child(4)  { --x:6% !important;  --y:60% !important; }  /* bayern */
-  .sticker-board .sticker:nth-child(5)  { --x:8% !important;  --y:78% !important; }  /* overwatch — left of /projects */
-  .sticker-board .sticker:nth-child(6)  { --x:92% !important; --y:80% !important; }  /* league — right of directory */
-  .sticker-board .sticker:nth-child(7)  { --x:96% !important; --y:68% !important; }  /* rayquaza */
-  .sticker-board .sticker:nth-child(8)  { --x:90% !important; --y:52% !important; }  /* retermina */
-  .sticker-board .sticker:nth-child(9)  { --x:94% !important; --y:36% !important; }  /* claude */
-  .sticker-board .sticker:nth-child(10) { --x:96% !important; --y:20% !important; }  /* hk */
-  .sticker-board .sticker:nth-child(11) { --x:82% !important; --y:6% !important; }   /* sketchstack */
-  .sticker-board .sticker:nth-child(12) { --x:94% !important; --y:12% !important; }  /* stash */
+  .sticker-board .sticker:nth-child(3)  { --x:6% !important;  --y:60% !important; }  /* bayern */
+  .sticker-board .sticker:nth-child(4)  { --x:8% !important;  --y:78% !important; }  /* overwatch — left of /projects */
+  .sticker-board .sticker:nth-child(5)  { --x:92% !important; --y:80% !important; }  /* league — right of directory */
+  .sticker-board .sticker:nth-child(6)  { --x:96% !important; --y:68% !important; }  /* rayquaza */
+  .sticker-board .sticker:nth-child(7)  { --x:90% !important; --y:52% !important; }  /* retermina */
+  .sticker-board .sticker:nth-child(8)  { --x:94% !important; --y:36% !important; }  /* claude */
+  .sticker-board .sticker:nth-child(9)  { --x:96% !important; --y:20% !important; }  /* hk */
+  .sticker-board .sticker:nth-child(10) { --x:82% !important; --y:6% !important; }   /* sketchstack */
+  .sticker-board .sticker:nth-child(11) { --x:94% !important; --y:12% !important; }  /* stash */
   .contact-inner { flex-direction:column; align-items:flex-start; justify-content:center; gap:28px; padding:80px 8vw; }
   .contact-gh { align-self:flex-start; }
   .palette-dock { right:14px; bottom:14px; }
