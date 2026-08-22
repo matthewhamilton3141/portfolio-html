@@ -483,9 +483,7 @@ $$('.livephoto').forEach(initLivePhoto);
     { title: 'clarity', artist: 'zedd (ft. foxes)', src: R2 + 'clarity.mp3', cover: '/images/clarity.jpg', wave: 'linear-gradient(to top, #3B82F6, #22C55E)' },
     { title: 'japanese denim', artist: 'daniel caesar', src: R2 + 'japanesedenim.mp3', cover: '/images/japanesedenim.jpg', wave: 'linear-gradient(to top, #e2e2e2ff, #a5a5a5ff)' },
     { title: 'crank the bass, play the muzik', artist: 'knock2', src: R2 + 'crankthebassplaythemuzik.mp3', cover: '/images/nolimit.jpg', wave: '#A5969B' },
-    { title: 'seigfried', artist: 'frank ocean', src: R2 + 'seigfried.mp3', cover: '/images/blond.jpg', wave: 'linear-gradient(to top, #22C55E, #e4e4e4ff)' },
     { title: 'slow dancing in the dark', artist: 'joji', src: R2 + 'slowdancinginthedark.mp3', cover: '/images/ballads1.jpeg', wave: 'linear-gradient(to top, #CDB0AE, #CEC0C0)' },
-    { title: 'rearrange my world', artist: 'daniel caesar (ft. rex orange county)', src: R2 + 'rearrangemyworld.mp3', cover: '/images/rearrange.jpeg', wave: '#b7b7b7ff' },
     { title: 'ochos rios', artist: 'daniel caesar', src: R2 + 'ochosrios.mp3', cover: '/images/neverenough.jpg', wave: '#4169E1' },
     { title: 'cyanide', artist: 'daniel caesar', src: R2 + 'cyanide.mp3', cover: '/images/casestudy.jpeg', wave: 'linear-gradient(to top, #7aadffb9, #b7b7b7ff)' },
   ];
