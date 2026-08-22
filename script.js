@@ -278,11 +278,11 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
         cursor.style.display = 'none';
         nameWrap.classList.add('interactive');
         startNameSwap();
-        setTimeout(() => $('#about-bio')?.classList.add('show'), 200);
         markIntroDone();
       }
     };
     setTimeout(typeNext, 300);
+    setTimeout(() => $('#about-bio')?.classList.add('show'), 520);
     setTimeout(() => {
       $('#photo-frame')?.classList.add('show');
       $('#icon-strip')?.classList.add('show');
