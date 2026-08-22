@@ -1175,11 +1175,13 @@ $$('.livephoto').forEach(initLivePhoto);
       });
 
       photosRoot.hidden = false;
+      photosRoot.removeAttribute('aria-hidden');
       document.body.classList.add('photos-page');
       document.title = PHOTOS_TITLE;
       view = 'photos';
       if (push) history.pushState({ soft: 'photos' }, '', '/photos');
       window.initPhotobook?.();
+      window.prefetchPhotobook?.();
       window.__applyThemeIcons?.();
       window.scrollTo(0, 0);
     } finally {
@@ -1199,7 +1201,10 @@ $$('.livephoto').forEach(initLivePhoto);
         return;
       }
 
-      if (photosRoot) photosRoot.hidden = true;
+      if (photosRoot) {
+        photosRoot.hidden = true;
+        photosRoot.setAttribute('aria-hidden', 'true');
+      }
       homeHidden.forEach(([el, display]) => { el.style.display = display; });
       homeHidden = [];
       document.body.classList.remove('photos-page');
@@ -1232,9 +1237,19 @@ $$('.livephoto').forEach(initLivePhoto);
     else if (isHome(path)) goHome({ push: false });
   });
 
+  const warmPhotos = () => {
+    prefetchPhotos();
+    window.prefetchPhotobook?.(8);
+  };
   if (view === 'home' && 'requestIdleCallback' in window) {
-    requestIdleCallback(() => { prefetchPhotos(); }, { timeout: 2500 });
+    requestIdleCallback(warmPhotos, { timeout: 2500 });
   } else if (view === 'home') {
-    setTimeout(() => { prefetchPhotos(); }, 1200);
+    setTimeout(warmPhotos, 1200);
   }
+
+  document.addEventListener('pointerenter', (e) => {
+    const a = e.target.closest?.('a[href]');
+    if (!a) return;
+    if (isPhotos(pathOf(a.getAttribute('href')))) window.prefetchPhotobook?.();
+  }, true);
 })();

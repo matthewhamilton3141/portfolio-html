@@ -145,6 +145,30 @@
   }
 
   const ORDER = shuffle(SHOTS, hashSeed(SHOTS.map((s) => s.src).join('|') + '|roll-v1'));
+  const warmed = new Set();
+  const EAGER_COUNT = 9;
+
+  function prefetchPhotobook(count) {
+    const list = count == null ? ORDER : ORDER.slice(0, count);
+    list.forEach((shot) => {
+      if (warmed.has(shot.src)) return;
+      warmed.add(shot.src);
+      const img = new Image();
+      img.decoding = 'async';
+      img.src = shot.src;
+    });
+  }
+
+  function preloadHead(n) {
+    ORDER.slice(0, n).forEach((shot) => {
+      if (document.head.querySelector(`link[rel="preload"][href="${shot.src}"]`)) return;
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'image';
+      link.href = shot.src;
+      document.head.appendChild(link);
+    });
+  }
 
   function initPhotobook() {
     const roll = document.getElementById('photo-roll');
@@ -155,6 +179,9 @@
     const btnNext = document.getElementById('lightbox-next');
     if (!roll || !lightbox || !lbImg || roll.dataset.ready === '1') return;
     roll.dataset.ready = '1';
+
+    preloadHead(4);
+    prefetchPhotobook(EAGER_COUNT);
 
     let active = -1;
 
@@ -180,10 +207,7 @@
       document.body.style.overflow = '';
       active = -1;
       setTimeout(() => {
-        if (!lightbox.classList.contains('open')) {
-          lightbox.hidden = true;
-          lbImg.removeAttribute('src');
-        }
+        if (!lightbox.classList.contains('open')) lightbox.hidden = true;
       }, 220);
     };
     const prev = () => { if (active >= 0) showShot(active - 1); };
@@ -195,13 +219,32 @@
       el.className = 'roll-item';
       el.style.setProperty('--delay', (40 + i * 40) + 'ms');
       el.setAttribute('aria-label', shot.caption || shot.alt || 'Open photo');
-      el.innerHTML =
-        `<img src="${shot.src}" alt="" loading="lazy" decoding="async" />` +
-        `<figcaption>${shot.caption || ''}</figcaption>`;
+
+      const img = document.createElement('img');
+      img.alt = '';
+      img.decoding = 'async';
+      if (i < EAGER_COUNT) {
+        img.loading = 'eager';
+        if (i < 4) img.fetchPriority = 'high';
+      } else {
+        img.loading = 'lazy';
+      }
+      img.src = shot.src;
+      const markCached = () => el.classList.add('is-cached');
+      if (img.complete && img.naturalWidth) markCached();
+      else img.addEventListener('load', markCached, { once: true });
+
+      const cap = document.createElement('figcaption');
+      cap.textContent = shot.caption || '';
+      el.append(img, cap);
       el.addEventListener('click', () => open(i));
       roll.appendChild(el);
       requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('show')));
     });
+
+    const warmRest = () => prefetchPhotobook();
+    if ('requestIdleCallback' in window) requestIdleCallback(warmRest, { timeout: 1800 });
+    else setTimeout(warmRest, 400);
 
     btnPrev?.addEventListener('click', (e) => { e.stopPropagation(); prev(); });
     btnNext?.addEventListener('click', (e) => { e.stopPropagation(); next(); });
@@ -225,8 +268,14 @@
   }
 
   global.initPhotobook = initPhotobook;
+  global.prefetchPhotobook = prefetchPhotobook;
   if (document.body?.classList.contains('photos-page')) {
+    preloadHead(4);
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initPhotobook);
     else initPhotobook();
+  } else if ('requestIdleCallback' in window) {
+    requestIdleCallback(() => prefetchPhotobook(8), { timeout: 2500 });
+  } else {
+    setTimeout(() => prefetchPhotobook(8), 1200);
   }
 })(typeof window !== 'undefined' ? window : globalThis);
