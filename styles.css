@@ -893,6 +893,7 @@ a.hl-orange:hover {
    PHOTOS PAGE  (/photos)
    ======================================================================== */
 .photos-page .palette-dock { opacity:1; transform:none; }
+.photos-page .namefill-dock { opacity:1; animation:none; }
 #soft-photos-root { min-height:100dvh; }
 /* Keep decoded bitmaps around when leaving /photos — display:none dumps them. */
 #soft-photos-root[hidden] {

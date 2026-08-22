@@ -1341,6 +1341,7 @@ $$('.livephoto').forEach(initLivePhoto);
 
   const isChrome = (el) =>
     el.classList?.contains('notch-wrap') ||
+    el.classList?.contains('namefill-dock') ||
     el.id === 'palette' ||
     el.id === 'soft-photos-root';
 
