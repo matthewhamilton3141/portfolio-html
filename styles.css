@@ -722,15 +722,14 @@ a.hl-orange:hover {
 .contact-inner {
   position:relative; z-index:10; display:flex; flex-direction:row; align-items:center;
   justify-content:flex-start; gap:clamp(40px, 6vw, 88px);
-  min-height:100dvh; padding:10vh 10vw 12vh 14vw; pointer-events:none;
+  min-height:100dvh; padding:calc(20vh - 115px) 10vw calc(6vh + 115px) 14vw; pointer-events:none;
 }
 .contact-copy {
   display:flex; flex-direction:column; align-items:flex-start; text-align:left;
   max-width:480px; flex-shrink:0;
 }
 .contact-inner h2 { font-size:clamp(28px,5vw,52px); font-weight:900; letter-spacing:-.02em; color:var(--ink);
-  line-height:1.05; margin-bottom:16px; text-align:left; white-space:nowrap; }
-.contact-sub { font-size:11px; letter-spacing:.25em; text-transform:lowercase; color:var(--ink-muted); margin-bottom:40px; }
+  line-height:1.05; margin-bottom:48px; text-align:left; white-space:nowrap; }
 .contact-links { display:flex; flex-direction:column; align-items:flex-start; gap:24px; }
 .contact-link { display:flex; align-items:center; gap:14px; padding:4px 0; transition:transform .3s; pointer-events:auto; }
 .contact-link:hover { transform:scale(1.03); }
@@ -822,15 +821,8 @@ a.hl-orange:hover {
   color:var(--accent); font-weight:600; line-height:1.15;
 }
 .github-card {
-  display:block; padding:12px 14px 14px; border-radius:4px; width:fit-content; height:fit-content;
-  background:color-mix(in srgb, var(--ink) 5%, var(--cream));
-  transition:background-color .2s, box-shadow .2s;
+  display:block; width:fit-content; height:fit-content;
 }
-.github-card:hover { background:color-mix(in srgb, var(--ink) 8%, var(--cream)); }
-.dark .github-card {
-  background:#010409; box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
-}
-.dark .github-card:hover { background:#0d1117; }
 
 .gh-graph { display:flex; flex-direction:column; gap:4px; }
 .gh-loading {
