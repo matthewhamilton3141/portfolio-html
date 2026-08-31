@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>grid style previews</title>
+  <meta name="robots" content="noindex" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;600;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cream: #F5F5F5;
+      --warm-white: #FFFFFF;
+      --ink: #000;
+      --ink-soft: #333;
+      --ink-muted: #666;
+      --accent: #000;
+      --border: #E5E5E5;
+      --card: #F5F5F5;
+      --muted: #F5F5F5;
+      --muted-foreground: #666;
+      --foreground: #000;
+      --background: #FFF;
+      --font-sans: 'DM Sans', system-ui, sans-serif;
+    }
+    .dark {
+      --cream: #141414; --warm-white: #0A0A0A; --ink: #FFF; --ink-soft: #CCC;
+      --ink-muted: #888; --accent: #FFF; --border: #262626; --card: #141414;
+      --muted: #141414; --muted-foreground: #888; --foreground: #FFF; --background: #0A0A0A;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--background);
+      color: var(--foreground);
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: 100dvh;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; border: 0; background: none; cursor: pointer; color: inherit; }
+
+    .nav {
+      position: sticky; top: 0; align-self: start;
+      height: 100dvh; overflow: auto;
+      padding: 28px 18px 40px;
+      border-right: 1px solid var(--border);
+      background: var(--background);
+    }
+    .nav h1 {
+      font-size: 11px; letter-spacing: .22em; text-transform: lowercase;
+      color: var(--ink-muted); font-weight: 700; margin-bottom: 6px;
+    }
+    .nav .sub {
+      font-size: 12px; color: var(--ink-soft); line-height: 1.45; margin-bottom: 18px;
+    }
+    .nav a {
+      display: block; padding: 7px 8px; border-radius: 2px;
+      font-size: 12px; color: var(--ink-soft); line-height: 1.3;
+    }
+    .nav a:hover, .nav a.active { background: color-mix(in srgb, var(--ink) 5%, transparent); color: var(--foreground); }
+    .nav a span { display: block; font-size: 10px; color: var(--ink-muted); margin-top: 2px; }
+    .nav .tools { margin-top: 20px; display: flex; flex-direction: column; gap: 8px; }
+    .nav .tools button, .nav .tools a.btn {
+      padding: 8px 10px; border: 1px solid var(--border); border-radius: 2px;
+      font-size: 11px; letter-spacing: .06em; text-align: left;
+    }
+    .nav .tools button:hover, .nav .tools a.btn:hover { border-color: var(--accent); }
+
+    .main { padding: 36px 48px 120px; min-width: 0; }
+    .variant {
+      scroll-margin-top: 28px;
+      padding: 36px 0 56px;
+      border-bottom: 1px solid var(--border);
+    }
+    .variant:last-child { border-bottom: 0; }
+    .variant-head { margin-bottom: 22px; max-width: 720px; }
+    .variant-head .num {
+      font-size: 11px; letter-spacing: .2em; text-transform: lowercase;
+      color: var(--accent); font-weight: 700; margin-bottom: 6px;
+    }
+    .variant-head h2 {
+      font-size: 22px; font-weight: 600; letter-spacing: -.02em; margin-bottom: 6px;
+    }
+    .variant-head p { font-size: 14px; color: var(--ink-soft); line-height: 1.55; }
+
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; width: 100%; max-width: 1100px; }
+    .grid.cols-2 { grid-template-columns: repeat(2, 1fr); gap: 40px; max-width: 960px; }
+
+    .thumb {
+      width: 100%; aspect-ratio: 16/9; overflow: hidden; position: relative;
+      background: #111; border-radius: 4px;
+    }
+    .thumb img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .thumb.contain { background: #000; }
+    .thumb.contain img { object-fit: contain; }
+    .title-line { display: flex; align-items: center; gap: 8px; }
+    .title-line h3 { font-weight: 400; font-size: 20px; line-height: 1.1; }
+    .title-links { display: flex; gap: 6px; margin-left: auto; }
+    .proj-link {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; border-radius: 2px; color: var(--muted-foreground);
+    }
+    .proj-link:hover { color: var(--foreground); background: color-mix(in srgb, var(--muted) 35%, transparent); }
+    .proj-ic { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .badge { width: 18px; height: 18px; object-fit: contain; }
+    .desc { font-size: 12px; line-height: 1.6; color: var(--muted-foreground); margin-top: 8px; }
+
+    /* 0 — current */
+    .v0 .card {
+      background: var(--card); border-radius: 4px;
+      border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+      padding: 28px; display: flex; flex-direction: column; height: 100%;
+    }
+    .v0 .thumb { margin-bottom: 24px; }
+    .v0 .title-line { margin-bottom: 8px; }
+
+    /* 1 — media-first */
+    .v1 .card { display: flex; flex-direction: column; gap: 12px; }
+    .v1 .thumb { border-radius: 4px; }
+    .v1 .title-line h3 { font-size: 18px; }
+    .v1 .desc { margin-top: 0; }
+
+    /* 2 — match list */
+    .v2 .grid { gap: 0; border-top: 1px solid color-mix(in srgb, var(--border) 40%, transparent); }
+    .v2 .card {
+      padding: 24px 16px 28px;
+      border-bottom: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+      border-right: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+    }
+    .v2 .card:nth-child(3n) { border-right: 0; }
+    .v2 .thumb { margin-bottom: 16px; border-radius: 0; }
+    .v2 .title-line h3 { font-size: 22px; transition: color .2s; }
+    .v2 .card:hover h3 { color: var(--accent); }
+    .v2 .desc { font-size: 14px; max-width: 40rem; }
+
+    /* 3 — caption only */
+    .v3 .card { display: flex; flex-direction: column; gap: 12px; }
+    .v3 .desc { display: none; }
+
+    /* 4 — 2-col featured */
+    .v4 .thumb { aspect-ratio: 16/10; }
+    .v4 .card { display: flex; flex-direction: column; gap: 14px; }
+    .v4 .title-line h3 { font-size: 24px; }
+    .v4 .desc { font-size: 14px; }
+
+    /* 5 — masonry */
+    .v5 .grid {
+      display: columns; columns: 3; column-gap: 28px;
+      max-width: 1100px;
+    }
+    .v5 .card {
+      break-inside: avoid; margin-bottom: 28px; display: flex; flex-direction: column; gap: 10px;
+    }
+    .v5 .thumb { aspect-ratio: auto; height: auto; }
+    .v5 .thumb img { height: auto; aspect-ratio: unset; }
+    .v5 .card:nth-child(1) .thumb img { aspect-ratio: 4/3; }
+    .v5 .card:nth-child(2) .thumb img { aspect-ratio: 1/1; }
+    .v5 .card:nth-child(3) .thumb img { aspect-ratio: 16/9; }
+    .v5 .card:nth-child(4) .thumb img { aspect-ratio: 3/4; }
+    .v5 .card:nth-child(5) .thumb img { aspect-ratio: 5/4; }
+    .v5 .card:nth-child(6) .thumb img { aspect-ratio: 16/10; }
+
+    /* 6 — borderless */
+    .v6 .card { display: flex; flex-direction: column; gap: 14px; }
+    .v6 .thumb { border-radius: 2px; }
+
+    /* 7 — hairline frame */
+    .v7 .card {
+      border: 1px solid var(--border); border-radius: 2px; padding: 0;
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .v7 .thumb { border-radius: 0; }
+    .v7 .details { padding: 16px 16px 18px; }
+    .v7 .desc { margin-top: 6px; }
+
+    /* 8 — thumb-only border */
+    .v8 .card { display: flex; flex-direction: column; gap: 12px; }
+    .v8 .thumb {
+      border: 1px solid var(--border); border-radius: 2px;
+    }
+
+    /* 9 — hover reveal chrome */
+    .v9 .card {
+      padding: 20px; border-radius: 4px; border: 1px solid transparent;
+      background: transparent; transition: border-color .2s, background .2s, box-shadow .2s;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .v9 .card:hover {
+      background: var(--card);
+      border-color: color-mix(in srgb, var(--border) 70%, transparent);
+      box-shadow: 0 8px 24px rgba(0,0,0,.06);
+    }
+
+    /* 10 — tighter type */
+    .v10 .card { display: flex; flex-direction: column; gap: 10px; }
+    .v10 .title-line h3 { font-size: 15px; letter-spacing: .01em; }
+    .v10 .desc { font-size: 11px; color: var(--ink-muted); margin-top: 0; }
+    .v10 .proj-link { width: 24px; height: 24px; opacity: .55; }
+    .v10 .card:hover .proj-link { opacity: 1; }
+
+    /* 11 — title overlay */
+    .v11 .card { position: relative; }
+    .v11 .thumb { border-radius: 2px; }
+    .v11 .overlay {
+      position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 16px; background: linear-gradient(to top, rgba(0,0,0,.72), rgba(0,0,0,.05) 55%, transparent);
+      color: #fff; border-radius: 2px;
+    }
+    .v11 .overlay h3 { font-size: 18px; font-weight: 500; }
+    .v11 .overlay .title-links { margin-left: 0; }
+    .v11 .overlay .proj-link { color: rgba(255,255,255,.75); }
+    .v11 .overlay .proj-link:hover { color: #fff; background: rgba(255,255,255,.12); }
+    .v11 .details-offscreen { display: none; }
+
+    /* 12 — badge as ornament */
+    .v12 .card { display: flex; flex-direction: column; gap: 12px; }
+    .v12 .desc { display: none; }
+    .v12 .title-links { display: none; }
+    .v12 .badge { width: 22px; height: 22px; }
+
+    /* 13 — whole tile link */
+    .v13 .card {
+      display: flex; flex-direction: column; gap: 12px; cursor: pointer;
+      transition: opacity .2s;
+    }
+    .v13 .card:hover { opacity: .85; }
+    .v13 .card:hover h3 { color: var(--accent); }
+    .v13 .hint {
+      font-size: 10px; letter-spacing: .12em; text-transform: lowercase;
+      color: var(--ink-muted); margin-top: 4px;
+    }
+
+    /* 14 — static until hover */
+    .v14 .card { display: flex; flex-direction: column; gap: 12px; }
+    .v14 .thumb::after {
+      content: 'hover → motion';
+      position: absolute; left: 10px; bottom: 10px;
+      font-size: 10px; letter-spacing: .08em; text-transform: lowercase;
+      color: #fff; background: rgba(0,0,0,.55); padding: 4px 7px; border-radius: 2px;
+      opacity: .9; pointer-events: none; transition: opacity .2s;
+    }
+    .v14 .card:hover .thumb::after { opacity: 0; }
+    .v14 .card:hover .thumb img { filter: brightness(1.05); }
+
+    @media (max-width: 900px) {
+      body { grid-template-columns: 1fr; }
+      .nav {
+        position: relative; height: auto; border-right: 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .nav .links { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+      .main { padding: 24px 20px 80px; }
+      .grid, .v5 .grid { grid-template-columns: 1fr; columns: 1; }
+      .grid.cols-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <aside class="nav">
+    <h1>grid previews</h1>
+    <p class="sub">Same sample projects, fourteen layouts. Pick a direction and tell me the number.</p>
+    <div class="links" id="nav-links"></div>
+    <div class="tools">
+      <button type="button" id="theme-toggle">toggle dark</button>
+      <a class="btn" href="index.html#projects">back to site</a>
+    </div>
+  </aside>
+
+  <main class="main" id="main"></main>
+
+  <script>
+    const icGithub = `<svg class="proj-ic" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>`;
+    const icLink = `<svg class="proj-ic" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`;
+
+    const projects = [
+      { title: 'kitti-nav', desc: 'Onboard stereo VO + lidar BEV feeding a shielded PPO planner.', thumb: 'images/kitti-nav.webp', gh: true },
+      { title: 'gsplat-rt', desc: 'Real-time Gaussian-splatting SLAM — self-planning car, 0 collisions.', thumb: 'images/reconstruction_desk.webp', gh: true },
+      { title: 'Retermina', desc: 'AI-coding terminal on Tauri v2 + Rust. Native PTYs and split panes.', thumb: 'images/reterminapreview.webp', gh: true, live: true },
+      { title: 'Sketchstack', desc: 'Turn system-design diagrams into structured prompts.', thumb: 'images/sketchstack.webp', gh: true, live: true },
+      { title: 'laser tag now', desc: 'AR laser tag on your phone — radar, health, live fire.', thumb: 'images/lasertagnow.webp', gh: true, logo: 'images/summerhacks.svg', contain: true },
+      { title: 'baam', desc: 'Social betting for your circle — Solana + iMessage.', thumb: 'images/baampreview1.webp', gh: true, logo: 'images/jamhackslogo.png' },
+    ];
+
+    const variants = [
+      { id: 'v0', num: '0', title: 'Current', blurb: 'Padded cream cards, border, nested 16:9 thumb. Baseline.' },
+      { id: 'v1', num: '1', title: 'Media-first tiles', blurb: 'No card chrome. Thumb leads; title, links, and desc sit flush underneath.' },
+      { id: 'v2', num: '2', title: 'Match the list', blurb: 'Hairline grid, no fills. Same typographic weight as list rows.' },
+      { id: 'v3', num: '3', title: 'Caption only', blurb: 'Title + icons under the image. Descriptions live in list view only.' },
+      { id: 'v4', num: '4', title: '2-column featured', blurb: 'Larger thumbs, two columns. More editorial, less dashboard.' },
+      { id: 'v5', num: '5', title: 'Masonry / uneven ratios', blurb: 'Natural-ish aspect mix instead of forced 16:9.' },
+      { id: 'v6', num: '6', title: 'Borderless on page bg', blurb: 'No card fill or border — spacing alone separates tiles.' },
+      { id: 'v7', num: '7', title: 'Hairline frame only', blurb: 'Thin border around the whole tile, no cream fill.' },
+      { id: 'v8', num: '8', title: 'Thumb-only border', blurb: 'Only the media is framed; details sit outside the box.' },
+      { id: 'v9', num: '9', title: 'Hover-reveal chrome', blurb: 'Resting state is plain; border/fill appear on hover.' },
+      { id: 'v10', num: '10', title: 'Tighter type hierarchy', blurb: 'Smaller title, quieter desc, muted icons until hover.' },
+      { id: 'v11', num: '11', title: 'Title overlaid on media', blurb: 'Gradient + title on the image. No text block below.' },
+      { id: 'v12', num: '12', title: 'Badge as only ornament', blurb: 'Title + hackathon badge. No desc, no link icons in-grid.' },
+      { id: 'v13', num: '13', title: 'Whole tile = link', blurb: 'Primary affordance is the tile itself; less chrome emphasis.' },
+      { id: 'v14', num: '14', title: 'Motion only on hover', blurb: 'Static posters by default so the wall isn’t constantly moving.' },
+    ];
+
+    function linksHTML(p) {
+      return `${p.gh ? `<span class="proj-link" title="GitHub">${icGithub}</span>` : ''}${p.live ? `<span class="proj-link try" title="Live">${icLink}</span>` : ''}`;
+    }
+    function logoHTML(p) {
+      return p.logo ? `<img class="badge" src="${p.logo}" alt="" />` : '';
+    }
+    function thumbHTML(p) {
+      return `<div class="thumb${p.contain ? ' contain' : ''}"><img src="${p.thumb}" alt="${p.title}" loading="lazy" /></div>`;
+    }
+    function detailsHTML(p, opts = {}) {
+      const showDesc = opts.hideDesc ? '' : `<p class="desc">${p.desc}</p>`;
+      const showLinks = opts.hideLinks ? '' : `<div class="title-links">${linksHTML(p)}</div>`;
+      const hint = opts.hint ? `<p class="hint">${opts.hint}</p>` : '';
+      return `<div class="details">
+        <div class="title-line">
+          <h3>${p.title}</h3>
+          ${logoHTML(p)}
+          ${showLinks}
+        </div>
+        ${showDesc}
+        ${hint}
+      </div>`;
+    }
+
+    function cardHTML(v, p) {
+      if (v.id === 'v0') {
+        return `<div class="card">${thumbHTML(p)}${detailsHTML(p)}</div>`;
+      }
+      if (v.id === 'v11') {
+        return `<div class="card" style="position:relative">
+          ${thumbHTML(p)}
+          <div class="overlay">
+            <div class="title-line">
+              <h3>${p.title}</h3>
+              ${logoHTML(p)}
+              <div class="title-links">${linksHTML(p)}</div>
+            </div>
+          </div>
+        </div>`;
+      }
+      if (v.id === 'v3' || v.id === 'v12') {
+        return `<div class="card">${thumbHTML(p)}${detailsHTML(p, { hideDesc: true, hideLinks: v.id === 'v12' })}</div>`;
+      }
+      if (v.id === 'v13') {
+        return `<div class="card">${thumbHTML(p)}${detailsHTML(p, { hint: 'click tile → project' })}</div>`;
+      }
+      if (v.id === 'v7') {
+        return `<div class="card">${thumbHTML(p)}${detailsHTML(p)}</div>`;
+      }
+      return `<div class="card">${thumbHTML(p)}${detailsHTML(p)}</div>`;
+    }
+
+    const nav = document.getElementById('nav-links');
+    const main = document.getElementById('main');
+
+    variants.forEach((v) => {
+      const a = document.createElement('a');
+      a.href = `#${v.id}`;
+      a.dataset.target = v.id;
+      a.innerHTML = `${v.num}. ${v.title}<span>${v.blurb.slice(0, 48)}${v.blurb.length > 48 ? '…' : ''}</span>`;
+      nav.appendChild(a);
+
+      const section = document.createElement('section');
+      section.className = `variant ${v.id}`;
+      section.id = v.id;
+      const sample = v.id === 'v4' ? projects.slice(0, 4) : projects;
+      const gridClass = v.id === 'v4' ? 'grid cols-2' : 'grid';
+      section.innerHTML = `
+        <div class="variant-head">
+          <div class="num">option ${v.num}</div>
+          <h2>${v.title}</h2>
+          <p>${v.blurb}</p>
+        </div>
+        <div class="${gridClass}">
+          ${sample.map((p) => cardHTML(v, p)).join('')}
+        </div>`;
+      main.appendChild(section);
+    });
+
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+    });
+
+    const links = [...nav.querySelectorAll('a')];
+    const sections = variants.map((v) => document.getElementById(v.id));
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        links.forEach((l) => l.classList.toggle('active', l.dataset.target === e.target.id));
+      });
+    }, { rootMargin: '-30% 0px -55% 0px', threshold: 0 });
+    sections.forEach((s) => io.observe(s));
+  </script>
+</body>
+</html>

@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>photo direction previews</title>
+  <meta name="robots" content="noindex" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=DM+Sans:ital,opsz,wght@0,9..40,300..900;1,9..40,300..900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cream: #F5F5F5;
+      --ink: #000;
+      --ink-soft: #333;
+      --ink-muted: #666;
+      --accent: #000;
+      --border: #E5E5E5;
+      --foreground: #000;
+      --background: #FFF;
+      --font-sans: 'DM Sans', system-ui, sans-serif;
+      --font-hand: 'Caveat', 'Segoe Print', cursive;
+      --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+    }
+    .dark {
+      --cream: #141414; --ink: #FFF; --ink-soft: #CCC; --ink-muted: #888;
+      --accent: #FFF; --border: #262626; --foreground: #FFF; --background: #0A0A0A;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--background);
+      color: var(--foreground);
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: 100dvh;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; border: 0; background: none; cursor: pointer; color: inherit; }
+    img { display: block; }
+
+    .nav {
+      position: sticky; top: 0; align-self: start;
+      height: 100dvh; overflow: auto;
+      padding: 28px 18px 40px;
+      border-right: 1px solid var(--border);
+      background: var(--background);
+    }
+    .nav h1 {
+      font-size: 11px; letter-spacing: .22em; text-transform: lowercase;
+      color: var(--ink-muted); font-weight: 700; margin-bottom: 6px;
+    }
+    .nav .sub {
+      font-size: 12px; color: var(--ink-soft); line-height: 1.45; margin-bottom: 18px;
+    }
+    .nav a {
+      display: block; padding: 8px 8px; border-radius: 2px;
+      font-size: 13px; color: var(--ink-soft); line-height: 1.3;
+    }
+    .nav a:hover, .nav a.active {
+      background: color-mix(in srgb, var(--ink) 5%, transparent);
+      color: var(--foreground);
+    }
+    .nav a span { display: block; font-size: 11px; color: var(--ink-muted); margin-top: 3px; }
+    .nav .tools { margin-top: 22px; display: flex; flex-direction: column; gap: 8px; }
+    .nav .tools button, .nav .tools a.btn {
+      padding: 8px 10px; border: 1px solid var(--border); border-radius: 2px;
+      font-size: 11px; letter-spacing: .06em; text-align: left;
+    }
+    .nav .tools button:hover, .nav .tools a.btn:hover { border-color: var(--accent); }
+
+    .main { min-width: 0; }
+    .variant {
+      scroll-margin-top: 0;
+      padding: 48px 48px 88px;
+      border-bottom: 1px solid var(--border);
+    }
+    .variant:last-of-type { border-bottom: 0; }
+    .variant-head { max-width: 520px; margin-bottom: 36px; }
+    .variant-head .num {
+      font-family: var(--font-mono); font-size: 11px; letter-spacing: .16em;
+      color: var(--accent); font-weight: 600; margin-bottom: 8px;
+    }
+    .variant-head h2 {
+      font-size: clamp(28px, 4vw, 42px); font-weight: 700; letter-spacing: -.03em;
+      line-height: 1.05; margin-bottom: 8px;
+    }
+    .variant-head p { font-size: 15px; color: var(--ink-soft); line-height: 1.6; }
+
+    /* ---- 1 camera roll ---- */
+    .roll {
+      columns: 3;
+      column-gap: 10px;
+      max-width: 1180px;
+    }
+    .roll-item {
+      break-inside: avoid;
+      margin: 0 0 10px;
+      width: 100%;
+      padding: 0;
+      text-align: left;
+      display: block;
+    }
+    .roll-item img {
+      width: 100%;
+      height: auto;
+      background: var(--cream);
+    }
+    .roll-item figcaption {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: .03em;
+      color: var(--ink-muted);
+      padding: 7px 1px 10px;
+    }
+    .roll-item:hover img { filter: brightness(1.04); }
+    .roll-item:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+    /* ---- 2 photobook ---- */
+    .book {
+      max-width: 860px;
+      display: flex;
+      flex-direction: column;
+      gap: 72px;
+    }
+    .spread { width: 100%; }
+    .spread img {
+      width: auto;
+      max-width: 100%;
+      max-height: 72vh;
+      height: auto;
+      background: var(--cream);
+    }
+    .spread-cap {
+      font-family: var(--font-hand);
+      font-size: 26px;
+      font-weight: 500;
+      line-height: 1.25;
+      color: var(--ink-soft);
+      margin-top: 12px;
+    }
+    .spread.hero figure {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .spread.hero .spread-cap { max-width: 22ch; }
+    .spread.pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px 20px;
+      align-items: end;
+    }
+    .spread.pair figure { min-width: 0; }
+    .spread.pair img {
+      width: 100%;
+      height: 46vh;
+      max-height: 420px;
+      object-fit: cover;
+    }
+    .spread.pair .spread-cap { font-size: 22px; }
+    .spread.note {
+      display: grid;
+      grid-template-columns: 1fr 220px;
+      gap: 28px;
+      align-items: end;
+    }
+    .spread.note-left { grid-template-columns: 220px 1fr; }
+    .spread.note img,
+    .spread.note-left img {
+      width: 100%;
+      max-height: 64vh;
+      object-fit: contain;
+      object-position: left bottom;
+    }
+    .spread.note .spread-cap,
+    .spread.note-left .spread-cap {
+      margin-top: 0;
+      font-size: 28px;
+      padding-bottom: 6px;
+    }
+    .spread button, .spread.pair button {
+      display: block; width: 100%; padding: 0; text-align: left;
+    }
+    .spread button:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+    /* ---- 3 bare scatter ---- */
+    .desk {
+      position: relative;
+      width: 100%;
+      max-width: 1180px;
+      min-height: 1100px;
+      isolation: isolate;
+    }
+    .bare {
+      position: absolute;
+      left: var(--x); top: var(--y); z-index: var(--z);
+      width: var(--w);
+      padding: 0;
+      border-radius: 2px;
+      overflow: hidden;
+      background: var(--cream);
+      box-shadow:
+        0 2px 4px rgba(0,0,0,.08),
+        0 16px 36px rgba(0,0,0,.16);
+      transform: rotate(var(--rot)) translateY(16px);
+      opacity: 0;
+      transition:
+        opacity .6s ease var(--delay, 0ms),
+        transform .32s cubic-bezier(.2,.85,.2,1),
+        box-shadow .3s ease;
+      touch-action: none;
+      user-select: none;
+    }
+    .dark .bare {
+      box-shadow:
+        0 2px 6px rgba(0,0,0,.4),
+        0 20px 44px rgba(0,0,0,.45);
+    }
+    .bare.show { opacity: 1; transform: rotate(var(--rot)) translateY(0); }
+    .bare img { width: 100%; height: auto; pointer-events: none; }
+    .bare figcaption {
+      position: absolute; left: 0; right: 0; bottom: 0;
+      padding: 28px 12px 10px;
+      background: linear-gradient(transparent, rgba(0,0,0,.72));
+      color: #fff;
+      font-size: 13px;
+      line-height: 1.3;
+      opacity: 0;
+      transition: opacity .22s ease;
+    }
+    .bare.lifted, .bare:hover, .bare:focus-visible {
+      z-index: 999 !important;
+      transform: rotate(calc(var(--rot) * .1)) translateY(-8px) scale(1.04);
+    }
+    .bare.lifted figcaption, .bare:hover figcaption, .bare:focus-visible figcaption { opacity: 1; }
+    .bare:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+    .bare.dragging {
+      z-index: 1000 !important;
+      cursor: grabbing;
+      transition: none;
+      transform: rotate(calc(var(--rot) * .15)) translateY(-12px) scale(1.05);
+    }
+    .bare-md { --w: 228px; }
+    .bare-lg { --w: 286px; }
+    .bare-xl { --w: 340px; }
+
+    /* lightbox */
+    .lb {
+      position: fixed; inset: 0; z-index: 100000;
+      display: flex; align-items: center; justify-content: center;
+      padding: 48px 72px; background: rgba(10,8,6,.78);
+      backdrop-filter: blur(10px);
+      opacity: 0; pointer-events: none; transition: opacity .22s ease;
+    }
+    .lb[hidden] { display: none !important; }
+    .lb.open { opacity: 1; pointer-events: auto; }
+    .lb-close {
+      position: absolute; top: 20px; right: 22px;
+      width: 40px; height: 40px; border-radius: 6px;
+      background: rgba(255,255,255,.1); color: #fff; font-size: 16px;
+    }
+    .lb-nav {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 52px; height: 52px; border-radius: 6px;
+      background: rgba(255,255,255,.1); color: #fff; font-size: 34px; font-weight: 300;
+    }
+    .lb-nav.prev { left: 18px; }
+    .lb-nav.next { right: 18px; }
+    .lb-fig { max-width: min(720px, 78vw); max-height: 88dvh; }
+    .lb-fig img { width: 100%; height: auto; max-height: 74dvh; object-fit: contain; }
+    .lb-fig figcaption {
+      color: #fff; text-align: center; margin-top: 14px;
+      font-size: 14px; letter-spacing: .02em;
+    }
+
+    @media (max-width: 980px) {
+      body { grid-template-columns: 1fr; }
+      .nav { position: relative; height: auto; border-right: 0; border-bottom: 1px solid var(--border); }
+      .nav .links { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; }
+      .variant { padding: 28px 20px 64px; }
+      .roll { columns: 2; }
+      .spread.pair, .spread.note, .spread.note-left { grid-template-columns: 1fr; gap: 10px; }
+      .desk { min-height: 0; display: flex; flex-wrap: wrap; gap: 12px; }
+      .bare { position: relative; left: auto; top: auto; transform: none; opacity: 1; }
+      .bare-md { --w: 46%; width: 46%; }
+      .bare-lg, .bare-xl { --w: 100%; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <aside class="nav">
+    <h1>photo previews</h1>
+    <p class="sub">Three directions, same shots. Click a photo to open it. Scatter is draggable on desktop.</p>
+    <div class="links">
+      <a href="#roll" data-target="roll" class="active">1. Camera roll<span>full-bleed masonry, quiet captions</span></a>
+      <a href="#book" data-target="book">2. Photobook<span>spreads, notes in the gutter</span></a>
+      <a href="#desk" data-target="desk">3. Bare scatter<span>drag, no polaroid chrome</span></a>
+    </div>
+    <div class="tools">
+      <button type="button" id="theme-toggle">toggle dark</button>
+      <a class="btn" href="/photos">current polaroids</a>
+      <a class="btn" href="/">back to site</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <section class="variant" id="roll">
+      <div class="variant-head">
+        <div class="num">option 1</div>
+        <h2>camera roll</h2>
+        <p>No frames. Mixed ratios, tight gaps, captions as small file labels. The pictures do the work.</p>
+      </div>
+      <div class="roll" id="roll-grid"></div>
+    </section>
+
+    <section class="variant" id="book">
+      <div class="variant-head">
+        <div class="num">option 2</div>
+        <h2>photobook</h2>
+        <p>One or two shots per spread. Longer captions sit in the gutter like a note you wrote in the margin.</p>
+      </div>
+      <div class="book" id="book-grid"></div>
+    </section>
+
+    <section class="variant" id="desk">
+      <div class="variant-head">
+        <div class="num">option 3</div>
+        <h2>bare scatter</h2>
+        <p>Same desk energy as now — drag to rearrange — but the cards are just the photo. Caption on hover.</p>
+      </div>
+      <div class="desk" id="desk-board" aria-label="Scattered prints"></div>
+    </section>
+  </main>
+
+  <div class="lb" id="lb" hidden>
+    <button class="lb-close" type="button" aria-label="Close">✕</button>
+    <button class="lb-nav prev" type="button" aria-label="Previous">‹</button>
+    <button class="lb-nav next" type="button" aria-label="Next">›</button>
+    <figure class="lb-fig">
+      <img id="lb-img" alt="" />
+      <figcaption id="lb-cap"></figcaption>
+    </figure>
+  </div>
+
+  <script>
+    const SHOTS = [
+      { src: '/photos/web/IMG_9795.jpg', caption: 'touching grass', alt: 'Tall grass and a quiet pond under a blue sky', size: 'xl' },
+      { src: '/photos/web/pink-sky.jpg', caption: 'pink sky', alt: 'Pink sky', size: 'md' },
+      { src: '/photos/web/IMG_9404.jpg', caption: 'pse (e7) at night', alt: 'Looking down a dark atrium crossed by lit red staircases', size: 'md' },
+      { src: '/photos/web/cat.jpg', caption: 'cat', alt: 'Cat', size: 'md' },
+      { src: '/photos/web/harbour.jpg', caption: 'harbour', alt: 'Harbour', size: 'lg' },
+      { src: '/photos/web/cool-tree.jpg', caption: 'cool tree', alt: 'Cool tree', size: 'md' },
+      { src: '/photos/web/daniel-caesar-fist-bump.jpg', caption: 'daniel caesar fist bump', alt: 'Fist bump with Daniel Caesar', size: 'md' },
+      { src: '/photos/web/dc.jpg', caption: 'bro broke his ankle mid tour', alt: 'Daniel Caesar on stage with a bandaged ankle and crutch', size: 'md' },
+      { src: '/photos/web/cursor-hackathon.jpg', caption: 'cursor hackathon', alt: 'Cursor hackathon', size: 'xl' },
+      { src: '/photos/web/IMG_9704.jpg', caption: 'dawg', alt: 'Hand petting a golden retriever on asphalt', size: 'lg' },
+      { src: '/photos/web/i-love-rayquaza.jpg', caption: 'i love rayquaza', alt: 'Rayquaza', size: 'md' },
+      { src: '/photos/web/central.jpg', caption: 'central', alt: 'Central', size: 'md' },
+      { src: '/photos/web/if-i-am-the-sky-you-are-the-sea.jpg', caption: 'if i am the sky you are the sea', alt: 'If I am the sky you are the sea', size: 'lg' },
+      { src: '/photos/web/IMG_9761.jpg', caption: 'forgot to tap off because of this', alt: 'GO Transit train at a platform at dusk', size: 'md' },
+      { src: '/photos/web/danielcaesartookmyphone.jpg', caption: 'daniel caesar took my phone', alt: 'Daniel Caesar took my phone', size: 'md' },
+      { src: '/photos/web/how-does-this-even-happen.jpg', caption: 'how does this even happen', alt: 'How does this even happen', size: 'md' },
+      { src: '/photos/web/trees.jpg', caption: 'trees', alt: 'Trees', size: 'xl' },
+      { src: '/photos/web/getting-into-uw-cs-at-a-frisbee-tournament.jpg', caption: 'getting into uw cs at a frisbee tournament', alt: 'Getting into UW CS at a frisbee tournament', size: 'lg' },
+      { src: '/photos/web/IMG_9394.jpg', caption: 'first overnight at the loo', alt: 'Mirror selfie brushing teeth and flashing a peace sign', size: 'md' },
+      { src: '/photos/web/ltn-at-summerhacks.jpg', caption: 'laser tag now', alt: 'laser tag now', size: 'lg' },
+      { src: '/photos/web/watermelon.jpg', caption: 'watermelon', alt: 'watermelon', size: 'xl' },
+    ];
+
+    const SPREADS = [
+      { type: 'hero', i: [0] },
+      { type: 'pair', i: [1, 2] },
+      { type: 'note', i: [3] },
+      { type: 'hero', i: [4] },
+      { type: 'pair', i: [5, 6] },
+      { type: 'note-left', i: [7] },
+      { type: 'hero', i: [8] },
+      { type: 'pair', i: [9, 10] },
+      { type: 'note', i: [11] },
+      { type: 'hero', i: [12] },
+      { type: 'note-left', i: [13] },
+      { type: 'pair', i: [14, 15] },
+      { type: 'hero', i: [16] },
+      { type: 'note', i: [17] },
+      { type: 'pair', i: [18, 19] },
+      { type: 'hero', i: [20] },
+    ];
+
+    const SIZE_W = { md: 228, lg: 286, xl: 340 };
+
+    const lb = document.getElementById('lb');
+    const lbImg = document.getElementById('lb-img');
+    const lbCap = document.getElementById('lb-cap');
+    let active = -1;
+
+    function show(i) {
+      active = (i + SHOTS.length) % SHOTS.length;
+      const s = SHOTS[active];
+      lbImg.src = s.src;
+      lbImg.alt = s.alt || '';
+      lbCap.textContent = s.caption || '';
+    }
+    function open(i) {
+      show(i);
+      lb.hidden = false;
+      requestAnimationFrame(() => lb.classList.add('open'));
+    }
+    function close() {
+      lb.classList.remove('open');
+      setTimeout(() => { if (!lb.classList.contains('open')) { lb.hidden = true; lbImg.removeAttribute('src'); } }, 220);
+    }
+    lb.addEventListener('click', (e) => {
+      if (e.target === lb || e.target.classList.contains('lb-close')) close();
+    });
+    lb.querySelector('.prev').addEventListener('click', (e) => { e.stopPropagation(); show(active - 1); });
+    lb.querySelector('.next').addEventListener('click', (e) => { e.stopPropagation(); show(active + 1); });
+    document.addEventListener('keydown', (e) => {
+      if (lb.hidden) return;
+      if (e.key === 'Escape') close();
+      if (e.key === 'ArrowLeft') show(active - 1);
+      if (e.key === 'ArrowRight') show(active + 1);
+    });
+
+    function shotBtn(i, capClass) {
+      const s = SHOTS[i];
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.setAttribute('aria-label', s.caption || s.alt || 'Open photo');
+      btn.innerHTML = `<img src="${s.src}" alt="" loading="lazy" decoding="async" draggable="false" /><figcaption class="${capClass}">${s.caption || ''}</figcaption>`;
+      btn.addEventListener('click', () => open(i));
+      return btn;
+    }
+
+    /* 1 — roll */
+    const roll = document.getElementById('roll-grid');
+    SHOTS.forEach((_, i) => {
+      const fig = document.createElement('figure');
+      fig.className = 'roll-item';
+      const btn = shotBtn(i, '');
+      btn.className = 'roll-item';
+      roll.appendChild(btn);
+    });
+
+    /* 2 — book */
+    const book = document.getElementById('book-grid');
+    SPREADS.forEach((sp) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'spread ' + sp.type;
+      sp.i.forEach((i) => {
+        const fig = document.createElement('figure');
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        const s = SHOTS[i];
+        btn.setAttribute('aria-label', s.caption || 'Open photo');
+        btn.innerHTML = `<img src="${s.src}" alt="" loading="lazy" decoding="async" />`;
+        btn.addEventListener('click', () => open(i));
+        const cap = document.createElement('figcaption');
+        cap.className = 'spread-cap';
+        cap.textContent = s.caption || '';
+        fig.appendChild(btn);
+        fig.appendChild(cap);
+        wrap.appendChild(fig);
+      });
+      book.appendChild(wrap);
+    });
+
+    /* 3 — bare scatter */
+    function hashSeed(str) {
+      let h = 2166136261;
+      for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+      return h >>> 0;
+    }
+    function mulberry32(seed) {
+      let a = seed >>> 0;
+      return () => {
+        a = (a + 0x6D2B79F5) >>> 0;
+        let t = Math.imul(a ^ (a >>> 15), 1 | a);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+    function layoutDesk(boardWidth) {
+      const rnd = mulberry32(hashSeed(SHOTS.map((s) => s.src).join('|') + '|bare-v1'));
+      const bw = Math.max(boardWidth || 1100, 640);
+      const cols = bw >= 1000 ? 3 : 2;
+      const colX = cols === 3 ? [2, 33, 64] : [3, 50];
+      const colH = Array.from({ length: cols }, (_, i) => 4 + rnd() * 10 + i * 3);
+      const occupied = [];
+      const placements = [];
+      const hit = (x, y, w, h) => ({ x: x + w * .22, y: y + h * .22, w: w * .56, h: h * .56 });
+      const overlap = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+
+      SHOTS.forEach((shot, i) => {
+        const size = shot.size && SIZE_W[shot.size] ? shot.size : 'md';
+        const wPx = SIZE_W[size];
+        const hPx = wPx * 0.78;
+        const wPct = (wPx / bw) * 100;
+        const hPct = (hPx / bw) * 100;
+        const maxX = Math.max(0, 100 - wPct - 1);
+        const order = Array.from({ length: cols }, (_, c) => c).sort((a, b) => colH[a] - colH[b]);
+        let placed = null;
+        for (const col of order) {
+          let x = Math.min(maxX, Math.max(0, colX[col] + (rnd() - .5) * 8));
+          let y = Math.max(0, colH[col] + (rnd() - .5) * 3);
+          for (let n = 0; n < 24 && !placed; n++) {
+            const box = hit(x, y, wPct, hPct);
+            if (!occupied.some((o) => overlap(box, o))) placed = { size, x, y, h: hPx, col, box };
+            else { y += 2.6 + rnd() * 1.4; x = Math.min(maxX, Math.max(0, x + (rnd() - .5) * 3)); }
+          }
+          if (placed) break;
+        }
+        if (!placed) {
+          const y = Math.max(...colH, 0) + 6;
+          const x = Math.min(maxX, colX[i % cols]);
+          placed = { size, x, y, h: hPx, col: i % cols, box: hit(x, y, wPct, hPct) };
+        }
+        placements.push({
+          size: placed.size, x: placed.x, y: placed.y, h: placed.h,
+          rot: (rnd() < .5 ? -1 : 1) * (2.2 + rnd() * 6.5),
+          z: 2 + Math.floor(rnd() * 8),
+        });
+        occupied.push(placed.box);
+        colH[placed.col] = Math.max(colH[placed.col], placed.y + hPct * 0.74);
+      });
+      const bottom = placements.reduce((m, p) => Math.max(m, p.y + (p.h / bw) * 100), 0);
+      return { placements, boardHeight: Math.ceil((bottom / 100) * bw + 180) };
+    }
+
+    const board = document.getElementById('desk-board');
+    const deskMq = window.matchMedia('(min-width: 981px)');
+    const cards = [];
+
+    SHOTS.forEach((shot, i) => {
+      const size = shot.size && SIZE_W[shot.size] ? shot.size : 'md';
+      const el = document.createElement('button');
+      el.type = 'button';
+      el.className = `bare bare-${size}`;
+      el.style.setProperty('--x', '0%');
+      el.style.setProperty('--y', '0%');
+      el.style.setProperty('--rot', '0deg');
+      el.style.setProperty('--z', String(i + 1));
+      el.style.setProperty('--delay', (60 + i * 50) + 'ms');
+      el.setAttribute('aria-label', shot.caption || 'Open photo');
+      el.innerHTML = `<img src="${shot.src}" alt="" loading="lazy" decoding="async" draggable="false" /><figcaption>${shot.caption || ''}</figcaption>`;
+      el.addEventListener('pointerenter', () => el.classList.add('lifted'));
+      el.addEventListener('pointerleave', () => { if (!el.classList.contains('dragging')) el.classList.remove('lifted'); });
+      cards.push(el);
+      board.appendChild(el);
+      requestAnimationFrame(() => el.classList.add('show'));
+    });
+
+    function applyDesk() {
+      if (!deskMq.matches) { board.style.minHeight = ''; return; }
+      const { placements, boardHeight } = layoutDesk(board.clientWidth || 1100);
+      board.style.minHeight = boardHeight + 'px';
+      cards.forEach((el, i) => {
+        const p = placements[i];
+        if (!p) return;
+        el.className = `bare bare-${p.size} show`;
+        el.style.setProperty('--x', p.x + '%');
+        el.style.setProperty('--y', p.y + '%');
+        el.style.setProperty('--rot', p.rot + 'deg');
+        el.style.setProperty('--z', String(p.z));
+      });
+    }
+
+    let topZ = SHOTS.length + 2;
+    cards.forEach((el, index) => {
+      let pid = null, sx = 0, sy = 0, ox = 0, oy = 0, dragging = false, moved = false;
+      const read = (prop) => parseFloat(el.style.getPropertyValue(prop)) || 0;
+      const onMove = (e) => {
+        if (e.pointerId !== pid) return;
+        const dx = e.clientX - sx, dy = e.clientY - sy;
+        if (!dragging) {
+          if (Math.hypot(dx, dy) < 6) return;
+          dragging = true; moved = true;
+          el.classList.add('dragging', 'lifted');
+          el.style.setProperty('--z', String(++topZ));
+          try { el.setPointerCapture(pid); } catch (_) {}
+        }
+        const bw = board.clientWidth || 1, bh = board.clientHeight || 1;
+        el.style.setProperty('--x', Math.max(0, Math.min(100 - (el.offsetWidth / bw) * 100, ox + (dx / bw) * 100)) + '%');
+        el.style.setProperty('--y', Math.max(0, Math.min(100 - (el.offsetHeight / bh) * 100, oy + (dy / bh) * 100)) + '%');
+      };
+      const onUp = (e) => {
+        if (e.pointerId !== pid) return;
+        pid = null; dragging = false;
+        el.classList.remove('dragging');
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp);
+        if (!moved) open(index);
+        moved = false;
+      };
+      el.addEventListener('pointerdown', (e) => {
+        if (!deskMq.matches || e.button) return;
+        pid = e.pointerId; sx = e.clientX; sy = e.clientY; ox = read('--x'); oy = read('--y');
+        dragging = false; moved = false;
+        window.addEventListener('pointermove', onMove, { passive: false });
+        window.addEventListener('pointerup', onUp);
+      });
+      el.addEventListener('click', (e) => {
+        if (deskMq.matches && e.detail !== 0) e.preventDefault();
+        else open(index);
+      });
+    });
+
+    applyDesk();
+    deskMq.addEventListener('change', applyDesk);
+    window.addEventListener('resize', () => { if (deskMq.matches) applyDesk(); });
+
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+    });
+
+    const links = [...document.querySelectorAll('.nav .links a')];
+    const sections = ['roll', 'book', 'desk'].map((id) => document.getElementById(id));
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        links.forEach((l) => l.classList.toggle('active', l.dataset.target === e.target.id));
+      });
+    }, { rootMargin: '-25% 0px -60% 0px', threshold: 0 });
+    sections.forEach((s) => io.observe(s));
+  </script>
+</body>
+</html>
