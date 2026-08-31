@@ -375,6 +375,10 @@ $$('.livephoto').forEach(initLivePhoto);
 (function () {
   const R2 = 'https://pub-642075d77d2b430c93bf3b1c60299af0.r2.dev/';
   const projects = [
+    { category: 'working on', title: 'Isle',
+      description: 'Turning the dead space around the MacBook camera into a live island: what\'s playing and what your agent is doing.',
+      link: 'https://github.com/matthewhamilton3141/isle', thumb: 'images/isle.webp',
+      video: R2 + 'isle-portfolio.mp4' },
     { category: 'working on', title: 'shield-in-alpasim',
       description: 'Putting a provable safety shield over a learned AV camera policy (VaVAM) in NVIDIA\'s AlpaSim, and measuring how much the "no-collisions" guarantee survives when the obstacle field comes from learned perception instead of ground truth.',
       link: 'https://github.com/matthewhamilton3141/shield-in-alpasim', thumb: 'images/shield-in-alpasim.webp',
@@ -408,10 +412,6 @@ $$('.livephoto').forEach(initLivePhoto);
       link: 'https://github.com/BansonVuong/BAAM', thumb: 'images/baampreview1.webp',
       video: R2 + 'baamimsg.mp4', webm: R2 + 'baamimsg.webm', logo: 'images/jamhackslogo.png',
       logoLink: 'https://jamhacks.ca', startTime: 2.23 },
-    { category: 'hackathon project', title: 'Marrymap',
-      description: 'Wedding planning with dual-consent vendor swiping and a Chrome extension that clips vendors into shared albums.',
-      link: 'https://github.com/aarontran321/marrymap', thumb: 'images/marrymap.webp',
-      logo: 'images/about/cursor.png', zoom: 1.25 },
   ];
 
   const gridView = $('#grid-view');

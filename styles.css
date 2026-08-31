@@ -470,6 +470,7 @@ html.skip-intro .sticker-board .sticker img {
 .sticker-board.show .sticker:nth-child(9) { transition-delay:.38s; }
 .sticker-board.show .sticker:nth-child(10) { transition-delay:.42s; }
 .sticker-board.show .sticker:nth-child(11) { transition-delay:.46s; }
+.sticker-board.show .sticker:nth-child(12) { transition-delay:.5s; }
 .sticker-board .sticker:hover,
 .sticker-board .sticker:focus-visible {
   /* Keep hitbox still — only the image moves — and stay under the directory. */
@@ -580,6 +581,24 @@ a.hl-microsoft:hover, .hl-microsoft:hover {
     rgba(127, 186, 0, .42) 33%,
     rgba(0, 164, 239, .42) 66%,
     rgba(255, 185, 0, .42) 100%
+  );
+  color:var(--ink);
+}
+.hl-isle {
+  background-image:linear-gradient(
+    105deg,
+    rgba(77, 163, 255, .32) 0%,
+    rgba(58, 186, 170, .32) 52%,
+    rgba(29, 185, 84, .32) 100%
+  );
+  background-color:transparent;
+}
+a.hl-isle:hover, .hl-isle:hover {
+  background-image:linear-gradient(
+    105deg,
+    rgba(77, 163, 255, .46) 0%,
+    rgba(58, 186, 170, .46) 52%,
+    rgba(29, 185, 84, .46) 100%
   );
   color:var(--ink);
 }
@@ -1061,17 +1080,17 @@ a.hl-orange:hover {
   .media-cluster { padding:28px 20px 44px; margin:-28px -20px -44px; }
   .media-row { justify-content:center; align-items:flex-start; gap:20px; }
   /* Keep stickers in front, but pin them to the frame so they don't sit on the face or directory. */
-  .sticker-board .sticker:nth-child(1)  { --x:6% !important;  --y:8% !important; }   /* waterloo */
-  .sticker-board .sticker:nth-child(2)  { --x:3% !important;  --y:26% !important; }  /* nvidia */
-  .sticker-board .sticker:nth-child(3)  { --x:6% !important;  --y:60% !important; }  /* bayern */
-  .sticker-board .sticker:nth-child(4)  { --x:8% !important;  --y:78% !important; }  /* overwatch — left of /projects */
-  .sticker-board .sticker:nth-child(5)  { --x:92% !important; --y:80% !important; }  /* league — right of directory */
-  .sticker-board .sticker:nth-child(6)  { --x:96% !important; --y:68% !important; }  /* rayquaza */
-  .sticker-board .sticker:nth-child(7)  { --x:90% !important; --y:52% !important; }  /* retermina */
-  .sticker-board .sticker:nth-child(8)  { --x:94% !important; --y:36% !important; }  /* claude */
-  .sticker-board .sticker:nth-child(9)  { --x:96% !important; --y:20% !important; }  /* hk */
-  .sticker-board .sticker:nth-child(10) { --x:82% !important; --y:6% !important; }   /* sketchstack */
-  .sticker-board .sticker:nth-child(11) { --x:94% !important; --y:12% !important; }  /* stash */
+  .sticker-board .sticker:nth-child(1)  { --x:6% !important;  --y:8% !important; } /* waterloo */
+  .sticker-board .sticker:nth-child(2)  { --x:3% !important;  --y:26% !important; } /* nvidia */
+  .sticker-board .sticker:nth-child(3)  { --x:6% !important;  --y:60% !important; } /* bayern */
+  .sticker-board .sticker:nth-child(4)  { --x:8% !important;  --y:78% !important; } /* overwatch */  /* overwatch — left of /projects */
+  .sticker-board .sticker:nth-child(5)  { --x:92% !important; --y:80% !important; } /* league */  /* league — right of directory */
+  .sticker-board .sticker:nth-child(6)  { --x:96% !important; --y:68% !important; } /* rayquaza */
+  .sticker-board .sticker:nth-child(7)  { --x:90% !important; --y:52% !important; } /* retermina */
+  .sticker-board .sticker:nth-child(8)  { --x:94% !important; --y:36% !important; } /* isle */
+  .sticker-board .sticker:nth-child(9)  { --x:96% !important; --y:20% !important; } /* claude */
+  .sticker-board .sticker:nth-child(10) { --x:82% !important; --y:6% !important; } /* hk */
+  .sticker-board .sticker:nth-child(11) { --x:94% !important; --y:12% !important; } /* sketchstack */
   .contact-inner { flex-direction:column; align-items:flex-start; justify-content:center; gap:28px; padding:80px 8vw; }
   .contact-gh { align-self:flex-start; }
   .palette-dock { right:14px; bottom:14px; }
@@ -1100,16 +1119,16 @@ a.hl-orange:hover {
   .sticker-board .sticker { width:calc(46px * var(--s, 1)); height:calc(46px * var(--s, 1)); }
   .sticker-board .sticker img { width:calc(38px * var(--s, 1)); height:calc(38px * var(--s, 1)); }
   /* Narrow phones: clear center channel over the portrait and directory links. */
-  .sticker-board .sticker:nth-child(1)  { --x:4% !important;  --y:7% !important; }
-  .sticker-board .sticker:nth-child(2)  { --x:2% !important;  --y:24% !important; }
-  .sticker-board .sticker:nth-child(3)  { --x:3% !important;  --y:42% !important; }
-  .sticker-board .sticker:nth-child(4)  { --x:4% !important;  --y:58% !important; }
-  .sticker-board .sticker:nth-child(5)  { --x:6% !important;  --y:76% !important; }  /* overwatch */
-  .sticker-board .sticker:nth-child(6)  { --x:94% !important; --y:78% !important; }  /* league */
-  .sticker-board .sticker:nth-child(7)  { --x:97% !important; --y:64% !important; }  /* rayquaza */
-  .sticker-board .sticker:nth-child(8)  { --x:92% !important; --y:50% !important; }  /* retermina */
-  .sticker-board .sticker:nth-child(9)  { --x:96% !important; --y:34% !important; }  /* claude */
-  .sticker-board .sticker:nth-child(10) { --x:97% !important; --y:18% !important; }  /* hk */
-  .sticker-board .sticker:nth-child(11) { --x:80% !important; --y:5% !important; }   /* sketchstack */
-  .sticker-board .sticker:nth-child(12) { --x:94% !important; --y:11% !important; }  /* stash */
+  .sticker-board .sticker:nth-child(1)  { --x:4% !important;  --y:7% !important; } /* waterloo */
+  .sticker-board .sticker:nth-child(2)  { --x:2% !important;  --y:24% !important; } /* nvidia */
+  .sticker-board .sticker:nth-child(3)  { --x:3% !important;  --y:42% !important; } /* bayern */
+  .sticker-board .sticker:nth-child(4)  { --x:4% !important;  --y:58% !important; } /* overwatch */
+  .sticker-board .sticker:nth-child(5)  { --x:6% !important;  --y:76% !important; } /* league */
+  .sticker-board .sticker:nth-child(6)  { --x:94% !important; --y:78% !important; } /* rayquaza */
+  .sticker-board .sticker:nth-child(7)  { --x:97% !important; --y:64% !important; } /* retermina */
+  .sticker-board .sticker:nth-child(8)  { --x:92% !important; --y:50% !important; } /* isle */
+  .sticker-board .sticker:nth-child(9)  { --x:96% !important; --y:34% !important; } /* claude */
+  .sticker-board .sticker:nth-child(10) { --x:97% !important; --y:18% !important; } /* hk */
+  .sticker-board .sticker:nth-child(11) { --x:80% !important; --y:5% !important; } /* sketchstack */
+  .sticker-board .sticker:nth-child(12) { --x:94% !important; --y:11% !important; } /* stash */
 }
