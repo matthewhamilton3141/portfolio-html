@@ -377,7 +377,8 @@ $$('.livephoto').forEach(initLivePhoto);
   const projects = [
     { category: 'working on', title: 'Isle',
       description: 'Turning the dead space around the MacBook camera into a live island: what\'s playing and what your agent is doing.',
-      link: 'https://github.com/matthewhamilton3141/isle', thumb: 'images/isle.webp',
+      link: 'https://github.com/matthewhamilton3141/isle', liveUrl: 'https://islenotch.vercel.app/',
+      thumb: 'images/isle.webp',
       video: R2 + 'isle-portfolio.mp4' },
     { category: 'working on', title: 'shield-in-alpasim',
       description: 'Putting a provable safety shield over a learned AV camera policy (VaVAM) in NVIDIA\'s AlpaSim, and measuring how much the "no-collisions" guarantee survives when the obstacle field comes from learned perception instead of ground truth.',
