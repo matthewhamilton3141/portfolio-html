@@ -335,6 +335,7 @@ html.skip-intro .topbar { opacity:1; animation:none; }
 }
 .topbar-icon:hover { background:color-mix(in srgb, var(--accent) 10%, transparent); border-color:var(--accent); color:var(--accent); transform:scale(1.08); }
 .topbar-icon svg { width:17px; height:17px; stroke:currentColor; fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+.topbar-icon svg.icon-x { stroke:none; fill:currentColor; }
 .try-now { font-size:11px; font-weight:600; color:var(--ink-muted); display:flex; align-items:center; gap:4px; user-select:none; }
 .retermina-glyph { font-size:12px; font-weight:700; font-family:var(--font-mono); line-height:1; }
 .menu-toggle { display:none; }
@@ -754,6 +755,7 @@ a.hl-orange:hover {
 .contact-link:hover { transform:scale(1.03); }
 .contact-link .ic { color:var(--ink-muted); display:flex; transition:color .3s; }
 .contact-link .ic svg { width:17px; height:17px; stroke:currentColor; fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+.contact-link .ic svg.icon-x { stroke:none; fill:currentColor; }
 .contact-link span { font-weight:600; letter-spacing:.06em; text-transform:lowercase;
   font-size:14px; color:var(--ink); transition:color .3s; }
 .contact-link:hover .ic, .contact-link:hover span { color:var(--accent-warm); }
@@ -1098,11 +1100,12 @@ a.hl-orange:hover {
   .projects { padding:80px 8vw 96px; }
   .grid-view { grid-template-columns:1fr; }
   .footer { flex-direction:column; text-align:center; }
-  /* Split chrome: LinkedIn/GitHub left of island, email/theme right.
-     Expanded island can cover the icons. */
-  .topbar { justify-content:space-between; padding:16px 14px; }
+  /* Mobile: hide social/email icons, keep only the theme toggle. */
+  .topbar { justify-content:flex-end; padding:16px 14px; }
   .topbar-icon { width:34px; height:34px; }
   .topbar-icons { gap:6px; }
+  .topbar-left,
+  .topbar-right .topbar-icon:not(#theme-toggle) { display:none; }
   .notch.playing { width:min(210px, 56vw); }
   .notch.expanded { width:min(91vw, 385px); height:105px; padding:16px; }
   .try-now { display:none; }
